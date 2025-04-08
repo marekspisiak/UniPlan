@@ -20,7 +20,6 @@ const AppRouter = () => {
       <Routes>
         <Route path="/verify-email" element={<VerifyEmailPage />} />
         <Route path="/email-info" element={<EmailInfoPage />} />
-        <Route path="/" element={<Home />} />
 
         <Route element={<GuestRoute />}>
           <Route path="/login" element={<LoginPage />} />

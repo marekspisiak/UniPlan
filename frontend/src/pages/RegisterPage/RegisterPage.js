@@ -49,7 +49,7 @@ const RegisterPage = () => {
 
   return (
     <AuthLayout>
-      <h4 className="mb-3">Registrácia do UniPlan</h4>
+      <h4 className="mb-3">Registrácia</h4>
 
       {message && <Alert variant="success">{message}</Alert>}
       {error && <Alert variant="danger">{error}</Alert>}
