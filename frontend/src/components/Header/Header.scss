@@ -33,4 +33,18 @@
       font-size: 1.25rem;
     }
   }
+
+  &--minimal {
+    border-bottom: none;
+    box-shadow: none;
+    justify-content: center;
+
+    .header__content {
+      justify-content: center;
+    }
+
+    .header__right {
+      display: none;
+    }
+  }
 }

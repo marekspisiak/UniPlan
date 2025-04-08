@@ -5,10 +5,10 @@ import { sendVerificationEmail } from "../utils/sendEmail.js";
 import jwt from "jsonwebtoken";
 
 export const registerUser = async (req, res) => {
-  const { name, email, password } = req.body;
+  const { firstName, lastName, email, password } = req.body;
 
   try {
-    if (!email.endsWith("@uniza.sk")) {
+    if (!email.endsWith("uniza.sk")) {
       return res
         .status(400)
         .json({ message: "Použi školský email končiaci na @uniza.sk." });
@@ -22,7 +22,8 @@ export const registerUser = async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, 10);
     const user = await prisma.user.create({
       data: {
-        name,
+        firstName,
+        lastName,
         email,
         password: hashedPassword,
       },

@@ -1,11 +1,15 @@
 import "./Header.scss";
 
-const Header = () => {
+const Header = ({ minimal = false }) => {
   return (
-    <header className="header">
+    <header className={`header ${minimal ? "header--minimal" : ""}`}>
       <div className="header__content">
         <div className="header__logo">📘 UniPlan</div>
-        {/* Prípadné ikony vpravo napr. <div className="header__right">👤</div> */}
+        {!minimal && (
+          <div className="header__right">
+            {/* napr. profil, notifikácie, menu... */}
+          </div>
+        )}
       </div>
     </header>
   );

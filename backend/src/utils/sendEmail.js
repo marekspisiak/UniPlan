@@ -9,7 +9,7 @@ export const sendVerificationEmail = async (to, token) => {
     },
   });
 
-  const url = `http://localhost:3000/verify-email?token=${token}`; // neskôr zmeníš na produkčnú URL
+  const url = `http://localhost:3000/verify-email?token=${token}`;
 
   const mailOptions = {
     from: `"UniPlan" <${process.env.EMAIL_FROM}>`,

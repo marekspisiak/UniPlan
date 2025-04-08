@@ -1,0 +1,18 @@
+@import "../styles/variables";
+
+.auth-layout {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background-color: $background-light;
+
+  .auth-box {
+    width: 100%;
+    max-width: 420px;
+    padding: 2rem;
+    background-color: $white;
+    border-radius: $border-radius;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.05);
+  }
+}

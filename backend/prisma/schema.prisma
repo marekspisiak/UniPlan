@@ -9,13 +9,15 @@ datasource db {
 
 model User {
   id              Int      @id @default(autoincrement())
-  name            String
+  firstName       String
+  lastName        String
   email           String   @unique
   password        String
   emailVerified   Boolean  @default(false)
   createdAt       DateTime @default(now())
   verificationTokens EmailVerificationToken[]
 }
+
 
 model EmailVerificationToken {
   id        Int      @id @default(autoincrement())
