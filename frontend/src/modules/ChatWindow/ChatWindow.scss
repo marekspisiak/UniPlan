@@ -1,0 +1,40 @@
+@import "../../styles/variables";
+
+.chat-window {
+  background-color: $white;
+
+  &__title {
+    font-weight: bold;
+    color: $primary-color;
+    margin-bottom: 10px;
+    text-align: center;
+    font-size: 1.1rem;
+  }
+
+  &__chat {
+    padding: 0.75rem 0.5rem;
+    border-bottom: 1px solid $border-color;
+
+    .chat-name {
+      font-weight: 500;
+      font-size: 0.95rem;
+      color: $text-color;
+    }
+
+    .chat-message {
+      font-size: 0.85rem;
+      color: $secondary-color;
+    }
+
+    .chat-time {
+      text-align: right;
+      font-size: 0.75rem;
+      margin-top: 0.25rem;
+    }
+
+    &:hover {
+      background-color: $background-light;
+      cursor: pointer;
+    }
+  }
+}

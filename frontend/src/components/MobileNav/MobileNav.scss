@@ -1,0 +1,29 @@
+// MobileNav.scss
+@import "../../styles/variables";
+
+.mobile-nav {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  padding: 0.5rem 0;
+  background-color: $white;
+  border-top: 1px solid $border-color;
+  z-index: 999;
+
+  .nav-icon {
+    color: $text-color;
+    font-size: 1.5rem;
+    text-decoration: none;
+
+    &.active {
+      color: $primary-color;
+    }
+  }
+
+  @media (min-width: 768px) {
+    display: none;
+  }
+}

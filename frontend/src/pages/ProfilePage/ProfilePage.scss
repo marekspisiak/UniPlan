@@ -1,0 +1,22 @@
+@import "../../styles/variables";
+
+.profile-page {
+  padding: 1rem;
+
+  h4 {
+    color: $primary-color;
+    margin-bottom: 1rem;
+  }
+
+  .profile-info {
+    font-size: 0.95rem;
+
+    p {
+      margin-bottom: 0.5rem;
+
+      strong {
+        color: $text-color;
+      }
+    }
+  }
+}

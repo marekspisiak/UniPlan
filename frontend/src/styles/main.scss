@@ -1,0 +1,9 @@
+@import './reset';
+@import './variables';
+@import './mixins';
+
+/* Môžeš pridať aj globálne štýly sem */
+body {
+  font-family: $font-stack;
+  color: $text-color;
+}

@@ -1,0 +1,64 @@
+@import "../../styles/variables";
+
+.calendar {
+  background-color: $white;
+  margin-bottom: 20px;
+  max-width: 100%; // zabráni pretečeniu
+  overflow: hidden;
+
+  &__title {
+    font-weight: bold;
+    color: $primary-color;
+    margin-bottom: 15px;
+    text-align: center;
+    font-size: 1.2rem;
+  }
+
+  &__grid {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  &__weekdays,
+  &__dates {
+    display: grid;
+    grid-template-columns: repeat(
+      7,
+      minmax(0, 1fr)
+    ); // rovnomerne rozložené a nepraskajú
+    gap: 0.25rem;
+    text-align: center;
+  }
+
+  &__day {
+    font-weight: 500;
+    color: $text-color;
+    font-size: 0.85rem;
+    white-space: nowrap;
+  }
+
+  &__date {
+    aspect-ratio: 1 / 1;
+    background-color: $background-light;
+    border-radius: $border-radius;
+    font-size: clamp(0.7rem, 1.5vw, 0.95rem);
+    color: $text-color;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: background-color 0.2s ease;
+
+    &:hover {
+      background-color: $accent-blue;
+      color: $white;
+      cursor: pointer;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .calendar__title {
+      font-size: 1rem;
+    }
+  }
+}
