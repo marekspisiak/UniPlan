@@ -1,7 +1,6 @@
-// MobileNav.scss
 @import "../../styles/variables";
 
-.mobile-nav {
+.mobileNav {
   display: flex;
   justify-content: space-around;
   align-items: center;
@@ -13,17 +12,21 @@
   border-top: 1px solid $border-color;
   z-index: 999;
 
-  .nav-icon {
-    color: $text-color;
-    font-size: 1.5rem;
-    text-decoration: none;
-
-    &.active {
-      color: $primary-color;
-    }
-  }
-
   @media (min-width: 768px) {
     display: none;
   }
+}
+
+.navIcon {
+  color: $text-color;
+  font-size: 1.5rem;
+  text-decoration: none;
+
+  &.active {
+    color: $primary-color;
+  }
+}
+
+.active {
+  color: $primary-color;
 }

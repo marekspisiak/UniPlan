@@ -1,0 +1,22 @@
+@import "../../styles/variables";
+
+.profilePage {
+  padding: 1rem;
+}
+
+.heading {
+  color: $primary-color;
+  margin-bottom: 1rem;
+}
+
+.info {
+  font-size: 0.95rem;
+
+  p {
+    margin-bottom: 0.5rem;
+
+    strong {
+      color: $text-color;
+    }
+  }
+}

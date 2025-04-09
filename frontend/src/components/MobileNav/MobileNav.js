@@ -1,19 +1,39 @@
 import { NavLink } from "react-router-dom";
-import "./MobileNav.scss";
+import styles from "./MobileNav.module.scss";
 
 const MobileNav = () => {
   return (
-    <nav className="mobile-nav">
-      <NavLink to="/" className="nav-icon">
+    <nav className={styles.mobileNav}>
+      <NavLink
+        to="/"
+        className={({ isActive }) =>
+          `${styles.navIcon} ${isActive ? styles.active : ""}`
+        }
+      >
         🏠
       </NavLink>
-      <NavLink to="/calendar" className="nav-icon">
+      <NavLink
+        to="/calendar"
+        className={({ isActive }) =>
+          `${styles.navIcon} ${isActive ? styles.active : ""}`
+        }
+      >
         📅
       </NavLink>
-      <NavLink to="/chat" className="nav-icon">
+      <NavLink
+        to="/chat"
+        className={({ isActive }) =>
+          `${styles.navIcon} ${isActive ? styles.active : ""}`
+        }
+      >
         💬
       </NavLink>
-      <NavLink to="/profile" className="nav-icon">
+      <NavLink
+        to="/profile"
+        className={({ isActive }) =>
+          `${styles.navIcon} ${isActive ? styles.active : ""}`
+        }
+      >
         👤
       </NavLink>
     </nav>

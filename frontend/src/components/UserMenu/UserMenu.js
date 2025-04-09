@@ -1,24 +1,28 @@
 import { Dropdown } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
-import "./UserMenu.scss";
+import styles from "./UserMenu.module.scss";
 
 const UserMenu = () => {
-  const { user, logout } = useAuth();
+  const { logout } = useAuth();
   const navigate = useNavigate();
 
   return (
-    <Dropdown align="end" className="user-menu">
-      <Dropdown.Toggle variant="light" id="dropdown-basic">
+    <Dropdown align="end" className={styles.userMenu}>
+      <Dropdown.Toggle
+        variant="light"
+        id="dropdown-basic"
+        className={styles.dropdownToggle}
+      >
         👤
       </Dropdown.Toggle>
 
-      <Dropdown.Menu>
+      <Dropdown.Menu className={styles.dropdownMenu}>
         <Dropdown.Item onClick={() => navigate("/profile")}>
           Môj profil
         </Dropdown.Item>
         <Dropdown.Divider />
-        <Dropdown.Item onClick={logout} className="text-danger ">
+        <Dropdown.Item onClick={logout} className="text-danger">
           Odhlásiť sa
         </Dropdown.Item>
       </Dropdown.Menu>

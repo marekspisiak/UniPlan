@@ -1,14 +1,15 @@
-import "./Header.scss";
+import styles from "./Header.module.scss";
 import UserMenu from "../UserMenu/UserMenu";
+import clsx from "clsx"; // voliteľné, ale elegantné spojenie classNames (môžeš pridať neskôr)
 
 const Header = ({ minimal = false }) => {
   return (
-    <header className={`header ${minimal ? "header--minimal" : ""}`}>
-      <div className="header__content">
-        <div className="header__logo">📘 UniPlan</div>
+    <header className={clsx(styles.header, minimal && styles.minimal)}>
+      <div className={styles.content}>
+        <div className={styles.logo}>📘 UniPlan</div>
 
         {!minimal && (
-          <div className="header__right d-none d-md-block">
+          <div className={`d-none d-md-block ${styles.right}`}>
             <UserMenu />
           </div>
         )}

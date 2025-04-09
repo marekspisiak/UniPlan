@@ -1,0 +1,43 @@
+// Mixins pre UniPlan – používané počas refaktoringu komponentov
+
+@import "variables";
+
+// Používa sa v: AuthLayout (authBox), ActivityCard, všeobecné boxy
+@mixin card {
+  background-color: $white;
+  border-radius: $border-radius;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.05);
+}
+
+// Používa sa v: ChatWindow, UpcomingEvents, Calendar (date), odporúčané akcie
+@mixin hover-light {
+  &:hover {
+    background-color: $background-light;
+    cursor: pointer;
+  }
+}
+
+// Používa sa v: Calendar – zarovnanie čísel
+@mixin flex-center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+// Používa sa v: MainLayout – padding všetkých panelov
+@mixin panel-padding {
+  padding: 15px;
+
+  @media (max-width: 768px) {
+    padding: 10px 0;
+  }
+}
+
+// Používa sa v: AuthLayout – názvy sekcií
+@mixin section-title {
+  font-weight: bold;
+  color: $primary-color;
+  margin-bottom: 10px;
+  text-align: center;
+  font-size: 1.1rem;
+}

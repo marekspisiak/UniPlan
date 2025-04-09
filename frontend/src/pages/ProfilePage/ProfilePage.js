@@ -1,5 +1,5 @@
 import MobileLayout from "../../layouts/MobileLayout";
-import "./ProfilePage.scss";
+import styles from "./ProfilePage.module.scss";
 
 import { Button } from "react-bootstrap";
 import { useAuth } from "../../context/AuthContext";
@@ -9,9 +9,9 @@ const ProfilePage = () => {
 
   return (
     <MobileLayout>
-      <div className="profile-page">
-        <h4>Môj profil</h4>
-        <div className="profile-info">
+      <div className={styles.profilePage}>
+        <h4 className={styles.heading}>Môj profil</h4>
+        <div className={styles.info}>
           <p>
             <strong>Meno:</strong> {user?.firstName} {user?.lastName}
           </p>

@@ -1,5 +1,5 @@
 import { Card, ListGroup, Badge } from "react-bootstrap";
-import "./ChatWindow.scss";
+import styles from "./ChatWindow.module.scss";
 
 const ChatWindow = () => {
   const chats = [
@@ -21,15 +21,15 @@ const ChatWindow = () => {
   ];
 
   return (
-    <Card className="chat-window">
+    <Card className={styles.chatWindow}>
       <Card.Body>
-        <h5 className="chat-window__title">Chaty</h5>
+        <h5 className={styles.title}>Chaty</h5>
         <ListGroup variant="flush">
           {chats.map((chat, index) => (
-            <ListGroup.Item key={index} className="chat-window__chat">
-              <div className="chat-name">{chat.name}</div>
-              <div className="chat-message">{chat.lastMessage}</div>
-              <div className="chat-time">
+            <ListGroup.Item key={index} className={styles.chat}>
+              <div className={styles.name}>{chat.name}</div>
+              <div className={styles.message}>{chat.lastMessage}</div>
+              <div className={styles.time}>
                 <Badge bg="light" text="dark">
                   {chat.time}
                 </Badge>

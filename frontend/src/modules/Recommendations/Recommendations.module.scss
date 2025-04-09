@@ -1,0 +1,17 @@
+@import "../../styles/variables";
+
+.recommendations {
+  // obal, ak bude potrebné neskôr niečo layoutovať
+}
+
+.title {
+  font-weight: bold;
+  color: $primary-color;
+  margin-bottom: 20px;
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}

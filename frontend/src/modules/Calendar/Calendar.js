@@ -1,21 +1,24 @@
-import { Card } from 'react-bootstrap';
-import './Calendar.scss';
+import { Card } from "react-bootstrap";
+import styles from "./Calendar.module.scss";
 
 const Calendar = () => {
   return (
-    <Card className="calendar">
+    <Card className={styles.calendar}>
       <Card.Body>
-        <h5 className="calendar__title">Kalendár</h5>
-        <div className="calendar__grid">
-          {/* Dummy statický obsah (dni v týždni + čísla) */}
-          <div className="calendar__weekdays">
-            {['Po', 'Ut', 'St', 'Št', 'Pi', 'So', 'Ne'].map((day, i) => (
-              <div key={i} className="calendar__day">{day}</div>
+        <h5 className={styles.title}>Kalendár</h5>
+        <div className={styles.grid}>
+          <div className={styles.weekdays}>
+            {["Po", "Ut", "St", "Št", "Pi", "So", "Ne"].map((day, i) => (
+              <div key={i} className={styles.day}>
+                {day}
+              </div>
             ))}
           </div>
-          <div className="calendar__dates">
+          <div className={styles.dates}>
             {[...Array(30)].map((_, i) => (
-              <div key={i} className="calendar__date">{i + 1}</div>
+              <div key={i} className={styles.date}>
+                {i + 1}
+              </div>
             ))}
           </div>
         </div>

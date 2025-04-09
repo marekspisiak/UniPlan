@@ -1,0 +1,58 @@
+@import "../../styles/variables";
+@import "../../styles/mixins";
+
+.calendar {
+  background-color: $white;
+  margin-bottom: 20px;
+  max-width: 100%;
+  overflow: hidden;
+}
+
+.title {
+  font-weight: bold;
+  color: $primary-color;
+  margin-bottom: 15px;
+  text-align: center;
+  font-size: 1.2rem;
+
+  @media (max-width: 768px) {
+    font-size: 1rem;
+  }
+}
+
+.grid {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.weekdays,
+.dates {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 0.25rem;
+  text-align: center;
+}
+
+.day {
+  font-weight: 500;
+  color: $text-color;
+  font-size: 0.85rem;
+  white-space: nowrap;
+}
+
+.date {
+  aspect-ratio: 1 / 1;
+  background-color: $background-light;
+  border-radius: $border-radius;
+  font-size: clamp(0.7rem, 1.5vw, 0.95rem);
+  color: $text-color;
+  @include flex-center;
+  transition: background-color 0.2s ease;
+
+  &:hover {
+    background-color: $accent-blue;
+    color: $white;
+    cursor: pointer;
+  }
+}

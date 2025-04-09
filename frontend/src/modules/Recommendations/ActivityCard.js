@@ -1,19 +1,19 @@
 import { Card, Button } from "react-bootstrap";
-import "./ActivityCard.scss";
+import styles from "./ActivityCard.module.scss";
 
 const ActivityCard = ({ activity }) => {
   return (
-    <Card className="activity-card">
+    <Card className={styles.card}>
       <Card.Body>
-        <div className="activity-card__header">
-          <h5 className="activity-card__title">{activity.title}</h5>
-          <div className="activity-card__datetime">
+        <div className={styles.header}>
+          <h5 className={styles.title}>{activity.title}</h5>
+          <div className={styles.datetime}>
             {activity.date} o {activity.time}
           </div>
         </div>
-        <div className="activity-card__location">{activity.location}</div>
-        <p className="activity-card__description">{activity.description}</p>
-        <Button variant="primary" className="activity-card__button">
+        <div className={styles.location}>{activity.location}</div>
+        <p className={styles.description}>{activity.description}</p>
+        <Button variant="primary" className={styles.button}>
           Zúčastniť sa
         </Button>
       </Card.Body>

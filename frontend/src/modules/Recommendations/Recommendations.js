@@ -1,5 +1,5 @@
 import ActivityCard from "./ActivityCard";
-import "./Recommendations.scss";
+import styles from "./Recommendations.module.scss";
 
 const Recommendations = () => {
   const activities = [
@@ -27,9 +27,9 @@ const Recommendations = () => {
   ];
 
   return (
-    <div className="recommendations">
-      <h4 className="recommendations__title">Odporúčané aktivity</h4>
-      <div className="recommendations__list">
+    <div className={styles.recommendations}>
+      <h4 className={styles.title}>Odporúčané aktivity</h4>
+      <div className={styles.list}>
         {activities.map((activity, index) => (
           <ActivityCard key={index} activity={activity} />
         ))}

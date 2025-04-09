@@ -1,5 +1,5 @@
 import { Card, ListGroup } from "react-bootstrap";
-import "./UpcomingEvents.scss";
+import styles from "./UpcomingEvents.module.scss";
 
 const UpcomingEvents = () => {
   const events = [
@@ -9,14 +9,14 @@ const UpcomingEvents = () => {
   ];
 
   return (
-    <Card className="upcoming-events">
+    <Card className={styles.upcomingEvents}>
       <Card.Body>
-        <h5 className="upcoming-events__title">Blížiace sa akcie</h5>
+        <h5 className={styles.title}>Blížiace sa akcie</h5>
         <ListGroup variant="flush">
           {events.map((event, index) => (
-            <ListGroup.Item key={index} className="upcoming-events__item">
-              <div className="event-title">{event.title}</div>
-              <div className="event-datetime">
+            <ListGroup.Item key={index} className={styles.item}>
+              <div className={styles.eventTitle}>{event.title}</div>
+              <div className={styles.eventDatetime}>
                 {event.date} o {event.time}
               </div>
             </ListGroup.Item>

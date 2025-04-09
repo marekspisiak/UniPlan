@@ -1,21 +1,21 @@
 import Header from "../components/Header/Header";
 import Footer from "../components/Footer/Footer";
 import { Container, Row, Col } from "react-bootstrap";
-import "./MainLayout.scss";
+import styles from "./MainLayout.module.scss";
 
 const MainLayout = ({ left, center, right }) => {
   return (
     <div style={{ paddingTop: "40px" }}>
       <Header />
-      <Container fluid className="main-layout">
+      <Container fluid className={styles.mainLayout}>
         <Row>
-          <Col xs={12} md={3} className="left-panel">
+          <Col xs={12} md={3} className={styles.leftPanel}>
             {left}
           </Col>
-          <Col xs={12} md={6} className="center-panel">
+          <Col xs={12} md={6} className={styles.centerPanel}>
             {center}
           </Col>
-          <Col xs={12} md={3} className="right-panel">
+          <Col xs={12} md={3} className={styles.rightPanel}>
             {right}
           </Col>
         </Row>

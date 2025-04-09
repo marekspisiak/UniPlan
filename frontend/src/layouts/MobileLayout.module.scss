@@ -1,0 +1,11 @@
+@import "../styles/variables";
+
+.mobileLayout {
+  padding: 1rem;
+  padding-top: 56px;
+  padding-bottom: 60px;
+
+  @media (min-width: 768px) {
+    padding: 2rem;
+  }
+}

@@ -1,0 +1,15 @@
+@import "../../styles/variables";
+
+.footer {
+  text-align: center;
+  margin-top: 1rem;
+}
+
+.link {
+  color: $accent-blue;
+  text-decoration: none;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}

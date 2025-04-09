@@ -1,0 +1,56 @@
+@import "../../styles/variables";
+
+.header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 48px;
+  background-color: $white;
+  border-bottom: 1px solid $border-color;
+  z-index: 998;
+  display: flex;
+  align-items: center;
+}
+
+.content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 1rem;
+  width: 100%;
+}
+
+.logo {
+  font-weight: bold;
+  font-size: 1.1rem;
+  color: $primary-color;
+}
+
+.right {
+  // Miesto pre menu
+}
+
+@media (min-width: 768px) {
+  .header {
+    height: 56px;
+  }
+
+  .logo {
+    font-size: 1.25rem;
+  }
+}
+
+.minimal {
+  border-bottom: none;
+  box-shadow: none;
+  justify-content: center;
+
+  .content {
+    justify-content: center;
+  }
+
+  .right {
+    display: none;
+  }
+}

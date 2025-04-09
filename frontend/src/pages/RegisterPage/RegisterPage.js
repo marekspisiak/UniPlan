@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Form, Button, Alert } from "react-bootstrap";
 import AuthLayout from "../../layouts/AuthLayout";
 import { useNavigate, Link } from "react-router-dom";
-import "./RegisterPage.scss";
+import styles from "./RegisterPage.module.scss";
 
 const RegisterPage = () => {
   const [form, setForm] = useState({
@@ -39,7 +39,7 @@ const RegisterPage = () => {
         throw new Error(data.message || "Chyba pri registrácii.");
       }
 
-      setMessage(data.message); // napr. „Skontroluj si email...“
+      setMessage(data.message);
       setForm({ firstName: "", lastName: "", email: "", password: "" });
       navigate("/email-info");
     } catch (err) {
@@ -49,7 +49,7 @@ const RegisterPage = () => {
 
   return (
     <AuthLayout>
-      <h4 className="mb-3">Registrácia</h4>
+      <h4 className={styles.heading}>Registrácia</h4>
 
       {message && <Alert variant="success">{message}</Alert>}
       {error && <Alert variant="danger">{error}</Alert>}

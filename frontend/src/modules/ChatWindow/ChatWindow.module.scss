@@ -1,0 +1,37 @@
+@import "../../styles/variables";
+@import "../../styles/mixins";
+
+.chatWindow {
+  background-color: $white;
+}
+
+.title {
+  font-weight: bold;
+  color: $primary-color;
+  margin-bottom: 10px;
+  text-align: center;
+  font-size: 1.1rem;
+}
+
+.chat {
+  padding: 0.75rem 0.5rem;
+  border-bottom: 1px solid $border-color;
+  @include hover-light;
+}
+
+.name {
+  font-weight: 500;
+  font-size: 0.95rem;
+  color: $text-color;
+}
+
+.message {
+  font-size: 0.85rem;
+  color: $secondary-color;
+}
+
+.time {
+  text-align: right;
+  font-size: 0.75rem;
+  margin-top: 0.25rem;
+}

@@ -1,0 +1,30 @@
+@import "../../styles/variables";
+@import "../../styles/mixins";
+
+.upcomingEvents {
+  background-color: $white;
+}
+
+.title {
+  font-weight: bold;
+  color: $primary-color;
+  margin-bottom: 10px;
+  text-align: center;
+  font-size: 1.1rem;
+}
+
+.item {
+  font-size: 0.9rem;
+  color: $text-color;
+  padding: 0.5rem;
+  @include hover-light;
+}
+
+.eventTitle {
+  font-weight: 500;
+}
+
+.eventDatetime {
+  font-size: 0.8rem;
+  color: $secondary-color;
+}

@@ -1,0 +1,38 @@
+@import "../../styles/variables";
+
+.card {
+  border: 1px solid $border-color;
+  border-radius: $border-radius;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.title {
+  font-weight: 600;
+  color: $primary-color;
+}
+
+.datetime {
+  font-size: 0.85rem;
+  color: $secondary-color;
+}
+
+.location {
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: $accent-blue;
+  margin: 0.5rem 0;
+}
+
+.description {
+  font-size: 0.875rem;
+  color: $text-color;
+}
+
+.button {
+  margin-top: 10px;
+}

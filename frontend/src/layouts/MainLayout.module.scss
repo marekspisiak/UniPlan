@@ -1,0 +1,19 @@
+@import "../styles/variables";
+@import "../styles/mixins";
+
+.mainLayout {
+  min-height: 100vh;
+  padding: 20px;
+}
+
+.leftPanel {
+  @include panel-padding;
+}
+
+.centerPanel {
+  @include panel-padding;
+}
+
+.rightPanel {
+  @include panel-padding;
+}
