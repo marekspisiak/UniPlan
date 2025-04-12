@@ -33,20 +33,17 @@ export const needsReverification = (user) => {
   const now = new Date();
   const year = now.getFullYear();
 
-  // Vytvoríme dve hranice
-  const winterDeadline = new Date(`${year}-01-31T23:59:59`);
-  const summerDeadline = new Date(`${year}-06-30T23:59:59`);
+  // Semestre začínajú:
+  const winterStart = new Date(`${year}-02-01T00:00:00`);
+  const summerStart = new Date(`${year}-07-01T00:00:00`);
 
-  let currentDeadline;
+  let semesterStart;
 
-  if (now <= winterDeadline) {
-    currentDeadline = winterDeadline;
-  } else if (now <= summerDeadline) {
-    currentDeadline = summerDeadline;
+  if (now < summerStart) {
+    semesterStart = winterStart;
   } else {
-    // Ak sme po 30. júni, ďalšie overenie bude do konca januára budúceho roka
-    currentDeadline = new Date(`${year + 1}-01-31T23:59:59`);
+    semesterStart = summerStart;
   }
 
-  return user.lastVerifiedAt < currentDeadline;
+  return new Date(user.lastVerifiedAt) < semesterStart;
 };
