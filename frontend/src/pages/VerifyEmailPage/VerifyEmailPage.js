@@ -38,6 +38,10 @@ const VerifyEmailPage = () => {
     verify();
   }, [params]);
 
+  const handleClick = () => {
+    window.location.href = "/login"; // hard reload
+  };
+
   return (
     <AuthLayout>
       <h4 className="mb-3">Overenie emailu</h4>
@@ -45,9 +49,9 @@ const VerifyEmailPage = () => {
       {status === "loading" && <Spinner animation="border" />}
       {status === "success" && <Alert variant="success">{message}</Alert>}
       {status === "error" && <Alert variant="danger">{message}</Alert>}
-      <Link to="/login">
-        <Button className="mt-3 w-100">Prejsť na prihlásenie</Button>
-      </Link>
+      <Button className="mt-3 w-100" onClick={handleClick}>
+        Prejsť na prihlásenie
+      </Button>
     </AuthLayout>
   );
 };

@@ -22,12 +22,12 @@ const AppRouter = () => {
   return (
     <Router>
       <Routes>
-        <Route path="/login" element={<LoginPage />} />
         <Route path="/verify-email" element={<VerifyEmailPage />} />
         <Route path="/email-info" element={<EmailInfoPage />} />
 
         <Route element={<GuestRoute />}>
           <Route path="/register" element={<RegisterPage />} />
+          <Route path="/login" element={<LoginPage />} />
         </Route>
 
         <Route element={<AuthOnlyRoute />}>

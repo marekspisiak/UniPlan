@@ -11,7 +11,7 @@ const EmailInfoPage = () => {
         emailovú adresu. Môže to trvať niekoľko minút.
       </p>
       <Link to="/login">
-        <Button className="mt-3 w-100">Prejsť na prihlásenie</Button>
+        <Button className="mt-3 w-100">Pokračovať</Button>
       </Link>
     </AuthLayout>
   );
