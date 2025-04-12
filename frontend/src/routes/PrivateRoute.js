@@ -2,9 +2,17 @@ import { Navigate, Outlet } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 
 const PrivateRoute = () => {
-  const { isAuthenticated, user } = useAuth();
+  const { isAuthenticated, user, needsReverification } = useAuth();
 
-  return isAuthenticated && user ? <Outlet /> : <Navigate to="/login" />;
+  if (!isAuthenticated || !user) {
+    return <Navigate to="/login" />;
+  }
+
+  if (needsReverification()) {
+    return <Navigate to="/email-reverify" />;
+  }
+
+  return <Outlet />;
 };
 
 export default PrivateRoute;

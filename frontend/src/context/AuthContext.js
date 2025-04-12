@@ -11,7 +11,7 @@ export const AuthProvider = ({ children }) => {
 
     if (!token) {
       setLoaded(true);
-      return;
+      return null;
     }
 
     try {
@@ -23,13 +23,16 @@ export const AuthProvider = ({ children }) => {
 
       const data = await res.json();
 
+      console.log(data);
       setUser(data);
+      setLoaded(true);
+      return data;
     } catch (err) {
       localStorage.removeItem("token");
       setUser(null);
+      setLoaded(true);
+      return null;
     }
-
-    setLoaded(true);
   };
 
   const logout = () => {
@@ -38,13 +41,23 @@ export const AuthProvider = ({ children }) => {
     window.location.href = "/login";
   };
 
+  const needsReverification = () => {
+    return user?.requiresVerification === true;
+  };
+
   useEffect(() => {
     loadUser();
   }, []);
 
   return (
     <AuthContext.Provider
-      value={{ user, isAuthenticated: !!user, logout, loadUser }}
+      value={{
+        user,
+        isAuthenticated: !!user,
+        logout,
+        loadUser,
+        needsReverification,
+      }}
     >
       {loaded ? children : null}
     </AuthContext.Provider>

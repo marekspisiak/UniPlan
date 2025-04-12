@@ -32,8 +32,13 @@ const LoginForm = () => {
       }
 
       localStorage.setItem("token", data.token);
-      await loadUser();
-      navigate("/");
+      const userData = await loadUser();
+
+      if (!userData?.emailVerified) {
+        navigate("/email-reverify");
+      } else {
+        navigate("/");
+      }
     } catch (err) {
       setError(err.message);
     }

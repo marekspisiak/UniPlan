@@ -13,17 +13,25 @@ import VerifyEmailPage from "../pages/VerifyEmailPage/VerifyEmailPage.js";
 
 import PrivateRoute from "./PrivateRoute.js";
 import GuestRoute from "./GuestRoute.js";
+import AuthOnlyRoute from "./AuthOnlyRoute.js";
+
+import CreateEventPage from "../pages/CreateEventPage/CreateEventPage.js";
+import EmailReverifyPage from "../pages/EmailReverifyPage/EmailReverifyPage.js";
 
 const AppRouter = () => {
   return (
     <Router>
       <Routes>
+        <Route path="/login" element={<LoginPage />} />
         <Route path="/verify-email" element={<VerifyEmailPage />} />
         <Route path="/email-info" element={<EmailInfoPage />} />
 
         <Route element={<GuestRoute />}>
-          <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
+        </Route>
+
+        <Route element={<AuthOnlyRoute />}>
+          <Route path="/email-reverify" element={<EmailReverifyPage />} />
         </Route>
 
         <Route element={<PrivateRoute />}>
@@ -31,6 +39,7 @@ const AppRouter = () => {
           <Route path="/calendar" element={<CalendarPage />} />
           <Route path="/chat" element={<ChatPage />} />
           <Route path="/profile" element={<ProfilePage />} />
+          <Route path="/create-event" element={<CreateEventPage />} />\
         </Route>
       </Routes>
     </Router>

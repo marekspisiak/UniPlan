@@ -13,9 +13,11 @@ model User {
   lastName        String
   email           String   @unique
   password        String
-  emailVerified   Boolean  @default(false)
+  lastVerifiedAt  DateTime?
   createdAt       DateTime @default(now())
   verificationTokens EmailVerificationToken[]
+  events          Event[]  @relation("UserEvents")       // hlavný organizátor
+  moderatedEvents Event[]  @relation("EventModerators")  // m:n cez pivot tabuľku
 }
 
 
@@ -29,4 +31,31 @@ model EmailVerificationToken {
 
   @@index([token])
 }
+
+model Event {
+  id          Int        @id @default(autoincrement())
+  title       String
+  description String?
+  date        DateTime
+  time        String
+  location    String
+  capacity    Int?
+  categories  Category[] @relation("EventCategories")
+  organizer   User       @relation("UserEvents", fields: [organizerId], references: [id])
+  organizerId Int
+  moderators  User[]     @relation("EventModerators")
+  createdAt   DateTime   @default(now())
+}
+
+
+
+
+model Category {
+  id        Int      @id @default(autoincrement())
+  name      String   @unique
+  label     String
+  icon      String?
+  events    Event[]  @relation("EventCategories")
+}
+
 

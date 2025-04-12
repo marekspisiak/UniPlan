@@ -1,0 +1,21 @@
+@import "../../styles/variables";
+@import "../../styles/mixins";
+
+.wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background-color: $background-light;
+  padding: 2rem;
+  text-align: center;
+  width: 100vw;
+  margin: 0;
+  overflow-x: hidden;
+}
+
+.box {
+  @include card;
+  max-width: 420px;
+  width: 100%;
+}
