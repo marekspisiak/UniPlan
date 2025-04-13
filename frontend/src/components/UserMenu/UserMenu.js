@@ -4,7 +4,7 @@ import { useAuth } from "../../context/AuthContext";
 import styles from "./UserMenu.module.scss";
 
 const UserMenu = () => {
-  const { logout } = useAuth();
+  const { logout, user } = useAuth();
   const navigate = useNavigate();
 
   return (
@@ -18,7 +18,7 @@ const UserMenu = () => {
       </Dropdown.Toggle>
 
       <Dropdown.Menu className={styles.dropdownMenu}>
-        <Dropdown.Item onClick={() => navigate("/profile")}>
+        <Dropdown.Item onClick={() => navigate(`/profile/${user?.id}`)}>
           Môj profil
         </Dropdown.Item>
         <Dropdown.Divider />

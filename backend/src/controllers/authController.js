@@ -6,6 +6,9 @@ import {
   needsReverification,
 } from "../utils/verificationHelpers.js";
 
+import path from "path";
+import fs from "fs";
+
 // 🧑‍🎓 Registrácia používateľa
 export const registerUser = async (req, res) => {
   const { firstName, lastName, email, password } = req.body;
@@ -31,6 +34,13 @@ export const registerUser = async (req, res) => {
         password: hashedPassword,
       },
     });
+
+    const ext = ".png";
+    const filename = `user_${user.id}${ext}`;
+    const destinationPath = path.join("uploads", "profile", filename);
+    const defaultImagePath = path.join("assets", "default-avatar.png");
+
+    fs.copyFileSync(defaultImagePath, destinationPath);
 
     await createAndSendVerificationEmail(user.id, user.email);
 

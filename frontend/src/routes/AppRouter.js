@@ -38,7 +38,7 @@ const AppRouter = () => {
           <Route path="/" element={<Home />} />
           <Route path="/calendar" element={<CalendarPage />} />
           <Route path="/chat" element={<ChatPage />} />
-          <Route path="/profile" element={<ProfilePage />} />
+          <Route path="/profile/:id" element={<ProfilePage />} />
           <Route path="/create-event" element={<CreateEventPage />} />\
         </Route>
       </Routes>

@@ -4,7 +4,6 @@ import { needsReverification } from "../utils/verificationHelpers.js";
 
 // 🎯 Základný protect (iba overenie tokenu + user existuje)
 export const protect = async (req, res, next) => {
-  console.log("Overenie tokenu...");
   const authHeader = req.headers.authorization;
 
   if (!authHeader || !authHeader.startsWith("Bearer ")) {
