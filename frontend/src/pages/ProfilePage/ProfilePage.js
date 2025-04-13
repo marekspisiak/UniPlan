@@ -1,18 +1,20 @@
 import { useParams } from "react-router-dom";
-import { useAuth } from "../../context/AuthContext";
-import ViewProfile from "./ViewProfile";
-import EditProfile from "./EditProfile";
+import { useState } from "react";
 import MobileLayout from "../../layouts/MobileLayout";
+import EditProfileCard from "../../components/EditProfileCard/EditProfileCard";
+import ViewProfileCard from "../../components/ViewProfileCard/ViewProfileCard";
 
 const ProfilePage = () => {
-  const { id } = useParams();
-  const { user } = useAuth();
-
-  const isOwnProfile = !id || Number(id) === user?.id;
+  const { userId } = useParams();
+  const [isEditing, setIsEditing] = useState(false);
 
   return (
     <MobileLayout>
-      <ViewProfile userId={id} />
+      {isEditing ? (
+        <EditProfileCard userId={userId} setIsEditing={setIsEditing} />
+      ) : (
+        <ViewProfileCard userId={userId} setIsEditing={setIsEditing} />
+      )}
     </MobileLayout>
   );
 };

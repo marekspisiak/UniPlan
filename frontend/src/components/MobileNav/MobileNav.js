@@ -1,7 +1,9 @@
 import { NavLink } from "react-router-dom";
 import styles from "./MobileNav.module.scss";
+import { useProfileLink } from "../../hooks/useProfileLink";
 
 const MobileNav = () => {
+  const getProfileLink = useProfileLink();
   return (
     <nav className={styles.mobileNav}>
       <NavLink
@@ -29,7 +31,7 @@ const MobileNav = () => {
         💬
       </NavLink>
       <NavLink
-        to="/profile"
+        to={getProfileLink()}
         className={({ isActive }) =>
           `${styles.navIcon} ${isActive ? styles.active : ""}`
         }

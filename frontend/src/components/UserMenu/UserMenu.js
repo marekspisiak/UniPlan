@@ -2,9 +2,12 @@ import { Dropdown } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import styles from "./UserMenu.module.scss";
+import { useProfileLink } from "../../hooks/useProfileLink";
 
 const UserMenu = () => {
   const { logout, user } = useAuth();
+  const getProfileLink = useProfileLink();
+
   const navigate = useNavigate();
 
   return (
@@ -18,7 +21,7 @@ const UserMenu = () => {
       </Dropdown.Toggle>
 
       <Dropdown.Menu className={styles.dropdownMenu}>
-        <Dropdown.Item onClick={() => navigate(`/profile/${user?.id}`)}>
+        <Dropdown.Item onClick={() => navigate(getProfileLink())}>
           Môj profil
         </Dropdown.Item>
         <Dropdown.Divider />

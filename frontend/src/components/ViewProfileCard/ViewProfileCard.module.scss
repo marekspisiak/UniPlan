@@ -1,0 +1,67 @@
+.card {
+  max-width: 400px;
+  margin: 2rem auto;
+  padding: 2rem;
+  border-radius: 16px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05);
+  background-color: #fff;
+  text-align: center;
+}
+
+.avatar {
+  width: 120px;
+  height: 120px;
+  object-fit: cover;
+  border-radius: 50%;
+  margin: 0 auto 1rem; // 🔧 zarovná obrázok horizontálne na stred
+  border: 2px solid #ddd;
+  display: block; // 🔧 zabezpečí, že margin auto funguje
+}
+
+.name {
+  font-size: 1.4rem;
+  font-weight: 600;
+  margin-bottom: 0.25rem;
+}
+
+.email {
+  font-size: 0.95rem;
+  color: #666;
+  margin-bottom: 1rem;
+}
+
+.interests {
+  margin-top: 1rem;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.5rem;
+
+  span {
+    background-color: #f1f1f1;
+    border-radius: 12px;
+    padding: 0.3rem 0.7rem;
+    font-size: 0.8rem;
+  }
+}
+
+.editButton {
+  margin-top: 1.5rem;
+  width: 100%;
+}
+
+.interests {
+  margin-top: 1rem;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.5rem;
+
+  span {
+    background-color: #f1f1f1;
+    border-radius: 12px;
+    padding: 0.3rem 0.7rem;
+    font-size: 0.8rem;
+    color: #333;
+  }
+}

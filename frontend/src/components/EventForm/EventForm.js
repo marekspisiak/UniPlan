@@ -1,18 +1,9 @@
-import { useState, useEffect } from "react";
-import { Form, Button, Alert, Spinner } from "react-bootstrap";
-import Select from "react-select";
-
+import { useState } from "react";
+import { Form, Button, Alert } from "react-bootstrap";
+import CategoryMultiSelect from "../CategoryMultiSelect/CategoryMultiSelect";
 import styles from "./EventForm.module.scss";
 
 const EventForm = () => {
-  const [categories, setCategories] = useState([]);
-  const [loadingCategories, setLoadingCategories] = useState(true);
-
-  const options = categories.map((cat) => ({
-    value: cat.id,
-    label: `${cat.icon || ""} ${cat.label}`,
-  }));
-
   const [form, setForm] = useState({
     title: "",
     description: "",
@@ -20,46 +11,15 @@ const EventForm = () => {
     time: "",
     location: "",
     capacity: "",
-    categoryIds: [], // ← teraz pole
+    categoryIds: [],
   });
 
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
 
-  useEffect(() => {
-    const fetchCategories = async () => {
-      try {
-        const token = localStorage.getItem("token");
-
-        const res = await fetch("http://localhost:5000/api/events/categories", {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
-
-        const data = await res.json();
-        setCategories(data);
-      } catch (err) {
-        console.error("Chyba pri načítaní kategórií:", err);
-      } finally {
-        setLoadingCategories(false);
-      }
-    };
-
-    fetchCategories();
-  }, []);
-
   const handleChange = (e) => {
-    const { name, value, multiple, selectedOptions } = e.target;
-
-    if (name === "categoryIds" && multiple) {
-      const values = Array.from(selectedOptions, (option) =>
-        parseInt(option.value)
-      );
-      setForm((prev) => ({ ...prev, categoryIds: values }));
-    } else {
-      setForm((prev) => ({ ...prev, [name]: value }));
-    }
+    const { name, value } = e.target;
+    setForm((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleSubmit = async (e) => {
@@ -92,7 +52,7 @@ const EventForm = () => {
         time: "",
         location: "",
         capacity: "",
-        category: "",
+        categoryIds: [],
       });
     } catch (err) {
       setError(err.message);
@@ -174,18 +134,9 @@ const EventForm = () => {
 
         <Form.Group className="mb-4">
           <Form.Label>Kategórie</Form.Label>
-          <Select
-            isMulti
-            options={options}
-            value={
-              form.categoryIds
-                ? options.filter((o) => form.categoryIds.includes(o.value))
-                : []
-            }
-            onChange={(selected) =>
-              setForm({ ...form, categoryIds: selected.map((s) => s.value) })
-            }
-            classNamePrefix="react-select"
+          <CategoryMultiSelect
+            selectedIds={form.categoryIds}
+            onChange={(ids) => setForm({ ...form, categoryIds: ids })}
           />
         </Form.Group>
 
