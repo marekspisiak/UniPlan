@@ -3,6 +3,8 @@ import { Card, Button } from "react-bootstrap";
 import styles from "./ActivityCard.module.scss";
 import Popup from "../../components/Popup/Popup";
 import EventDetail from "../EventDetail/EventDetail";
+import UserAvatar from "../../components/UserAvatar/UserAvatar";
+import { User } from "lucide-react";
 
 const ActivityCard = ({ activity }) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -21,7 +23,7 @@ const ActivityCard = ({ activity }) => {
           Zúčastniť sa
         </Button>
         <Popup isOpen={isOpen} onClose={() => setIsOpen(false)}>
-          <EventDetail event={activity}></EventDetail>
+          <UserAvatar user={activity.organizer} size="mini" />
         </Popup>
         <Button
           onClick={() => setIsOpen(true)}

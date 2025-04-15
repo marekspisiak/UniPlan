@@ -31,7 +31,12 @@ export const getUserProfile = async (req, res) => {
     if (!user)
       return res.status(404).json({ message: "Používateľ neexistuje." });
 
-    res.json(user);
+    const userWithImage = {
+      ...user,
+      profileImageUrl: `http://localhost:5000/uploads/profile/user_${user.id}.png`,
+    };
+
+    res.json(userWithImage);
   } catch (err) {
     console.error("Chyba pri načítaní profilu:", err);
     res.status(500).json({ message: "Server error." });

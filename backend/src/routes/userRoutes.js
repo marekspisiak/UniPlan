@@ -12,10 +12,24 @@ import { upload } from "../middleware/uploadMiddleware.js";
 const router = express.Router();
 
 router.get("/me", protect, (req, res) => {
-  const { id, firstName, lastName, email, requiresVerification } = req.user;
+  const {
+    id,
+    firstName,
+    lastName,
+    email,
+    requiresVerification,
+    profileImageUrl,
+  } = req.user;
   res
     .status(200)
-    .json({ id, firstName, lastName, email, requiresVerification });
+    .json({
+      id,
+      firstName,
+      lastName,
+      email,
+      requiresVerification,
+      profileImageUrl,
+    });
 });
 
 router.put("/me/interests", protectVerified, updateUserInterests);
