@@ -6,16 +6,24 @@ export const createEvent = async (req, res) => {
       title,
       description,
       date,
-      time,
+      startTime,
+      endTime,
       location,
       capacity,
-      categoryIds, // teraz pole čísel
+      categoryIds,
+      moderators,
     } = req.body;
+    console.log("user");
 
+    console.log(req.user.id);
+
+    !Array.isArray(categoryIds) ? console.log("Názov akcie je prázdny") : null;
+
+    // Validácia
     if (
       !title ||
       !date ||
-      !time ||
+      !startTime ||
       !location ||
       !Array.isArray(categoryIds) ||
       categoryIds.length === 0
@@ -23,21 +31,52 @@ export const createEvent = async (req, res) => {
       return res.status(400).json({ message: "Vyplň všetky povinné polia." });
     }
 
+    // 💾 Spracovanie fotiek
+    let mainImageUrl = null;
+    let galleryUrls = [];
+
+    if (req.files?.mainImage?.[0]) {
+      mainImageUrl = `/uploads/events/${req.files.mainImage[0].filename}`;
+    }
+
+    if (req.files?.gallery?.length) {
+      galleryUrls = req.files.gallery.map(
+        (file) => `/uploads/events/${file.filename}`
+      );
+    }
+
+    // Vytvorenie eventu
+
     const newEvent = await prisma.event.create({
       data: {
         title,
         description,
         date: new Date(date),
-        time,
+        time: startTime,
+        endTime: endTime || null,
         location,
         capacity: capacity ? parseInt(capacity) : null,
-        organizerId: req.user.id,
+        mainImage: mainImageUrl,
+        gallery: galleryUrls.length
+          ? {
+              create: galleryUrls.map((url) => ({ url })),
+            }
+          : undefined,
+        organizer: {
+          connect: { id: req.user.id }, // 👈 TOTO je kľúčové
+        },
         categories: {
           connect: categoryIds.map((id) => ({ id: parseInt(id) })),
         },
+        moderators: moderators
+          ? {
+              connect: moderators.map((id) => ({ id: parseInt(id) })),
+            }
+          : undefined,
       },
       include: {
         categories: true,
+        moderators: true,
       },
     });
 
@@ -58,5 +97,36 @@ export const getEventCategories = async (req, res) => {
   } catch (err) {
     console.error("Chyba pri načítaní kategórií:", err);
     res.status(500).json({ message: "Chyba servera." });
+  }
+};
+
+// GET /api/events
+export const getAllEvents = async (req, res) => {
+  try {
+    const events = await prisma.event.findMany({
+      orderBy: { date: "asc" },
+      include: {
+        categories: true,
+        organizer: {
+          select: {
+            id: true,
+            firstName: true,
+            lastName: true,
+          },
+        },
+        moderators: {
+          select: {
+            id: true,
+            firstName: true,
+            lastName: true,
+          },
+        },
+      },
+    });
+
+    res.json(events);
+  } catch (err) {
+    console.error("Chyba pri načítaní eventov:", err);
+    res.status(500).json({ message: "Chyba pri načítaní eventov." });
   }
 };

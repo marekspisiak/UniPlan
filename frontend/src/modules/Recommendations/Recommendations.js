@@ -1,37 +1,48 @@
+import { useEffect, useState } from "react";
 import ActivityCard from "./ActivityCard";
 import styles from "./Recommendations.module.scss";
+import { Spinner, Alert } from "react-bootstrap";
 
 const Recommendations = () => {
-  const activities = [
-    {
-      title: "Hackathon Žilina 2025",
-      date: "2025-04-18",
-      time: "09:00",
-      location: "Aula DATALAN",
-      description: "24-hodinová výzva pre študentov IT.",
-    },
-    {
-      title: "Kariérny deň UNIZA",
-      date: "2025-04-21",
-      time: "10:00",
-      location: "Hlavná aula",
-      description: "Príď sa stretnúť so zamestnávateľmi.",
-    },
-    {
-      title: "Kurz time managementu",
-      date: "2025-04-25",
-      time: "13:30",
-      location: "Online (Teams)",
-      description: "Získaj zručnosti ako plánovať svoj čas.",
-    },
-  ];
+  const [activities, setActivities] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+
+  useEffect(() => {
+    const fetchActivities = async () => {
+      try {
+        const token = localStorage.getItem("token");
+        const res = await fetch("http://localhost:5000/api/events/get", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        const data = await res.json();
+
+        if (!res.ok)
+          throw new Error(data.message || "Nepodarilo sa načítať aktivity");
+
+        setActivities(data);
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchActivities();
+  }, []);
+
+  if (loading) return <Spinner animation="border" />;
+  if (error) return <Alert variant="danger">{error}</Alert>;
 
   return (
     <div className={styles.recommendations}>
       <h4 className={styles.title}>Odporúčané aktivity</h4>
       <div className={styles.list}>
-        {activities.map((activity, index) => (
-          <ActivityCard key={index} activity={activity} />
+        {activities.map((activity) => (
+          <ActivityCard key={activity.id} activity={activity} />
         ))}
       </div>
     </div>

@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Form, Button, Alert } from "react-bootstrap";
 import CategoryMultiSelect from "../CategoryMultiSelect/CategoryMultiSelect";
 import styles from "./EventForm.module.scss";
@@ -8,14 +8,31 @@ const EventForm = () => {
     title: "",
     description: "",
     date: "",
-    time: "",
+    startTime: "",
+    endTime: "",
     location: "",
     capacity: "",
     categoryIds: [],
+    moderators: [],
+    mainImage: null,
+    gallery: [],
   });
 
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
+  const [allUsers, setAllUsers] = useState([]);
+
+  useEffect(() => {
+    const fetchUsers = async () => {
+      const res = await fetch("http://localhost:5000/api/user/all", {
+        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+      });
+      const data = await res.json();
+      console.log(data);
+      setAllUsers([]);
+    };
+    fetchUsers();
+  }, []);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -29,14 +46,24 @@ const EventForm = () => {
 
     try {
       const token = localStorage.getItem("token");
+      const formData = new FormData();
+
+      Object.entries(form).forEach(([key, value]) => {
+        if (key === "categoryIds" || key === "moderators") {
+          value.forEach((v) => formData.append(key, v));
+        } else if (key === "gallery") {
+          value.forEach((img) => formData.append("gallery", img));
+        } else if (key === "mainImage" && value) {
+          formData.append("mainImage", value);
+        } else {
+          formData.append(key, value);
+        }
+      });
 
       const res = await fetch("http://localhost:5000/api/events/create", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify(form),
+        headers: { Authorization: `Bearer ${token}` },
+        body: formData,
       });
 
       const data = await res.json();
@@ -49,10 +76,14 @@ const EventForm = () => {
         title: "",
         description: "",
         date: "",
-        time: "",
+        startTime: "",
+        endTime: "",
         location: "",
         capacity: "",
         categoryIds: [],
+        moderators: [],
+        mainImage: null,
+        gallery: [],
       });
     } catch (err) {
       setError(err.message);
@@ -66,7 +97,7 @@ const EventForm = () => {
       {error && <Alert variant="danger">{error}</Alert>}
       {success && <Alert variant="success">{success}</Alert>}
 
-      <Form onSubmit={handleSubmit}>
+      <Form onSubmit={handleSubmit} encType="multipart/form-data">
         <Form.Group className="mb-3">
           <Form.Label>Názov</Form.Label>
           <Form.Control
@@ -104,10 +135,20 @@ const EventForm = () => {
           <Form.Label>Čas začiatku</Form.Label>
           <Form.Control
             type="time"
-            name="time"
-            value={form.time}
+            name="startTime"
+            value={form.startTime}
             onChange={handleChange}
             required
+          />
+        </Form.Group>
+
+        <Form.Group className="mb-3">
+          <Form.Label>Čas konca (nepovinné)</Form.Label>
+          <Form.Control
+            type="time"
+            name="endTime"
+            value={form.endTime}
+            onChange={handleChange}
           />
         </Form.Group>
 
@@ -136,7 +177,55 @@ const EventForm = () => {
           <Form.Label>Kategórie</Form.Label>
           <CategoryMultiSelect
             selectedIds={form.categoryIds}
-            onChange={(ids) => setForm({ ...form, categoryIds: ids })}
+            onChange={(ids) =>
+              setForm((prev) => ({ ...prev, categoryIds: ids }))
+            }
+          />
+        </Form.Group>
+
+        <Form.Group className="mb-3">
+          <Form.Label>Moderátori</Form.Label>
+          <Form.Select
+            multiple
+            value={form.moderators}
+            onChange={(e) => {
+              const selected = Array.from(e.target.selectedOptions).map((o) =>
+                parseInt(o.value)
+              );
+              setForm((prev) => ({ ...prev, moderators: selected }));
+            }}
+          >
+            {allUsers.map((user) => (
+              <option key={user.id} value={user.id}>
+                {user.firstName} {user.lastName} ({user.email})
+              </option>
+            ))}
+          </Form.Select>
+        </Form.Group>
+
+        <Form.Group className="mb-3">
+          <Form.Label>Profilová fotka (nepovinná)</Form.Label>
+          <Form.Control
+            type="file"
+            accept="image/*"
+            onChange={(e) =>
+              setForm((prev) => ({ ...prev, mainImage: e.target.files[0] }))
+            }
+          />
+        </Form.Group>
+
+        <Form.Group className="mb-3">
+          <Form.Label>Galéria (max 5 fotiek)</Form.Label>
+          <Form.Control
+            type="file"
+            multiple
+            accept="image/*"
+            onChange={(e) =>
+              setForm((prev) => ({
+                ...prev,
+                gallery: [...e.target.files],
+              }))
+            }
           />
         </Form.Group>
 

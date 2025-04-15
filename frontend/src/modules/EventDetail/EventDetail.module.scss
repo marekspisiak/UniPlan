@@ -1,0 +1,27 @@
+.container {
+  padding: 1.5rem;
+}
+
+.title {
+  font-size: 1.3rem;
+  font-weight: bold;
+  margin-bottom: 1rem;
+  text-align: center;
+}
+
+.info {
+  font-size: 0.95rem;
+
+  p {
+    margin-bottom: 0.5rem;
+  }
+}
+
+.category {
+  display: inline-block;
+  background-color: #f3f3f3;
+  padding: 0.3rem 0.6rem;
+  margin-right: 0.3rem;
+  border-radius: 10px;
+  font-size: 0.85rem;
+}

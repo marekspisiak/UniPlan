@@ -11,59 +11,63 @@ model EmailVerificationToken {
   id        Int      @id @default(autoincrement())
   token     String   @unique
   userId    Int
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   expiresAt DateTime
   createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([token])
+  @@index([userId], map: "EmailVerificationToken_userId_fkey")
 }
 
 model User {
-  id              Int      @id @default(autoincrement())
-  firstName       String
-  lastName        String
-  email           String   @unique
-  password        String
-  interests       Category[] @relation("UserInterests") // ← záujmy používateľa
-  lastVerifiedAt  DateTime?
-  createdAt       DateTime @default(now())
+  id                 Int                      @id @default(autoincrement())
+  email              String                   @unique
+  password           String
+  createdAt          DateTime                 @default(now())
+  firstName          String
+  lastName           String
+  lastVerifiedAt     DateTime?
   verificationTokens EmailVerificationToken[]
-  events          Event[]  @relation("UserEvents")
-  moderatedEvents Event[]  @relation("EventModerators")
+  events             Event[]                  @relation("UserEvents")
+  moderatedEvents    Event[]                  @relation("EventModerators")
+  interests          Category[]               @relation("UserInterests")
 }
 
 model Event {
-  id          Int        @id @default(autoincrement())
+  id          Int      @id @default(autoincrement())
   title       String
   description String?
   date        DateTime
   time        String
+  endTime     String?
   location    String
   capacity    Int?
-  categories  Category[] @relation("EventCategories") // ← kategórie eventu
+  mainImage   String?
+  gallery     EventImage[]
+  createdAt   DateTime @default(now())
+
+  // VZŤAHY
+  categories  Category[] @relation("EventCategories")
   organizer   User       @relation("UserEvents", fields: [organizerId], references: [id])
   organizerId Int
   moderators  User[]     @relation("EventModerators")
-  createdAt   DateTime   @default(now())
 }
 
+
 model Category {
-  id     Int      @id @default(autoincrement())
-  name   String   @unique
+  id     Int     @id @default(autoincrement())
+  name   String  @unique
   label  String
   icon   String?
-  
-  // spätne väzby na vzťahy
   events Event[] @relation("EventCategories")
   users  User[]  @relation("UserInterests")
 }
 
+model EventImage {
+  id      Int    @id @default(autoincrement())
+  url     String
+  eventId Int
+  event   Event  @relation(fields: [eventId], references: [id])
 
-
-
-
-
-
-
-
-
+  @@index([eventId], map: "EventImage_eventId_fkey")
+}
