@@ -1,3 +1,4 @@
+import e from "express";
 import prisma from "../../prisma/client.js";
 
 export const createEvent = async (req, res) => {
@@ -110,6 +111,7 @@ export const getAllEvents = async (req, res) => {
             id: true,
             firstName: true,
             lastName: true,
+            email: true,
           },
         },
         moderators: {
