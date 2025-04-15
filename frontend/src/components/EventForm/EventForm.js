@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Form, Button, Alert } from "react-bootstrap";
 import CategoryMultiSelect from "../CategoryMultiSelect/CategoryMultiSelect";
 import styles from "./EventForm.module.scss";
@@ -22,6 +22,8 @@ const EventForm = () => {
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
   const [allUsers, setAllUsers] = useState([]);
+  const mainImageRef = useRef();
+  const galleryRef = useRef();
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -73,6 +75,8 @@ const EventForm = () => {
         throw new Error(data.message || "Nepodarilo sa vytvoriť akciu");
 
       setSuccess("Akcia bola úspešne vytvorená.");
+      mainImageRef.current?.clear();
+      galleryRef.current?.clear();
       setForm({
         title: "",
         description: "",
@@ -205,16 +209,18 @@ const EventForm = () => {
         </Form.Group>
 
         <ImageUploader
+          ref={mainImageRef}
           label="Profilová fotka (nepovinná)"
-          multiple={false}
           onChange={(file) => setForm((prev) => ({ ...prev, mainImage: file }))}
+          multiple={false}
         />
 
         <ImageUploader
+          ref={galleryRef}
           label="Galéria (max 5 fotiek)"
+          onChange={(files) => setForm((prev) => ({ ...prev, gallery: files }))}
           multiple
           max={5}
-          onChange={(files) => setForm((prev) => ({ ...prev, gallery: files }))}
         />
 
         <Button type="submit" variant="primary" className="w-100">
