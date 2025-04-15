@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { Form, Button, Alert } from "react-bootstrap";
 import CategoryMultiSelect from "../CategoryMultiSelect/CategoryMultiSelect";
 import styles from "./EventForm.module.scss";
+import ImageUploader from "../ImageUploader/ImageUploader";
 
 const EventForm = () => {
   const [form, setForm] = useState({
@@ -203,31 +204,18 @@ const EventForm = () => {
           </Form.Select>
         </Form.Group>
 
-        <Form.Group className="mb-3">
-          <Form.Label>Profilová fotka (nepovinná)</Form.Label>
-          <Form.Control
-            type="file"
-            accept="image/*"
-            onChange={(e) =>
-              setForm((prev) => ({ ...prev, mainImage: e.target.files[0] }))
-            }
-          />
-        </Form.Group>
+        <ImageUploader
+          label="Profilová fotka (nepovinná)"
+          multiple={false}
+          onChange={(file) => setForm((prev) => ({ ...prev, mainImage: file }))}
+        />
 
-        <Form.Group className="mb-3">
-          <Form.Label>Galéria (max 5 fotiek)</Form.Label>
-          <Form.Control
-            type="file"
-            multiple
-            accept="image/*"
-            onChange={(e) =>
-              setForm((prev) => ({
-                ...prev,
-                gallery: [...e.target.files],
-              }))
-            }
-          />
-        </Form.Group>
+        <ImageUploader
+          label="Galéria (max 5 fotiek)"
+          multiple
+          max={5}
+          onChange={(files) => setForm((prev) => ({ ...prev, gallery: files }))}
+        />
 
         <Button type="submit" variant="primary" className="w-100">
           Vytvoriť akciu
