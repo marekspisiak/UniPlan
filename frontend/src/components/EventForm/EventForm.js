@@ -3,6 +3,7 @@ import { Form, Button, Alert } from "react-bootstrap";
 import CategoryMultiSelect from "../CategoryMultiSelect/CategoryMultiSelect";
 import styles from "./EventForm.module.scss";
 import ImageUploader from "../ImageUploader/ImageUploader";
+import ModeratorSelector from "../ModeratorSelector/ModeratorSelector";
 
 const EventForm = () => {
   const [form, setForm] = useState({
@@ -21,21 +22,8 @@ const EventForm = () => {
 
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
-  const [allUsers, setAllUsers] = useState([]);
   const mainImageRef = useRef();
   const galleryRef = useRef();
-
-  useEffect(() => {
-    const fetchUsers = async () => {
-      const res = await fetch("http://localhost:5000/api/user/all", {
-        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-      });
-      const data = await res.json();
-      console.log(data);
-      setAllUsers([]);
-    };
-    fetchUsers();
-  }, []);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -190,22 +178,12 @@ const EventForm = () => {
 
         <Form.Group className="mb-3">
           <Form.Label>Moderátori</Form.Label>
-          <Form.Select
-            multiple
-            value={form.moderators}
-            onChange={(e) => {
-              const selected = Array.from(e.target.selectedOptions).map((o) =>
-                parseInt(o.value)
-              );
-              setForm((prev) => ({ ...prev, moderators: selected }));
-            }}
-          >
-            {allUsers.map((user) => (
-              <option key={user.id} value={user.id}>
-                {user.firstName} {user.lastName} ({user.email})
-              </option>
-            ))}
-          </Form.Select>
+          <ModeratorSelector
+            selected={form.moderators}
+            onChange={(ids) =>
+              setForm((prev) => ({ ...prev, moderators: ids }))
+            }
+          />
         </Form.Group>
 
         <ImageUploader

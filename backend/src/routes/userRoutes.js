@@ -5,6 +5,7 @@ import {
   updateUserInterests,
   updateProfilePhoto,
   updateProfile,
+  searchUsers,
 } from "../controllers/userController.js";
 import { upload } from "../middleware/uploadMiddleware.js";
 
@@ -17,7 +18,6 @@ router.get("/me", protect, (req, res) => {
     .json({ id, firstName, lastName, email, requiresVerification });
 });
 
-router.get("/:id", protectVerified, getUserProfile);
 router.put("/me/interests", protectVerified, updateUserInterests);
 router.put(
   "/upload-photo",
@@ -27,5 +27,7 @@ router.put(
 );
 
 router.put("/profile", protectVerified, upload.single("photo"), updateProfile);
+router.get("/search", searchUsers);
+router.get("/:id", protectVerified, getUserProfile);
 
 export default router;

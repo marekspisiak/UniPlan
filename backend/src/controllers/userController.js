@@ -1,5 +1,8 @@
 import prisma from "../../prisma/client.js";
-import { createAndSendVerificationEmail } from "../utils/verificationHelpers.js";
+import {
+  createAndSendVerificationEmail,
+  needsReverification,
+} from "../utils/verificationHelpers.js";
 
 export const getUserProfile = async (req, res) => {
   const userId = parseInt(req.params.id);
@@ -138,5 +141,51 @@ export const updateProfile = async (req, res) => {
     return res
       .status(500)
       .json({ message: "Chyba servera pri úprave profilu." });
+  }
+};
+
+export const searchUsers = async (req, res) => {
+  const query = req.query.q;
+
+  if (!query || query.length < 3) {
+    return res
+      .status(400)
+      .json({ message: "Zadaj aspoň 3 znaky na vyhľadávanie." });
+  }
+
+  try {
+    const users = await prisma.user.findMany({
+      where: {
+        OR: [
+          { firstName: { contains: query } },
+          { lastName: { contains: query } },
+          { email: { contains: query } },
+        ],
+      },
+      select: {
+        id: true,
+        firstName: true,
+        lastName: true,
+        email: true,
+        lastVerifiedAt: true,
+        createdAt: true,
+      },
+    });
+
+    // ⚠️ Filtrovanie až v JS, pretože needsReverification nie je Prisma funkcia
+    const verifiedUsers = users.filter((user) => !needsReverification(user));
+
+    const usersWithImage = verifiedUsers.map((user) => ({
+      id: user.id,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      email: user.email,
+      profileImageUrl: `http://localhost:5000/uploads/profile/user_${user.id}.png`,
+    }));
+
+    res.json(usersWithImage);
+  } catch (err) {
+    console.error("Chyba pri vyhľadávaní používateľov:", err);
+    res.status(500).json({ message: "Chyba servera." });
   }
 };

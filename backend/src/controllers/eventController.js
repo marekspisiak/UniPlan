@@ -13,9 +13,7 @@ export const createEvent = async (req, res) => {
       categoryIds,
       moderators,
     } = req.body;
-    console.log("user");
-
-    console.log(req.user.id);
+    console.log(moderators);
 
     !Array.isArray(categoryIds) ? console.log("Názov akcie je prázdny") : null;
 

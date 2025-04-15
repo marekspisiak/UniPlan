@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Form, Button, Alert, Spinner } from "react-bootstrap";
 import { useAuth } from "../../context/AuthContext";
 import CategoryMultiSelect from "../CategoryMultiSelect/CategoryMultiSelect";
@@ -6,44 +6,17 @@ import styles from "./EditProfileCard.module.scss";
 
 const EditProfileCard = ({ setIsEditing }) => {
   const { user, logout, loadUser } = useAuth();
+
   const [form, setForm] = useState({
-    firstName: "",
-    lastName: "",
-    email: "",
-    interests: [],
+    firstName: user?.firstName || "",
+    lastName: user?.lastName || "",
+    email: user?.email || "",
+    interests: user?.interests?.map((i) => i.id) || [],
   });
-  const [loading, setLoading] = useState(true);
+
   const [message, setMessage] = useState(null);
   const [error, setError] = useState(null);
   const [uploading, setUploading] = useState(false);
-
-  useEffect(() => {
-    const fetchUser = async () => {
-      try {
-        const res = await fetch("http://localhost:5000/api/user/me", {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        });
-
-        const userData = await res.json();
-        if (!res.ok) throw new Error("Chyba pri načítaní profilu");
-
-        setForm({
-          firstName: userData.firstName,
-          lastName: userData.lastName,
-          email: userData.email,
-          interests: userData.interests || [],
-        });
-        setLoading(false);
-      } catch (err) {
-        setError(err.message);
-        setLoading(false);
-      }
-    };
-
-    fetchUser();
-  }, []);
 
   const handleChange = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -59,14 +32,13 @@ const EditProfileCard = ({ setIsEditing }) => {
       formData.append("firstName", form.firstName);
       formData.append("lastName", form.lastName);
       formData.append("email", form.email);
-      form.interests.forEach((id) => formData.append("interests[]", id)); // ⬅️ oprava
+      form.interests.forEach((id) => formData.append("interests[]", id));
       if (form.photo) formData.append("photo", form.photo);
 
       const res = await fetch("http://localhost:5000/api/user/profile", {
         method: "PUT",
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,
-          // ❌ žiadny 'Content-Type' tu, browser to nastaví sám!
         },
         body: formData,
       });
@@ -92,7 +64,7 @@ const EditProfileCard = ({ setIsEditing }) => {
     if (file) setForm((prev) => ({ ...prev, photo: file }));
   };
 
-  if (loading) return <Spinner animation="border" />;
+  if (!user) return <Spinner animation="border" />;
 
   return (
     <div className={styles.editProfileCard}>
