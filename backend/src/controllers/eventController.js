@@ -359,3 +359,91 @@ export const unsubscribeFromEvent = async (req, res) => {
     res.status(500).json({ message: "Chyba servera pri odhlasovaní." });
   }
 };
+
+export const updateEvent = async (req, res) => {
+  const eventId = parseInt(req.params.id);
+  const {
+    title,
+    description,
+    date,
+    time,
+    endTime,
+    location,
+    capacity,
+    categoryIds,
+    moderatorIds,
+    removedGalleryImages = [], // URLs to delete
+    mainImageChanged,
+  } = req.body;
+
+  try {
+    const event = await prisma.event.findUnique({
+      where: { id: eventId },
+      include: { gallery: true },
+    });
+
+    if (!event) return res.status(404).json({ message: "Event nenájdený." });
+
+    // Remove old gallery images if requested
+    if (removedGalleryImages.length > 0) {
+      const toRemove = event.gallery.filter((img) =>
+        removedGalleryImages.includes(img.url)
+      );
+
+      await prisma.eventImage.deleteMany({
+        where: {
+          id: { in: toRemove.map((img) => img.id) },
+        },
+      });
+
+      toRemove.forEach((img) => {
+        const filePath = path.join("uploads", img.url);
+        if (fs.existsSync(filePath)) fs.unlinkSync(filePath);
+      });
+    }
+
+    // Handle new uploaded images
+    const newGalleryImages = req.files?.gallery || [];
+    const galleryData = newGalleryImages.map((file) => ({
+      url: "/uploads/events/" + file.filename,
+      eventId: event.id,
+    }));
+    await prisma.eventImage.createMany({ data: galleryData });
+
+    // Main image handling
+    let mainImageUrl = event.mainImage;
+    if (mainImageChanged === "true" && req.files?.mainImage?.[0]) {
+      if (mainImageUrl) {
+        const oldPath = path.join("uploads", mainImageUrl);
+        if (fs.existsSync(oldPath)) fs.unlinkSync(oldPath);
+      }
+      mainImageUrl = "/uploads/events/" + req.files.mainImage[0].filename;
+    }
+
+    // Update event
+    const updatedEvent = await prisma.event.update({
+      where: { id: eventId },
+      data: {
+        title,
+        description,
+        date: new Date(date),
+        time,
+        endTime: endTime || null,
+        location,
+        capacity: capacity ? parseInt(capacity) : null,
+        mainImage: mainImageUrl,
+        categories: {
+          set: categoryIds.map((id) => ({ id: parseInt(id) })),
+        },
+        moderators: {
+          set: moderatorIds.map((id) => ({ id: parseInt(id) })),
+        },
+      },
+    });
+
+    res.status(200).json(updatedEvent);
+  } catch (err) {
+    console.error("Chyba pri úprave eventu:", err);
+    res.status(500).json({ message: "Chyba servera." });
+  }
+};

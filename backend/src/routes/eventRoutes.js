@@ -8,6 +8,7 @@ import {
   leaveEvent,
   subscribeToEvent,
   unsubscribeFromEvent,
+  updateEvent,
 } from "../controllers/eventController.js";
 import { eventUpload } from "../middleware/uploadEventMedia.js";
 
@@ -20,6 +21,12 @@ router.post("/:id/join", protectVerified, joinEvent);
 router.post("/:id/leave", protectVerified, leaveEvent);
 router.post("/:id/subscribe", protectVerified, subscribeToEvent);
 router.post("/:id/unsubscribe", protectVerified, unsubscribeFromEvent);
+router.put(
+  "/:id/edit",
+  protectVerified,
+  eventUpload,
+  updateEvent // napríklad tá funkcia čo si predtým robil
+);
 router.get("/:id", protectVerified, getEventById);
 
 export default router;
