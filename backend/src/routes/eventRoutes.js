@@ -6,6 +6,8 @@ import {
   joinEvent,
   getEventById,
   leaveEvent,
+  subscribeToEvent,
+  unsubscribeFromEvent,
 } from "../controllers/eventController.js";
 import { eventUpload } from "../middleware/uploadEventMedia.js";
 
@@ -15,7 +17,9 @@ router.post("/create", protectVerified, eventUpload, createEvent);
 router.get("/categories", protectVerified, getEventCategories);
 router.get("/get", protectVerified, getAllEvents);
 router.post("/:id/join", protectVerified, joinEvent);
-router.get("/:id", protectVerified, getEventById);
 router.post("/:id/leave", protectVerified, leaveEvent);
+router.post("/:id/subscribe", protectVerified, subscribeToEvent);
+router.post("/:id/unsubscribe", protectVerified, unsubscribeFromEvent);
+router.get("/:id", protectVerified, getEventById);
 
 export default router;

@@ -78,6 +78,48 @@ const EventDetail = ({ eventId }) => {
     }
   };
 
+  const handleSubscribe = async () => {
+    setMessage(null);
+    setError(null);
+    try {
+      const token = localStorage.getItem("token");
+      const res = await fetch(
+        `http://localhost:5000/api/events/${eventId}/subscribe`,
+        {
+          method: "POST",
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.message || "Chyba pri subscribnutí.");
+      setMessage(data.message);
+      fetchEvent(); // obnov data
+    } catch (err) {
+      setError(err.message);
+    }
+  };
+
+  const handleUnsubscribe = async () => {
+    setMessage(null);
+    setError(null);
+    try {
+      const token = localStorage.getItem("token");
+      const res = await fetch(
+        `http://localhost:5000/api/events/${eventId}/unsubscribe`,
+        {
+          method: "POST",
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.message || "Chyba pri zrušení odberu.");
+      setMessage(data.message);
+      fetchEvent(); // obnov event s novými dátami
+    } catch (err) {
+      setError(err.message);
+    }
+  };
+
   if (loading || !event) return <Spinner animation="border" />;
 
   const {
@@ -93,7 +135,10 @@ const EventDetail = ({ eventId }) => {
     organizer,
     moderators = [],
     participants = [],
+    subscribers = [],
   } = event;
+
+  console.log(event);
 
   const occupied = participants.length;
   const available = capacity ? capacity - occupied : null;
@@ -192,7 +237,7 @@ const EventDetail = ({ eventId }) => {
       )}
 
       <div className="d-flex flex-row justify-content-between align-items-center gap-2 w-100 mt-3">
-        <div className="d-flex flex-column align-items-center gap-1">
+        <div className="d-flex flex-column align-items-start gap-1">
           {moderators.length > 0 && (
             <UserAvatarList
               users={participants}
@@ -221,6 +266,47 @@ const EventDetail = ({ eventId }) => {
           ) : (
             <Button variant="secondary" disabled>
               Už nie sú voľné miesta
+            </Button>
+          )}
+        </div>
+      </div>
+      <div className="d-flex flex-row justify-content-between align-items-center gap-2 w-100 mt-3">
+        <div className="d-flex flex-column align-items-stsart gap-1">
+          {event.subscribers?.length > 0 && (
+            <UserAvatarList
+              users={event.subscribers}
+              size="mini"
+              interactive
+              maxVisible={4}
+              header="Odberatelia"
+            />
+          )}
+          {event.subscribers?.length > 0 && (
+            <div className={styles.organizatorTag}>Odberatelia</div>
+          )}
+        </div>
+
+        <div className="d-flex flex-row justify-content-end align-items-center gap-3 w-100">
+          <div className={styles.spotsLeft}>
+            {capacity
+              ? `Zostáva miest na odber: ${Math.max(
+                  capacity - event.subscribers.length,
+                  0
+                )}`
+              : ""}
+          </div>
+
+          {event.subscribers.some((s) => s.id === user?.id) ? (
+            <Button variant="outline-danger" onClick={handleUnsubscribe}>
+              Zrušiť odber
+            </Button>
+          ) : event.subscribers.length < capacity ? (
+            <Button variant="secondary" onClick={handleSubscribe}>
+              Prihlásiť sa na odber
+            </Button>
+          ) : (
+            <Button variant="secondary" disabled>
+              Plný počet odberateľov
             </Button>
           )}
         </div>

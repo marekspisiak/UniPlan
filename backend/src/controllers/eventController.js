@@ -226,6 +226,14 @@ export const getEventById = async (req, res) => {
             email: true,
           },
         },
+        subscribers: {
+          select: {
+            id: true,
+            firstName: true,
+            lastName: true,
+            email: true,
+          },
+        },
         gallery: true,
       },
     });
@@ -286,5 +294,68 @@ export const leaveEvent = async (req, res) => {
   } catch (err) {
     console.error("Chyba pri odhlasovaní:", err);
     res.status(500).json({ message: "Chyba servera." });
+  }
+};
+
+export const subscribeToEvent = async (req, res) => {
+  const userId = req.user.id;
+  const eventId = parseInt(req.params.id);
+
+  try {
+    // Najprv načítaj event aj s počtom subscriberov
+    const event = await prisma.event.findUnique({
+      where: { id: eventId },
+      include: {
+        subscribers: true,
+      },
+    });
+
+    if (!event) {
+      return res.status(404).json({ message: "Event neexistuje." });
+    }
+
+    if (event.capacity && event.subscribers.length >= event.capacity) {
+      return res
+        .status(400)
+        .json({ message: "Kapacita odberateľov tohto eventu je plná." });
+    }
+
+    // Pridaj subscribera (ak ešte nie je pridaný)
+    await prisma.event.update({
+      where: { id: eventId },
+      data: {
+        subscribers: {
+          connect: { id: userId },
+        },
+      },
+    });
+
+    res
+      .status(200)
+      .json({ message: "Úspešne si sa prihlásil na odber eventu." });
+  } catch (err) {
+    console.error("Chyba pri subscribnutí:", err);
+    res.status(500).json({ message: "Chyba servera pri subscribnutí." });
+  }
+};
+
+export const unsubscribeFromEvent = async (req, res) => {
+  const userId = req.user.id;
+  const eventId = parseInt(req.params.id);
+
+  try {
+    await prisma.event.update({
+      where: { id: eventId },
+      data: {
+        subscribers: {
+          disconnect: { id: userId },
+        },
+      },
+    });
+
+    res.status(200).json({ message: "Odhlásený z odberu eventu." });
+  } catch (err) {
+    console.error("Chyba pri odhlasovaní z odberu:", err);
+    res.status(500).json({ message: "Chyba servera pri odhlasovaní." });
   }
 };

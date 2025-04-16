@@ -32,6 +32,7 @@ model User {
   moderatedEvents    Event[]                  @relation("EventModerators")
   interests          Category[]               @relation("UserInterests")
   joinedEvents Event[] @relation("EventParticipants")
+  subscribedEvents Event[] @relation("EventSubscribers")  
 
 }
 
@@ -47,6 +48,7 @@ model Event {
   mainImage   String?
   gallery     EventImage[]
   createdAt   DateTime @default(now())
+    seriesId    String   @default(uuid()) // 👈 generuje UUID automaticky
 
   // VZŤAHY
   categories  Category[] @relation("EventCategories")
@@ -54,6 +56,7 @@ model Event {
   organizerId Int
   moderators  User[]     @relation("EventModerators")
   participants User[] @relation("EventParticipants")
+  subscribers User[] @relation("EventSubscribers")
 }
 
 
