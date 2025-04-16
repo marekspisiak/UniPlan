@@ -6,6 +6,7 @@ import { PhotoProvider, PhotoView } from "react-photo-view";
 import "react-photo-view/dist/react-photo-view.css";
 import { useState, useEffect } from "react";
 import { useAuth } from "../../context/AuthContext";
+import { OverlayTrigger, Tooltip } from "react-bootstrap";
 
 const EventDetail = ({ eventId }) => {
   const { user } = useAuth();
@@ -161,8 +162,24 @@ const EventDetail = ({ eventId }) => {
           )}
         </div>
       )}
-      <div className={styles.title}>{title}</div>
-      {event.categories && event.categories.length > 0 && (
+      <div className="d-flex flex-row justify-content-start align-items-center w-100">
+        <div className={styles.title}>{title}</div>
+        <OverlayTrigger
+          placement="top"
+          overlay={<Tooltip id="copy-tooltip">Skopírovať odkaz</Tooltip>}
+        >
+          <button
+            className={styles.copyButton}
+            onClick={() => {
+              const url = `${window.location.origin}/event/${eventId}`;
+              navigator.clipboard.writeText(url);
+            }}
+          >
+            📋
+          </button>
+        </OverlayTrigger>
+      </div>
+      <div className="d-flex justify-content-between align-items-center mb-2">
         <div className={styles.tags}>
           {event.categories.map((cat) => (
             <span key={cat.id} className={styles.tag}>
@@ -171,7 +188,8 @@ const EventDetail = ({ eventId }) => {
             </span>
           ))}
         </div>
-      )}
+      </div>
+
       <div className="d-flex fex-row justify-content-between align-items-start gap-2 w-100">
         <div className={styles.details}>
           <div>

@@ -36,6 +36,7 @@ const AppRouter = () => {
 
         <Route element={<PrivateRoute />}>
           <Route path="/" element={<Home />} />
+          <Route path="/event/:id" element={<Home />} />
           <Route path="/calendar" element={<CalendarPage />} />
           <Route path="/chat" element={<ChatPage />} />
           <Route path="/profile/:userId" element={<ProfilePage />} />

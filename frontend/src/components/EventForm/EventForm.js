@@ -1,11 +1,17 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Form, Button, Alert } from "react-bootstrap";
 import CategoryMultiSelect from "../CategoryMultiSelect/CategoryMultiSelect";
-import styles from "./EventForm.module.scss";
 import ImageUploader from "../ImageUploader/ImageUploader";
 import ModeratorSelector from "../ModeratorSelector/ModeratorSelector";
+import styles from "./EventForm.module.scss";
 
-const EventForm = () => {
+const EventForm = ({
+  initialData = {},
+  onSubmit,
+  successMessage = "Akcia bola úspešne uložená.",
+  submitLabel = "Uložiť",
+  heading = "",
+}) => {
   const [form, setForm] = useState({
     title: "",
     description: "",
@@ -18,12 +24,19 @@ const EventForm = () => {
     moderators: [],
     mainImage: null,
     gallery: [],
+    ...initialData,
   });
+
+  console.log(form);
 
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
   const mainImageRef = useRef();
   const galleryRef = useRef();
+
+  useEffect(() => {
+    if (initialData) setForm((prev) => ({ ...prev, ...initialData }));
+  }, []);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -36,33 +49,8 @@ const EventForm = () => {
     setSuccess(null);
 
     try {
-      const token = localStorage.getItem("token");
-      const formData = new FormData();
-
-      Object.entries(form).forEach(([key, value]) => {
-        if (key === "categoryIds" || key === "moderators") {
-          value.forEach((v) => formData.append(key, v));
-        } else if (key === "gallery") {
-          value.forEach((img) => formData.append("gallery", img));
-        } else if (key === "mainImage" && value) {
-          formData.append("mainImage", value);
-        } else {
-          formData.append(key, value);
-        }
-      });
-
-      const res = await fetch("http://localhost:5000/api/events/create", {
-        method: "POST",
-        headers: { Authorization: `Bearer ${token}` },
-        body: formData,
-      });
-
-      const data = await res.json();
-
-      if (!res.ok)
-        throw new Error(data.message || "Nepodarilo sa vytvoriť akciu");
-
-      setSuccess("Akcia bola úspešne vytvorená.");
+      await onSubmit(form);
+      setSuccess(successMessage);
       mainImageRef.current?.clear();
       galleryRef.current?.clear();
       setForm({
@@ -79,13 +67,13 @@ const EventForm = () => {
         gallery: [],
       });
     } catch (err) {
-      setError(err.message);
+      setError(err.message || "Chyba pri ukladaní eventu.");
     }
   };
 
   return (
     <div className={styles.eventForm}>
-      <h4 className={styles.heading}>Vytvoriť novú akciu</h4>
+      <h4 className={styles.heading}>{heading}</h4>
 
       {error && <Alert variant="danger">{error}</Alert>}
       {success && <Alert variant="success">{success}</Alert>}
@@ -202,7 +190,7 @@ const EventForm = () => {
         />
 
         <Button type="submit" variant="primary" className="w-100">
-          Vytvoriť akciu
+          {submitLabel}
         </Button>
       </Form>
     </div>
