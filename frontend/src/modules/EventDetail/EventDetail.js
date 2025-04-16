@@ -1,70 +1,212 @@
-import { useEffect, useState } from "react";
-import { Spinner, Alert, Button } from "react-bootstrap";
 import styles from "./EventDetail.module.scss";
+import { Button, Alert, Spinner } from "react-bootstrap";
+import UserAvatar from "../../components/UserAvatar/UserAvatar";
+import UserAvatarList from "../../components/UserAvatarList/UserAvatarList";
+import { PhotoProvider, PhotoView } from "react-photo-view";
+import "react-photo-view/dist/react-photo-view.css";
+import { useState, useEffect } from "react";
+import { useAuth } from "../../context/AuthContext";
 
-const EventDetail = ({ event, eventId }) => {
-  const [data, setData] = useState(event || null);
+const EventDetail = ({ eventId }) => {
+  const { user } = useAuth();
+  const [event, setEvent] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [message, setMessage] = useState(null);
   const [error, setError] = useState(null);
 
+  const fetchEvent = async () => {
+    try {
+      setLoading(true);
+      const res = await fetch(`http://localhost:5000/api/events/${eventId}`, {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.message || "Chyba pri načítaní eventu");
+      setEvent(data);
+    } catch (err) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
-    if (event || !eventId) return;
+    fetchEvent();
+  }, []);
 
-    const fetchData = async () => {
-      try {
-        const res = await fetch(`http://localhost:5000/api/events/${eventId}`, {
-          headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-        });
-        const json = await res.json();
-        if (!res.ok) throw new Error(json.message);
-        setData(json);
-      } catch (err) {
-        setError(err.message);
-      }
-    };
+  const handleJoin = async () => {
+    setMessage(null);
+    setError(null);
+    try {
+      const token = localStorage.getItem("token");
+      const res = await fetch(
+        `http://localhost:5000/api/events/${eventId}/join`,
+        {
+          method: "POST",
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.message || "Chyba pri prihlasovaní.");
+      setMessage("Úspešne prihlásený.");
+      fetchEvent();
+    } catch (err) {
+      setError(err.message);
+    }
+  };
 
-    fetchData();
-  }, [event, eventId]);
+  const handleLeave = async () => {
+    setMessage(null);
+    setError(null);
+    try {
+      const token = localStorage.getItem("token");
+      const res = await fetch(
+        `http://localhost:5000/api/events/${eventId}/leave`,
+        {
+          method: "POST",
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.message || "Chyba pri odhlasovaní.");
+      setMessage("Úspešne odhlásený.");
+      fetchEvent();
+    } catch (err) {
+      setError(err.message);
+    }
+  };
 
-  if (error) return <Alert variant="danger">{error}</Alert>;
-  if (!data) return <Spinner animation="border" />;
+  if (loading || !event) return <Spinner animation="border" />;
 
-  const { title, description, date, time, location, categories, organizer } =
-    data;
+  const {
+    title,
+    mainImage,
+    description,
+    date,
+    time,
+    endTime,
+    location,
+    capacity,
+    gallery = [],
+    organizer,
+    moderators = [],
+    participants = [],
+  } = event;
+
+  const occupied = participants.length;
+  const available = capacity ? capacity - occupied : null;
+  const isParticipant = participants.some((p) => p.id === user?.id);
 
   return (
-    <div className={styles.container}>
-      <h5 className={styles.title}>{title}</h5>
-      <div className={styles.info}>
-        <p>
-          <strong>Dátum:</strong> {new Date(date).toLocaleDateString()}
-        </p>
-        <p>
-          <strong>Čas:</strong> {time}
-        </p>
-        <p>
-          <strong>Miesto:</strong> {location}
-        </p>
-        {description && <p>{description}</p>}
-        {categories?.length > 0 && (
-          <p>
-            {categories.map((cat) => (
-              <span key={cat.id} className={styles.category}>
-                {cat.icon} {cat.label}
-              </span>
-            ))}
-          </p>
-        )}
-        <p>
-          <strong>Organizátor:</strong> {organizer.firstName}{" "}
-          {organizer.lastName}
-        </p>
+    <div className={styles.eventDetails}>
+      {mainImage && (
+        <div className={styles.header}>
+          <img
+            src={`http://localhost:5000${mainImage}`}
+            alt={title}
+            className={styles.mainImage}
+          />
+        </div>
+      )}
+      <div className={styles.title}>{title}</div>
+      <div className="d-flex fex-row justify-content-between align-items-start gap-2 w-100">
+        <div className={styles.details}>
+          <div>
+            <b>📍</b> {location}
+          </div>
+          <div>
+            <b>📅</b> {new Date(date).toLocaleDateString()}
+          </div>
+          <div>
+            <b>⏰</b> {time}
+            {endTime ? ` – ${endTime}` : ""}
+          </div>
+          {capacity && (
+            <div>
+              <b>👥 </b> {occupied} / {capacity} miest obsadených
+            </div>
+          )}
+        </div>
+        <div className="d-flex flex-column gap-3 align-items-center">
+          <div className="d-flex flex-row gap-2 align-items-center">
+            <UserAvatar user={organizer} interactive></UserAvatar>
+            <div className="flex flex-column">
+              <div
+                className={styles.organizatorName}
+              >{`${organizer.firstName} ${organizer.lastName}`}</div>
+              <div className={styles.organizatorTag}>Organizátor</div>
+            </div>
+          </div>
+          <div className="d-flex flex-column align-items-center gap-1">
+            {moderators.length > 0 && (
+              <UserAvatarList
+                users={moderators}
+                size="mini"
+                interactive
+                maxVisible={2}
+                header="Moderátori"
+              ></UserAvatarList>
+            )}
+            {moderators.length > 0 && (
+              <div className={styles.organizatorTag}>Moderátori</div>
+            )}
+          </div>
+        </div>
       </div>
 
-      <Button variant="primary" className="w-100 mt-3">
-        Zaregistrovať sa
-      </Button>
+      <div className="my-2">{description}</div>
+      {gallery.length > 0 && (
+        <PhotoProvider>
+          <div className={styles.gallery}>
+            {gallery.map((img, index) => (
+              <PhotoView key={index} src={`http://localhost:5000${img.url}`}>
+                <img
+                  src={`http://localhost:5000${img.url}`}
+                  alt={`gallery-${index}`}
+                  className={styles.galleryImage}
+                />
+              </PhotoView>
+            ))}
+          </div>
+        </PhotoProvider>
+      )}
+
+      <div className="d-flex flex-row justify-content-between align-items-center gap-2 w-100 mt-3">
+        <div className="d-flex flex-column align-items-center gap-1">
+          {moderators.length > 0 && (
+            <UserAvatarList
+              users={participants}
+              size="mini"
+              interactive
+              maxVisible={4}
+              header="Účastníci"
+            ></UserAvatarList>
+          )}
+          {moderators.length > 0 && (
+            <div className={styles.organizatorTag}>Účastníci</div>
+          )}
+        </div>
+        <div className="d-flex flex-row justify-content-end align-items-center gap-3  w-100">
+          <div className={styles.spotsLeft}>
+            {capacity ? `Voľných miest: ${available}` : ""}
+          </div>
+          {isParticipant ? (
+            <Button variant="danger" onClick={handleLeave}>
+              Odhlásiť sa
+            </Button>
+          ) : available > 0 || !capacity ? (
+            <Button variant="primary" onClick={handleJoin}>
+              Prihlásiť sa
+            </Button>
+          ) : (
+            <Button variant="secondary" disabled>
+              Už nie sú voľné miesta
+            </Button>
+          )}
+        </div>
+      </div>
     </div>
   );
 };

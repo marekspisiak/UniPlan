@@ -31,6 +31,8 @@ model User {
   events             Event[]                  @relation("UserEvents")
   moderatedEvents    Event[]                  @relation("EventModerators")
   interests          Category[]               @relation("UserInterests")
+  joinedEvents Event[] @relation("EventParticipants")
+
 }
 
 model Event {
@@ -51,6 +53,7 @@ model Event {
   organizer   User       @relation("UserEvents", fields: [organizerId], references: [id])
   organizerId Int
   moderators  User[]     @relation("EventModerators")
+  participants User[] @relation("EventParticipants")
 }
 
 

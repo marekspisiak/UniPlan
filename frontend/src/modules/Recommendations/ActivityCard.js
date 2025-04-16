@@ -3,12 +3,10 @@ import { Card, Button } from "react-bootstrap";
 import styles from "./ActivityCard.module.scss";
 import Popup from "../../components/Popup/Popup";
 import EventDetail from "../EventDetail/EventDetail";
-import UserAvatar from "../../components/UserAvatar/UserAvatar";
-import UserList from "../../components/UserList/UserList";
-import { User } from "lucide-react";
 
 const ActivityCard = ({ activity }) => {
   const [isOpen, setIsOpen] = useState(false);
+  console.log(activity);
   return (
     <Card className={styles.card}>
       <Card.Body>
@@ -24,24 +22,7 @@ const ActivityCard = ({ activity }) => {
           Zúčastniť sa
         </Button>
         <Popup isOpen={isOpen} onClose={() => setIsOpen(false)}>
-          <UserList
-            users={[
-              activity.organizer,
-              activity.organizer,
-              activity.organizer,
-              activity.organizer,
-              activity.organizer,
-              activity.organizer,
-              activity.organizer,
-              activity.organizer,
-              activity.organizer,
-              activity.organizer,
-              activity.organizer,
-              activity.organizer,
-              activity.organizer,
-              activity.organizer,
-            ]}
-          />
+          <EventDetail eventId={activity.id} />
         </Popup>
         <Button
           onClick={() => setIsOpen(true)}

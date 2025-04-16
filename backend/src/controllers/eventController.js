@@ -106,6 +106,8 @@ export const getAllEvents = async (req, res) => {
       orderBy: { date: "asc" },
       include: {
         categories: true,
+        gallery: true,
+        participants: true,
         organizer: {
           select: {
             id: true,
@@ -128,5 +130,161 @@ export const getAllEvents = async (req, res) => {
   } catch (err) {
     console.error("Chyba pri načítaní eventov:", err);
     res.status(500).json({ message: "Chyba pri načítaní eventov." });
+  }
+};
+
+export const joinEvent = async (req, res) => {
+  const eventId = parseInt(req.params.id);
+  const userId = req.user.id;
+
+  try {
+    const event = await prisma.event.findUnique({
+      where: { id: eventId },
+      include: {
+        participants: { select: { id: true } },
+      },
+    });
+    if (!event) {
+      return res.status(404).json({ message: "Event neexistuje." });
+    }
+
+    // 🔒 Check: Event už skončil?
+    const eventDateTimeString = `${event.date.toISOString().split("T")[0]}T${
+      event.endTime || event.time
+    }`;
+    const eventEndDateTime = new Date(eventDateTimeString);
+    const now = new Date();
+
+    if (eventEndDateTime < now) {
+      return res.status(400).json({ message: "Tento event už prebehol." });
+    }
+
+    // ✅ Už je prihlásený?
+    const alreadyJoined = event.participants.some((p) => p.id === userId);
+    if (alreadyJoined) {
+      return res
+        .status(400)
+        .json({ message: "Už si prihlásený na tento event." });
+    }
+
+    // 🚫 Kapacita plná?
+    if (event.capacity && event.participants.length >= event.capacity) {
+      return res.status(400).json({ message: "Kapacita eventu je plná." });
+    }
+    console.log("joinEvent called");
+
+    // 🎉 Prihlásenie
+    await prisma.event.update({
+      where: { id: eventId },
+      data: {
+        participants: {
+          connect: { id: userId },
+        },
+      },
+    });
+
+    res.json({ message: "Úspešne si sa prihlásil na event." });
+  } catch (err) {
+    console.error("Chyba pri prihlasovaní na event:", err);
+    res.status(500).json({ message: "Chyba servera." });
+  }
+};
+
+export const getEventById = async (req, res) => {
+  const eventId = parseInt(req.params.id);
+
+  if (isNaN(eventId)) {
+    return res.status(400).json({ message: "Neplatné ID eventu." });
+  }
+
+  try {
+    const event = await prisma.event.findUnique({
+      where: { id: eventId },
+      include: {
+        categories: true,
+        organizer: {
+          select: {
+            id: true,
+            firstName: true,
+            lastName: true,
+            email: true,
+          },
+        },
+        moderators: {
+          select: {
+            id: true,
+            firstName: true,
+            lastName: true,
+            email: true,
+          },
+        },
+        participants: {
+          select: {
+            id: true,
+            firstName: true,
+            lastName: true,
+            email: true,
+          },
+        },
+        gallery: true,
+      },
+    });
+
+    if (!event) {
+      return res.status(404).json({ message: "Event neexistuje." });
+    }
+
+    // Pridanie URL k profilovkám
+    const addProfileUrl = (user) => ({
+      ...user,
+      profileImageUrl: `http://localhost:5000/uploads/profile/user_${user.id}.png`,
+    });
+
+    res.json({
+      ...event,
+      organizer: addProfileUrl(event.organizer),
+      moderators: event.moderators.map(addProfileUrl),
+      participants: event.participants.map(addProfileUrl),
+    });
+  } catch (err) {
+    console.error("Chyba pri načítaní eventu:", err);
+    res.status(500).json({ message: "Chyba servera." });
+  }
+};
+
+export const leaveEvent = async (req, res) => {
+  const userId = req.user.id;
+  const eventId = parseInt(req.params.id);
+
+  try {
+    const event = await prisma.event.findUnique({
+      where: { id: eventId },
+      include: { participants: true },
+    });
+
+    if (!event) {
+      return res.status(404).json({ message: "Event neexistuje." });
+    }
+
+    const isParticipant = event.participants.some((p) => p.id === userId);
+    if (!isParticipant) {
+      return res
+        .status(400)
+        .json({ message: "Nie si prihlásený na tento event." });
+    }
+
+    await prisma.event.update({
+      where: { id: eventId },
+      data: {
+        participants: {
+          disconnect: { id: userId },
+        },
+      },
+    });
+
+    res.json({ message: "Úspešne si sa odhlásil z eventu." });
+  } catch (err) {
+    console.error("Chyba pri odhlasovaní:", err);
+    res.status(500).json({ message: "Chyba servera." });
   }
 };

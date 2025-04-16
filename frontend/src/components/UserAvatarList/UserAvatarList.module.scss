@@ -1,0 +1,23 @@
+.avatarList {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+
+.extra {
+  background-color: #eee;
+  color: #333;
+  font-size: 0.7rem;
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  border: 1px solid #ccc;
+
+  &:hover {
+    background-color: #ddd;
+  }
+}
