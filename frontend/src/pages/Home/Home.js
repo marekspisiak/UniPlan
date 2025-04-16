@@ -17,6 +17,7 @@ const Home = () => {
   const { id: eventId } = useParams();
   const [isOpen, setIsOpen] = useState(true);
   const Navigate = useNavigate();
+  console.log(eventId);
 
   const renderPopup = () =>
     eventId ? (

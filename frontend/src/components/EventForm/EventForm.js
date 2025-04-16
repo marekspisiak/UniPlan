@@ -30,8 +30,7 @@ const EventForm = ({
     ...initialData,
   });
 
-  console.log(form);
-  console.log(form.deletedGallery);
+  console.log(initialData);
 
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
@@ -220,7 +219,7 @@ const EventForm = ({
         <Button type="submit" variant="primary" className="w-100">
           {submitLabel}
         </Button>
-        <Link to="/" className="text-decoration-none">
+        <Link to={`/event/${initialData.id}`} className="text-decoration-none">
           <Button type="submit" variant="danger" className="w-100 mt-2">
             Zrušiť
           </Button>

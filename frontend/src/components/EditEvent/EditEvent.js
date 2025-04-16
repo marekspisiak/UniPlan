@@ -35,6 +35,7 @@ const EditEvent = ({ eventId }) => {
           moderators: data.moderators.map((m) => m.id),
           mainImage: data.mainImage,
           gallery: data.gallery,
+          id: data.id,
         });
       } catch (err) {
         setError(err.message);
