@@ -18,6 +18,9 @@ import AuthOnlyRoute from "./AuthOnlyRoute.js";
 import CreateEventPage from "../pages/CreateEventPage/CreateEventPage.js";
 import EmailReverifyPage from "../pages/EmailReverifyPage/EmailReverifyPage.js";
 
+import EditEventPage from "../pages/EditEventPage/EditEventPage.js";
+import EditableEventRoute from "./EditableEventRoute.js";
+
 const AppRouter = () => {
   return (
     <Router>
@@ -39,8 +42,11 @@ const AppRouter = () => {
           <Route path="/event/:id" element={<Home />} />
           <Route path="/calendar" element={<CalendarPage />} />
           <Route path="/chat" element={<ChatPage />} />
+          <Route element={<EditableEventRoute />}>
+            <Route path="/edit-event/:id" element={<EditEventPage />} />
+          </Route>
           <Route path="/profile/:userId" element={<ProfilePage />} />
-          <Route path="/create-event" element={<CreateEventPage />} />\
+          <Route path="/create-event" element={<CreateEventPage />} />
         </Route>
       </Routes>
     </Router>

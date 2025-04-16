@@ -4,15 +4,18 @@ import styles from "./ImageUploader.module.scss";
 
 const ImageUploader = forwardRef(
   ({ label, multiple = false, max = 5, onChange, existing = [] }, ref) => {
-    const [previews, setPreviews] = useState(existing);
+    const [previews, setPreviews] = useState([
+      ...existing.map((url) => ({ url, existing: true })),
+    ]);
+    const [deleted, setDeleted] = useState([]);
     const fileInputRef = useRef();
 
     const handleFiles = (files) => {
       const selected = Array.from(files);
-
       const newPreviews = selected.map((file) => ({
         file,
         url: URL.createObjectURL(file),
+        existing: false,
       }));
 
       const combined = multiple
@@ -20,10 +23,10 @@ const ImageUploader = forwardRef(
         : newPreviews;
 
       setPreviews(combined);
-      onChange(
-        multiple ? combined.map((p) => p.file) : combined[0]?.file || null
-      );
+      triggerChange(combined, deleted);
     };
+
+    console.log(existing);
 
     const handleDrop = (e) => {
       e.preventDefault();
@@ -32,15 +35,35 @@ const ImageUploader = forwardRef(
 
     const handleRemove = (index) => {
       const updated = [...previews];
-      updated.splice(index, 1);
+      const removed = updated.splice(index, 1)[0];
+
+      if (removed.existing) {
+        setDeleted((prev) => [...prev, removed.url]);
+        triggerChange(updated, [...deleted, removed.url]);
+      } else {
+        triggerChange(updated, deleted);
+      }
+
       setPreviews(updated);
-      onChange(multiple ? updated.map((p) => p.file) : null);
+    };
+
+    const triggerChange = (currentPreviews, deletedList) => {
+      console.log(currentPreviews);
+      const files = currentPreviews
+        .filter((p) => !p.existing)
+        .map((p) => p.file);
+
+      onChange({
+        files,
+        deleted: deletedList,
+      });
     };
 
     useImperativeHandle(ref, () => ({
       clear() {
         setPreviews([]);
-        onChange(multiple ? [] : null);
+        setDeleted([]);
+        triggerChange([], []);
         if (fileInputRef.current) {
           fileInputRef.current.value = null;
         }
@@ -57,7 +80,7 @@ const ImageUploader = forwardRef(
         <div className={styles.previewWrapper}>
           {previews.map((preview, index) => (
             <div key={index} className={styles.preview}>
-              <img src={preview.url || preview} alt="preview" />
+              <img src={preview.url} alt="preview" />
               <button
                 type="button"
                 onClick={() => handleRemove(index)}

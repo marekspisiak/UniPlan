@@ -1,20 +1,16 @@
 import e from "express";
 import prisma from "../../prisma/client.js";
+import path from "path";
+import fs from "fs"; // a ak ešte nemáš, aj fs budeš potrebovať
+
+const toArray = (val) => (Array.isArray(val) ? val : val ? [val] : []);
 
 export const createEvent = async (req, res) => {
   try {
-    const {
-      title,
-      description,
-      date,
-      startTime,
-      endTime,
-      location,
-      capacity,
-      categoryIds,
-      moderators,
-    } = req.body;
-    console.log(moderators);
+    const { title, description, date, startTime, endTime, location, capacity } =
+      req.body;
+    const categoryIds = toArray(req.body.categoryIds);
+    const moderators = toArray(req.body.moderators);
 
     !Array.isArray(categoryIds) ? console.log("Názov akcie je prázdny") : null;
 
@@ -202,6 +198,9 @@ export const getEventById = async (req, res) => {
       where: { id: eventId },
       include: {
         categories: true,
+        gallery: true,
+        participants: true,
+        subscribers: true,
         organizer: {
           select: {
             id: true,
@@ -234,7 +233,6 @@ export const getEventById = async (req, res) => {
             email: true,
           },
         },
-        gallery: true,
       },
     });
 
@@ -370,11 +368,17 @@ export const updateEvent = async (req, res) => {
     endTime,
     location,
     capacity,
-    categoryIds,
-    moderatorIds,
-    removedGalleryImages = [], // URLs to delete
+    mainImage,
+
     mainImageChanged,
   } = req.body;
+
+  const categoryIds = toArray(req.body.categoryIds);
+  const moderators = toArray(req.body.moderators);
+  const deletedGallery = toArray(req.body.deletedGallery);
+
+  console.log(req.body);
+  console.log(mainImage);
 
   try {
     const event = await prisma.event.findUnique({
@@ -385,20 +389,26 @@ export const updateEvent = async (req, res) => {
     if (!event) return res.status(404).json({ message: "Event nenájdený." });
 
     // Remove old gallery images if requested
-    if (removedGalleryImages.length > 0) {
-      const toRemove = event.gallery.filter((img) =>
-        removedGalleryImages.includes(img.url)
+    if (deletedGallery.length > 0) {
+      // Relatívne cesty s / pre porovnanie v DB
+      const relativePaths = deletedGallery.map((fullUrl) =>
+        new URL(fullUrl).pathname.replace(/^\/*/, "/")
       );
 
+      // Odstrániť z DB
       await prisma.eventImage.deleteMany({
         where: {
-          id: { in: toRemove.map((img) => img.id) },
+          url: { in: relativePaths },
         },
       });
 
-      toRemove.forEach((img) => {
-        const filePath = path.join("uploads", img.url);
-        if (fs.existsSync(filePath)) fs.unlinkSync(filePath);
+      // Odstrániť zo súborového systému
+      relativePaths.forEach((urlPath) => {
+        const pathWithoutLeadingSlash = urlPath.replace(/^\/+/, ""); // napr. 'uploads/events/xyz.png'
+        const filePath = path.join(pathWithoutLeadingSlash);
+        if (fs.existsSync(filePath)) {
+          fs.unlinkSync(filePath);
+        }
       });
     }
 
@@ -411,14 +421,30 @@ export const updateEvent = async (req, res) => {
     await prisma.eventImage.createMany({ data: galleryData });
 
     // Main image handling
-    let mainImageUrl = event.mainImage;
-    if (mainImageChanged === "true" && req.files?.mainImage?.[0]) {
-      if (mainImageUrl) {
-        const oldPath = path.join("uploads", mainImageUrl);
-        if (fs.existsSync(oldPath)) fs.unlinkSync(oldPath);
+    let mainImageUrl = event.mainImage || null;
+
+    if (mainImageChanged === "true") {
+      // Ak existovala stará fotka, zmažeme ju zo systému
+      if (event.mainImage) {
+        const oldRelativePath = event.mainImage.replace(/^\/+/, ""); // odstráni leading slash
+        const oldPath = path.join("uploads", oldRelativePath); // zloží cestu
+
+        if (fs.existsSync(oldPath)) {
+          fs.unlinkSync(oldPath);
+        }
       }
-      mainImageUrl = "/uploads/events/" + req.files.mainImage[0].filename;
+
+      // Ak je nahratá nová fotka → nastavíme novú cestu
+      console.log("mainImageChanged === true");
+      console.log(req.files);
+      if (req.files?.mainImage?.[0]) {
+        mainImageUrl = "/uploads/events/" + req.files.mainImage[0].filename;
+      } else {
+        // Ak nie je nahratá žiadna → vymažeme aj z DB
+        mainImageUrl = null;
+      }
     }
+    console.log(moderators);
 
     // Update event
     const updatedEvent = await prisma.event.update({
@@ -436,7 +462,7 @@ export const updateEvent = async (req, res) => {
           set: categoryIds.map((id) => ({ id: parseInt(id) })),
         },
         moderators: {
-          set: moderatorIds.map((id) => ({ id: parseInt(id) })),
+          set: moderators.map((id) => ({ id: parseInt(id) })),
         },
       },
     });

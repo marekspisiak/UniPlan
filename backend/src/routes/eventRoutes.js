@@ -11,6 +11,7 @@ import {
   updateEvent,
 } from "../controllers/eventController.js";
 import { eventUpload } from "../middleware/uploadEventMedia.js";
+import { authorizeEventEditor } from "../middleware/authorizeEventEditor.js";
 
 const router = express.Router();
 
@@ -24,6 +25,7 @@ router.post("/:id/unsubscribe", protectVerified, unsubscribeFromEvent);
 router.put(
   "/:id/edit",
   protectVerified,
+  authorizeEventEditor,
   eventUpload,
   updateEvent // napríklad tá funkcia čo si predtým robil
 );

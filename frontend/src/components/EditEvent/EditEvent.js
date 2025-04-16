@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import EventForm from "../../components/EventForm/EventForm";
 
-const EditEvent = () => {
-  const { id } = useParams();
+const EditEvent = ({ eventId }) => {
   const navigate = useNavigate();
+  console.log(eventId);
   const [initialData, setInitialData] = useState(null);
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
@@ -13,12 +13,13 @@ const EditEvent = () => {
     const fetchEvent = async () => {
       try {
         const token = localStorage.getItem("token");
-        const res = await fetch(`http://localhost:5000/api/events/${id}`, {
+        const res = await fetch(`http://localhost:5000/api/events/${eventId}`, {
           headers: {
             Authorization: `Bearer ${token}`,
           },
         });
         const data = await res.json();
+        console.log(data);
         if (!res.ok)
           throw new Error(data.message || "Chyba pri načítaní eventu");
 
@@ -32,15 +33,15 @@ const EditEvent = () => {
           capacity: data.capacity || "",
           categoryIds: data.categories.map((c) => c.id),
           moderators: data.moderators.map((m) => m.id),
-          mainImage: null,
-          gallery: [],
+          mainImage: data.mainImage,
+          gallery: data.gallery,
         });
       } catch (err) {
         setError(err.message);
       }
     };
     fetchEvent();
-  }, [id]);
+  }, [eventId]);
 
   const handleEdit = async (form) => {
     try {
@@ -50,34 +51,51 @@ const EditEvent = () => {
       const token = localStorage.getItem("token");
       const formData = new FormData();
 
+      console.log(form);
+
       Object.entries(form).forEach(([key, value]) => {
         if (key === "categoryIds" || key === "moderators") {
           value.forEach((v) => formData.append(key, v));
         } else if (key === "gallery") {
           value.forEach((img) => formData.append("gallery", img));
-        } else if (key === "mainImage" && value) {
-          formData.append("mainImage", value);
+        } else if (key === "deletedGallery" && Array.isArray(value)) {
+          value.forEach((url) => formData.append("deletedGallery", url));
+        } else if (key === "mainImage" && value?.[0] instanceof File) {
+          formData.append("mainImage", value[0]); // ⬅️ použijeme prvý súbor z poľa
         } else {
           formData.append(key, value);
         }
       });
 
-      const res = await fetch(`http://localhost:5000/api/events/${id}/edit`, {
-        method: "PUT",
-        headers: { Authorization: `Bearer ${token}` },
-        body: formData,
-      });
+      for (let [key, value] of formData.entries()) {
+        if (value instanceof File) {
+          console.log(`${key}: [file] ${value.name}`);
+        } else {
+          console.log(`${key}: ${value}`);
+        }
+      }
+
+      const res = await fetch(
+        `http://localhost:5000/api/events/${eventId}/edit`,
+        {
+          method: "PUT",
+          headers: { Authorization: `Bearer ${token}` },
+          body: formData,
+        }
+      );
 
       const data = await res.json();
       if (!res.ok) throw new Error(data.message || "Chyba pri editovaní");
 
       setSuccess("Akcia bola úspešne upravená.");
-      navigate(`/events/${id}`);
+      navigate(`/event/${eventId}`);
     } catch (err) {
       setError(err.message);
       throw err; // Rethrow the error to be caught by the parent component
     }
   };
+
+  console.log(initialData);
 
   return (
     <>

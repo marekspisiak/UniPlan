@@ -45,7 +45,7 @@ export const getUserProfile = async (req, res) => {
 
 export const updateUserInterests = async (req, res) => {
   const userId = req.user.id;
-  const { categoryIds } = req.body; // očakávame pole ID kategórií
+  const categoryIds = toArray(req.body.categoryIds);
 
   if (!Array.isArray(categoryIds)) {
     return res.status(400).json({ message: "Neplatné údaje." });

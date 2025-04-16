@@ -1,5 +1,5 @@
 import { useMediaQuery } from "react-responsive";
-import { useParams } from "react-router-dom";
+import { Navigate, useParams } from "react-router-dom";
 import MainLayout from "../../layouts/MainLayout";
 import MobileLayout from "../../layouts/MobileLayout";
 
@@ -9,14 +9,24 @@ import Recommendations from "../../modules/Recommendations/Recommendations";
 import ChatWindow from "../../modules/ChatWindow/ChatWindow";
 import Popup from "../../components/Popup/Popup";
 import EventDetail from "../../modules/EventDetail/EventDetail";
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 const Home = () => {
   const isMobile = useMediaQuery({ maxWidth: 767 });
   const { id: eventId } = useParams();
+  const [isOpen, setIsOpen] = useState(true);
+  const Navigate = useNavigate();
 
   const renderPopup = () =>
     eventId ? (
-      <Popup isOpen={true} onClose={() => window.history.back()}>
+      <Popup
+        isOpen={isOpen}
+        onClose={() => {
+          Navigate("/");
+          setIsOpen(false);
+        }}
+      >
         <EventDetail eventId={parseInt(eventId)} />
       </Popup>
     ) : null;

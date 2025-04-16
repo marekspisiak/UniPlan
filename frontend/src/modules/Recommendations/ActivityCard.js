@@ -6,7 +6,6 @@ import EventDetail from "../EventDetail/EventDetail";
 
 const ActivityCard = ({ activity }) => {
   const [isOpen, setIsOpen] = useState(false);
-  console.log(activity);
   return (
     <Card className={styles.card}>
       <Card.Body>

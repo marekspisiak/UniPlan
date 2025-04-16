@@ -61,7 +61,7 @@
 .gallery {
   display: flex;
   flex-wrap: wrap;
-  gap: 15px;
+  gap: 10px;
   margin: 1rem 0;
   justify-content: start;
   overflow: hidden;
@@ -70,16 +70,16 @@
 .galleryImageWrapper {
   position: relative;
   display: flex;
-  width: 100px;
-  height: 100px;
+  width: 50px;
+  height: 50px;
   overflow: hidden;
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .galleryImage {
-  width: 100px;
-  height: 100px;
+  width: 50px;
+  height: 50px;
   object-fit: cover;
   border-radius: 8px;
   cursor: pointer;
@@ -117,5 +117,47 @@
 
   &:hover {
     background-color: #f0f0f0;
+  }
+}
+
+.editButton {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  background-color: white;
+  border: 1px solid #ccc;
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+
+  &:hover {
+    background-color: #f0f0f0;
+  }
+
+  &::after {
+    content: "Upraviť";
+    position: absolute;
+    top: 100%;
+    right: 0;
+    transform: translateY(4px);
+    background: black;
+    color: white;
+    padding: 2px 6px;
+    font-size: 0.7rem;
+    border-radius: 4px;
+    opacity: 0;
+    white-space: nowrap;
+    pointer-events: none;
+    transition: opacity 0.2s;
+  }
+
+  &:hover::after {
+    opacity: 1;
   }
 }

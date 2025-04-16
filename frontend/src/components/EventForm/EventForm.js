@@ -4,6 +4,7 @@ import CategoryMultiSelect from "../CategoryMultiSelect/CategoryMultiSelect";
 import ImageUploader from "../ImageUploader/ImageUploader";
 import ModeratorSelector from "../ModeratorSelector/ModeratorSelector";
 import styles from "./EventForm.module.scss";
+import { Link } from "react-router-dom";
 
 const EventForm = ({
   initialData = {},
@@ -24,10 +25,13 @@ const EventForm = ({
     moderators: [],
     mainImage: null,
     gallery: [],
+    deletedGallery: [],
+    mainImageChanged: false,
     ...initialData,
   });
 
   console.log(form);
+  console.log(form.deletedGallery);
 
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
@@ -36,7 +40,7 @@ const EventForm = ({
 
   useEffect(() => {
     if (initialData) setForm((prev) => ({ ...prev, ...initialData }));
-  }, []);
+  }, [initialData]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -65,11 +69,14 @@ const EventForm = ({
         moderators: [],
         mainImage: null,
         gallery: [],
+        deletedGallery: [],
       });
     } catch (err) {
       setError(err.message || "Chyba pri ukladaní eventu.");
     }
   };
+
+  console.log(form);
 
   return (
     <div className={styles.eventForm}>
@@ -177,21 +184,47 @@ const EventForm = ({
         <ImageUploader
           ref={mainImageRef}
           label="Profilová fotka (nepovinná)"
-          onChange={(file) => setForm((prev) => ({ ...prev, mainImage: file }))}
+          onChange={({ files }) => {
+            setForm((prev) => ({
+              ...prev,
+              mainImage: files,
+              mainImageChanged: true,
+            }));
+          }}
           multiple={false}
+          existing={
+            initialData.mainImage
+              ? [`http://localhost:5000${initialData.mainImage}`]
+              : []
+          }
         />
 
         <ImageUploader
           ref={galleryRef}
           label="Galéria (max 5 fotiek)"
-          onChange={(files) => setForm((prev) => ({ ...prev, gallery: files }))}
+          onChange={({ files, deleted }) =>
+            setForm((prev) => ({
+              ...prev,
+              gallery: files,
+              deletedGallery: deleted,
+            }))
+          }
           multiple
           max={5}
+          existing={
+            initialData.gallery?.map((g) => `http://localhost:5000${g.url}`) ||
+            []
+          }
         />
 
         <Button type="submit" variant="primary" className="w-100">
           {submitLabel}
         </Button>
+        <Link to="/" className="text-decoration-none">
+          <Button type="submit" variant="danger" className="w-100 mt-2">
+            Zrušiť
+          </Button>
+        </Link>
       </Form>
     </div>
   );

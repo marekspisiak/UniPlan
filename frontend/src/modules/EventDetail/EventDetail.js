@@ -7,6 +7,7 @@ import "react-photo-view/dist/react-photo-view.css";
 import { useState, useEffect } from "react";
 import { useAuth } from "../../context/AuthContext";
 import { OverlayTrigger, Tooltip } from "react-bootstrap";
+import { useNavigate } from "react-router-dom";
 
 const EventDetail = ({ eventId }) => {
   const { user } = useAuth();
@@ -14,6 +15,9 @@ const EventDetail = ({ eventId }) => {
   const [loading, setLoading] = useState(true);
   const [message, setMessage] = useState(null);
   const [error, setError] = useState(null);
+  const navigate = useNavigate();
+
+  console.log("wtf");
 
   const fetchEvent = async () => {
     try {
@@ -140,10 +144,14 @@ const EventDetail = ({ eventId }) => {
   } = event;
 
   console.log(event);
+  console.log("wtf");
 
   const occupied = participants.length;
   const available = capacity ? capacity - occupied : null;
   const isParticipant = participants.some((p) => p.id === user?.id);
+
+  const isOrganizer = event.organizer?.id === user?.id;
+  const isModerator = event.moderators?.some((m) => m.id === user?.id);
 
   return (
     <div className={styles.eventDetails}>
@@ -164,6 +172,7 @@ const EventDetail = ({ eventId }) => {
       )}
       <div className="d-flex flex-row justify-content-start align-items-center w-100">
         <div className={styles.title}>{title}</div>
+
         <OverlayTrigger
           placement="top"
           overlay={<Tooltip id="copy-tooltip">Skopírovať odkaz</Tooltip>}
@@ -178,17 +187,31 @@ const EventDetail = ({ eventId }) => {
             📋
           </button>
         </OverlayTrigger>
+        {isOrganizer || isModerator ? (
+          <Button
+            variant="outline-secondary"
+            size="sm"
+            onClick={() => navigate(`/edit-event/${event.id}`)}
+            className="ms-auto "
+          >
+            ✏️ Upraviť
+          </Button>
+        ) : (
+          ""
+        )}
       </div>
-      <div className="d-flex justify-content-between align-items-center mb-2">
-        <div className={styles.tags}>
-          {event.categories.map((cat) => (
-            <span key={cat.id} className={styles.tag}>
-              <span className={styles.tagIcon}>{cat.icon}</span>
-              {cat.label || cat.name}
-            </span>
-          ))}
+      {event.categories.length > 0 && (
+        <div className="d-flex justify-content-between align-items-center ">
+          <div className={styles.tags}>
+            {event.categories.map((cat) => (
+              <span key={cat.id} className={styles.tag}>
+                <span className={styles.tagIcon}>{cat.icon}</span>
+                {cat.label || cat.name}
+              </span>
+            ))}
+          </div>
         </div>
-      </div>
+      )}
 
       <div className="d-flex fex-row justify-content-between align-items-start gap-2 w-100">
         <div className={styles.details}>
