@@ -25,6 +25,7 @@
   object-fit: cover;
   z-index: 1;
   border-radius: 10px;
+  cursor: pointer;
 }
 
 .title {
@@ -33,7 +34,7 @@
   font-weight: bold;
   z-index: 2;
 
-  padding: 10px 0px;
+  padding: 1px 0px;
 }
 
 .title:first-letter {
@@ -60,8 +61,20 @@
 .gallery {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
+  gap: 15px;
   margin: 1rem 0;
+  justify-content: start;
+  overflow: hidden;
+}
+
+.galleryImageWrapper {
+  position: relative;
+  display: flex;
+  width: 100px;
+  height: 100px;
+  overflow: hidden;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 
 .galleryImage {
@@ -73,6 +86,22 @@
   transition: transform 0.2s ease;
 
   &:hover {
-    transform: scale(1.05);
+    transform: scale(1.5);
   }
+}
+
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.tag {
+  background-color: #e0f0ff;
+  color: #0077cc;
+  font-size: 0.7rem;
+  padding: 0.3rem 0.7rem;
+  border-radius: 20px;
+  border: 1px solid #b3daff;
 }

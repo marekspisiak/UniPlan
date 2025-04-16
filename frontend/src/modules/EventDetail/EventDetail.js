@@ -103,14 +103,30 @@ const EventDetail = ({ eventId }) => {
     <div className={styles.eventDetails}>
       {mainImage && (
         <div className={styles.header}>
-          <img
-            src={`http://localhost:5000${mainImage}`}
-            alt={title}
-            className={styles.mainImage}
-          />
+          {mainImage && (
+            <PhotoProvider>
+              <PhotoView src={`http://localhost:5000${mainImage}`}>
+                <img
+                  src={`http://localhost:5000${mainImage}`}
+                  alt={title}
+                  className={styles.mainImage}
+                />
+              </PhotoView>
+            </PhotoProvider>
+          )}
         </div>
       )}
       <div className={styles.title}>{title}</div>
+      {event.categories && event.categories.length > 0 && (
+        <div className={styles.tags}>
+          {event.categories.map((cat) => (
+            <span key={cat.id} className={styles.tag}>
+              <span className={styles.tagIcon}>{cat.icon}</span>
+              {cat.label || cat.name}
+            </span>
+          ))}
+        </div>
+      )}
       <div className="d-flex fex-row justify-content-between align-items-start gap-2 w-100">
         <div className={styles.details}>
           <div>
@@ -145,7 +161,7 @@ const EventDetail = ({ eventId }) => {
                 users={moderators}
                 size="mini"
                 interactive
-                maxVisible={2}
+                maxVisible={4}
                 header="Moderátori"
               ></UserAvatarList>
             )}
@@ -156,18 +172,20 @@ const EventDetail = ({ eventId }) => {
         </div>
       </div>
 
-      <div className="my-2">{description}</div>
+      <div className=" my-2">{description}</div>
       {gallery.length > 0 && (
         <PhotoProvider>
           <div className={styles.gallery}>
             {gallery.map((img, index) => (
-              <PhotoView key={index} src={`http://localhost:5000${img.url}`}>
-                <img
-                  src={`http://localhost:5000${img.url}`}
-                  alt={`gallery-${index}`}
-                  className={styles.galleryImage}
-                />
-              </PhotoView>
+              <div className={styles.galleryImageWrapper}>
+                <PhotoView key={index} src={`http://localhost:5000${img.url}`}>
+                  <img
+                    src={`http://localhost:5000${img.url}`}
+                    alt={`gallery-${index}`}
+                    className={styles.galleryImage}
+                  />
+                </PhotoView>
+              </div>
             ))}
           </div>
         </PhotoProvider>
