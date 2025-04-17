@@ -13,10 +13,15 @@ const CreateEvent = () => {
     try {
       const token = localStorage.getItem("token");
       const formData = new FormData();
+      console.log(form);
 
       Object.entries(form).forEach(([key, value]) => {
-        if (key === "categoryIds" || key === "moderators") {
+        if (key === "categoryIds") {
           value.forEach((v) => formData.append(key, v));
+        } else if (key === "moderators") {
+          value.forEach((mod) => {
+            formData.append("moderators", JSON.stringify(mod));
+          });
         } else if (key === "gallery") {
           value.forEach((img) => formData.append("gallery", img));
         } else if (key === "mainImage" && value) {

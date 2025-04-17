@@ -1,11 +1,13 @@
 generator client {
   provider = "prisma-client-js"
+
 }
 
 datasource db {
   provider = "mysql"
   url      = env("DATABASE_URL")
 }
+
 
 model EmailVerificationToken {
   id        Int      @id @default(autoincrement())
@@ -29,10 +31,11 @@ model User {
   lastVerifiedAt     DateTime?
   verificationTokens EmailVerificationToken[]
   events             Event[]                  @relation("UserEvents")
-  moderatedEvents    Event[]                  @relation("EventModerators")
   interests          Category[]               @relation("UserInterests")
   joinedEvents Event[] @relation("EventParticipants")
   subscribedEvents Event[] @relation("EventSubscribers")  
+
+  moderatorIn EventModerator[]
 
 }
 
@@ -48,15 +51,17 @@ model Event {
   mainImage   String?
   gallery     EventImage[]
   createdAt   DateTime @default(now())
-    seriesId    String   @default(uuid()) // 👈 generuje UUID automaticky
+
 
   // VZŤAHY
-  categories  Category[] @relation("EventCategories")
-  organizer   User       @relation("UserEvents", fields: [organizerId], references: [id])
-  organizerId Int
-  moderators  User[]     @relation("EventModerators")
-  participants User[] @relation("EventParticipants")
-  subscribers User[] @relation("EventSubscribers")
+  seriesId     String
+  series       EventSeries @relation(fields: [seriesId], references: [id])
+  categories   Category[] @relation("EventCategories")
+  organizer    User       @relation("UserEvents", fields: [organizerId], references: [id])
+  organizerId  Int
+  participants User[]     @relation("EventParticipants")
+  subscribers  User[]     @relation("EventSubscribers")
+
 }
 
 
@@ -77,3 +82,27 @@ model EventImage {
 
   @@index([eventId], map: "EventImage_eventId_fkey")
 }
+
+model EventModerator {
+  id                   Int      @id @default(autoincrement())
+  userId               Int
+  user                 User     @relation(fields: [userId], references: [id])
+
+  seriesId             String
+  series               EventSeries @relation("ModeratorSeries", fields: [seriesId], references: [id])
+
+  canEditEvent         Boolean @default(false)
+  canManageParticipants Boolean @default(false)
+  canManageSubscribers  Boolean @default(false)
+  canManageModerators   Boolean @default(false)
+  canRepostEvent        Boolean @default(false)
+
+  @@unique([seriesId, userId])
+}
+
+model EventSeries {
+  id         String            @id @default(uuid())
+  events     Event[]
+  moderators EventModerator[] @relation("ModeratorSeries") // ✅ sem to patrí
+}
+

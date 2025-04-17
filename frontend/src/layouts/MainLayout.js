@@ -9,15 +9,25 @@ const MainLayout = ({ left, center, right }) => {
       <Header />
       <Container fluid className={styles.mainLayout}>
         <Row>
-          <Col xs={12} md={3} className={styles.leftPanel}>
-            {left}
-          </Col>
-          <Col xs={12} md={6} className={styles.centerPanel}>
+          {left && (
+            <Col xs={12} md={3} className={styles.leftPanel}>
+              {left}
+            </Col>
+          )}
+          <Col
+            xs={12}
+            md={left && right ? 6 : 9}
+            className={`${styles.centerPanel} ${
+              !left && !right ? styles.centered : ""
+            }`}
+          >
             {center}
           </Col>
-          <Col xs={12} md={3} className={styles.rightPanel}>
-            {right}
-          </Col>
+          {right && (
+            <Col xs={12} md={3} className={styles.rightPanel}>
+              {right}
+            </Col>
+          )}
         </Row>
       </Container>
       <Footer />

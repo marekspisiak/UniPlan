@@ -2,17 +2,25 @@ import e from "express";
 import prisma from "../../prisma/client.js";
 import path from "path";
 import fs from "fs"; // a ak ešte nemáš, aj fs budeš potrebovať
-
-const toArray = (val) => (Array.isArray(val) ? val : val ? [val] : []);
+import { toArray } from "../utils/helpers.js"; // importuj túto funkciu z utils
 
 export const createEvent = async (req, res) => {
   try {
-    const { title, description, date, startTime, endTime, location, capacity } =
-      req.body;
-    const categoryIds = toArray(req.body.categoryIds);
-    const moderators = toArray(req.body.moderators);
+    const {
+      title,
+      description,
+      date,
+      startTime,
+      endTime,
+      location,
+      capacity,
+      seriesId,
+    } = req.body;
 
-    !Array.isArray(categoryIds) ? console.log("Názov akcie je prázdny") : null;
+    const categoryIds = toArray(req.body.categoryIds);
+    const moderatorsRaw = toArray(req.body.moderators);
+    const moderators = moderatorsRaw.map((mod) => JSON.parse(mod));
+    console.log(moderators);
 
     // Validácia
     if (
@@ -40,8 +48,19 @@ export const createEvent = async (req, res) => {
       );
     }
 
-    // Vytvorenie eventu
+    // 🌱 Vytvorenie alebo získanie série
+    const actualSeriesId = seriesId || crypto.randomUUID();
 
+    // Ak seriesId ešte neexistuje, vytvor záznam v EventSeries
+    if (!seriesId) {
+      await prisma.eventSeries.create({
+        data: {
+          id: actualSeriesId,
+        },
+      });
+    }
+
+    // 📅 Vytvorenie samotného eventu
     const newEvent = await prisma.event.create({
       data: {
         title,
@@ -52,28 +71,43 @@ export const createEvent = async (req, res) => {
         location,
         capacity: capacity ? parseInt(capacity) : null,
         mainImage: mainImageUrl,
+        series: {
+          connect: { id: actualSeriesId },
+        },
+
         gallery: galleryUrls.length
           ? {
               create: galleryUrls.map((url) => ({ url })),
             }
           : undefined,
         organizer: {
-          connect: { id: req.user.id }, // 👈 TOTO je kľúčové
+          connect: { id: req.user.id },
         },
         categories: {
           connect: categoryIds.map((id) => ({ id: parseInt(id) })),
         },
-        moderators: moderators
-          ? {
-              connect: moderators.map((id) => ({ id: parseInt(id) })),
-            }
-          : undefined,
       },
       include: {
         categories: true,
-        moderators: true,
+        series: true,
       },
     });
+
+    // 👥 Priradenie moderátorov k sérii (ak to nie je opakovanie)
+    if (moderators.length) {
+      await prisma.eventModerator.createMany({
+        data: moderators.map((mod) => ({
+          userId: mod.id,
+          seriesId: actualSeriesId,
+          canEditEvent: mod.canEditEvent,
+          canManageParticipants: mod.canManageParticipants,
+          canManageSubscribers: mod.canManageSubscribers,
+          canManageModerators: mod.canManageModerators,
+          canRepostEvent: mod.canRepostEvent,
+        })),
+        skipDuplicates: true, // pre prípad, že sa znovu vytvára event zo série
+      });
+    }
 
     res.status(201).json(newEvent);
   } catch (err) {
@@ -112,17 +146,36 @@ export const getAllEvents = async (req, res) => {
             email: true,
           },
         },
-        moderators: {
-          select: {
-            id: true,
-            firstName: true,
-            lastName: true,
+        series: {
+          include: {
+            moderators: {
+              include: {
+                user: {
+                  select: {
+                    id: true,
+                    firstName: true,
+                    lastName: true,
+                    email: true,
+                  },
+                },
+              },
+            },
           },
         },
       },
     });
 
-    res.json(events);
+    // Ak chceš späť kompatibilitu (napr. `event.moderators`), môžeš si to premapovať:
+    const formatted = events.map((event) => ({
+      ...event,
+      moderators:
+        event.series?.moderators?.map((mod) => ({
+          ...mod.user,
+          ...mod, // pridá aj permissions
+        })) || [],
+    }));
+
+    res.json(formatted);
   } catch (err) {
     console.error("Chyba pri načítaní eventov:", err);
     res.status(500).json({ message: "Chyba pri načítaní eventov." });
@@ -209,12 +262,20 @@ export const getEventById = async (req, res) => {
             email: true,
           },
         },
-        moderators: {
-          select: {
-            id: true,
-            firstName: true,
-            lastName: true,
-            email: true,
+        series: {
+          include: {
+            moderators: {
+              include: {
+                user: {
+                  select: {
+                    id: true,
+                    firstName: true,
+                    lastName: true,
+                    email: true,
+                  },
+                },
+              },
+            },
           },
         },
         participants: {
@@ -246,10 +307,12 @@ export const getEventById = async (req, res) => {
       profileImageUrl: `http://localhost:5000/uploads/profile/user_${user.id}.png`,
     });
 
+    console.log(event);
+
     res.json({
       ...event,
       organizer: addProfileUrl(event.organizer),
-      moderators: event.moderators.map(addProfileUrl),
+      moderators: event.series.moderators.map(addProfileUrl),
       participants: event.participants.map(addProfileUrl),
     });
   } catch (err) {
@@ -358,7 +421,7 @@ export const unsubscribeFromEvent = async (req, res) => {
   }
 };
 
-export const updateEvent = async (req, res) => {
+export const updateEventDetails = async (req, res) => {
   const eventId = parseInt(req.params.id);
   const {
     title,
@@ -369,16 +432,15 @@ export const updateEvent = async (req, res) => {
     location,
     capacity,
     mainImage,
-
     mainImageChanged,
   } = req.body;
 
-  const categoryIds = toArray(req.body.categoryIds);
-  const moderators = toArray(req.body.moderators);
-  const deletedGallery = toArray(req.body.deletedGallery);
+  console.log("kategorie");
 
-  console.log(req.body);
-  console.log(mainImage);
+  console.log(req.body.categoryIds);
+
+  const categoryIds = toArray(req.body.categoryIds);
+  const deletedGallery = toArray(req.body.deletedGallery);
 
   try {
     const event = await prisma.event.findUnique({
@@ -388,31 +450,24 @@ export const updateEvent = async (req, res) => {
 
     if (!event) return res.status(404).json({ message: "Event nenájdený." });
 
-    // Remove old gallery images if requested
+    // Vymazanie starej galérie
     if (deletedGallery.length > 0) {
-      // Relatívne cesty s / pre porovnanie v DB
       const relativePaths = deletedGallery.map((fullUrl) =>
-        new URL(fullUrl).pathname.replace(/^\/*/, "/")
+        new URL(fullUrl).pathname.replace(/^\/+/, "/")
       );
 
-      // Odstrániť z DB
       await prisma.eventImage.deleteMany({
-        where: {
-          url: { in: relativePaths },
-        },
+        where: { url: { in: relativePaths } },
       });
 
-      // Odstrániť zo súborového systému
       relativePaths.forEach((urlPath) => {
-        const pathWithoutLeadingSlash = urlPath.replace(/^\/+/, ""); // napr. 'uploads/events/xyz.png'
+        const pathWithoutLeadingSlash = urlPath.replace(/^\/+/, "");
         const filePath = path.join(pathWithoutLeadingSlash);
-        if (fs.existsSync(filePath)) {
-          fs.unlinkSync(filePath);
-        }
+        if (fs.existsSync(filePath)) fs.unlinkSync(filePath);
       });
     }
 
-    // Handle new uploaded images
+    // Nové fotky galérie
     const newGalleryImages = req.files?.gallery || [];
     const galleryData = newGalleryImages.map((file) => ({
       url: "/uploads/events/" + file.filename,
@@ -420,33 +475,23 @@ export const updateEvent = async (req, res) => {
     }));
     await prisma.eventImage.createMany({ data: galleryData });
 
-    // Main image handling
+    // Main image
     let mainImageUrl = event.mainImage || null;
 
     if (mainImageChanged === "true") {
-      // Ak existovala stará fotka, zmažeme ju zo systému
       if (event.mainImage) {
-        const oldRelativePath = event.mainImage.replace(/^\/+/, ""); // odstráni leading slash
-        const oldPath = path.join("uploads", oldRelativePath); // zloží cestu
-
-        if (fs.existsSync(oldPath)) {
-          fs.unlinkSync(oldPath);
-        }
+        const oldRelativePath = event.mainImage.replace(/^\/+/, "");
+        const oldPath = path.join("uploads", oldRelativePath);
+        if (fs.existsSync(oldPath)) fs.unlinkSync(oldPath);
       }
 
-      // Ak je nahratá nová fotka → nastavíme novú cestu
-      console.log("mainImageChanged === true");
-      console.log(req.files);
       if (req.files?.mainImage?.[0]) {
         mainImageUrl = "/uploads/events/" + req.files.mainImage[0].filename;
       } else {
-        // Ak nie je nahratá žiadna → vymažeme aj z DB
         mainImageUrl = null;
       }
     }
-    console.log(moderators);
 
-    // Update event
     const updatedEvent = await prisma.event.update({
       where: { id: eventId },
       data: {
@@ -461,15 +506,49 @@ export const updateEvent = async (req, res) => {
         categories: {
           set: categoryIds.map((id) => ({ id: parseInt(id) })),
         },
-        moderators: {
-          set: moderators.map((id) => ({ id: parseInt(id) })),
-        },
       },
     });
 
     res.status(200).json(updatedEvent);
   } catch (err) {
-    console.error("Chyba pri úprave eventu:", err);
+    console.error("Chyba pri úprave detailov eventu:", err);
+    res.status(500).json({ message: "Chyba servera." });
+  }
+};
+
+export const updateEventModerators = async (req, res) => {
+  const eventId = parseInt(req.params.id);
+  const moderatorsRaw = toArray(req.body.moderators);
+
+  try {
+    const event = await prisma.event.findUnique({
+      where: { id: eventId },
+      include: { series: true },
+    });
+
+    if (!event) return res.status(404).json({ message: "Event nenájdený." });
+
+    const parsed = moderatorsRaw.map((m) => JSON.parse(m));
+
+    await prisma.eventModerator.deleteMany({
+      where: { seriesId: event.seriesId },
+    });
+
+    await prisma.eventModerator.createMany({
+      data: parsed.map((mod) => ({
+        userId: mod.id,
+        seriesId: event.seriesId,
+        canEditEvent: mod.canEditEvent,
+        canManageParticipants: mod.canManageParticipants,
+        canManageSubscribers: mod.canManageSubscribers,
+        canManageModerators: mod.canManageModerators,
+        canRepostEvent: mod.canRepostEvent,
+      })),
+    });
+
+    res.status(200).json({ message: "Moderátori aktualizovaní." });
+  } catch (err) {
+    console.error("Chyba pri úprave moderátorov:", err);
     res.status(500).json({ message: "Chyba servera." });
   }
 };

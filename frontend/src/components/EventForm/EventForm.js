@@ -39,7 +39,7 @@ const EventForm = ({
 
   useEffect(() => {
     if (initialData) setForm((prev) => ({ ...prev, ...initialData }));
-  }, [initialData]);
+  }, []);
 
   const handleChange = (e) => {
     const { name, value } = e.target;

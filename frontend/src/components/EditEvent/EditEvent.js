@@ -19,7 +19,6 @@ const EditEvent = ({ eventId }) => {
           },
         });
         const data = await res.json();
-        console.log(data);
         if (!res.ok)
           throw new Error(data.message || "Chyba pri načítaní eventu");
 
@@ -31,8 +30,8 @@ const EditEvent = ({ eventId }) => {
           endTime: data.endTime || "",
           location: data.location,
           capacity: data.capacity || "",
-          categoryIds: data.categories.map((c) => c.id),
-          moderators: data.moderators.map((m) => m.id),
+          categoryIds: data.categories.map((cat) => cat.id),
+          moderators: data.moderators,
           mainImage: data.mainImage,
           gallery: data.gallery,
           id: data.id,
@@ -55,14 +54,18 @@ const EditEvent = ({ eventId }) => {
       console.log(form);
 
       Object.entries(form).forEach(([key, value]) => {
-        if (key === "categoryIds" || key === "moderators") {
-          value.forEach((v) => formData.append(key, v));
+        if (key === "categoryIds") {
+          value.forEach((cat) => {
+            formData.append("categoryIds", cat); // ⬅️ iba id
+          });
+        } else if (key === "moderators") {
+          value.forEach((mod) => {
+            formData.append("moderators", JSON.stringify(mod)); // ⬅️ celý objekt
+          });
         } else if (key === "gallery") {
           value.forEach((img) => formData.append("gallery", img));
-        } else if (key === "deletedGallery" && Array.isArray(value)) {
-          value.forEach((url) => formData.append("deletedGallery", url));
-        } else if (key === "mainImage" && value?.[0] instanceof File) {
-          formData.append("mainImage", value[0]); // ⬅️ použijeme prvý súbor z poľa
+        } else if (key === "mainImage" && value) {
+          formData.append("mainImage", value[0]);
         } else {
           formData.append(key, value);
         }
@@ -77,7 +80,7 @@ const EditEvent = ({ eventId }) => {
       }
 
       const res = await fetch(
-        `http://localhost:5000/api/events/${eventId}/edit`,
+        `http://localhost:5000/api/events/${eventId}/edit-details`,
         {
           method: "PUT",
           headers: { Authorization: `Bearer ${token}` },

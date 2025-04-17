@@ -152,6 +152,7 @@ const EventDetail = ({ eventId }) => {
 
   const isOrganizer = event.organizer?.id === user?.id;
   const isModerator = event.moderators?.some((m) => m.id === user?.id);
+  console.log(capacity);
 
   return (
     <div className={styles.eventDetails}>
