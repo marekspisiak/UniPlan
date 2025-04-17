@@ -61,6 +61,7 @@ model Event {
   gallery       EventImage[]    
   createdAt     DateTime        @default(now())
   attendancyLimit Int?
+  allowRecurringAttendance Boolean @default(false)
 
   joinDaysBeforeStart Int
 

@@ -10,24 +10,25 @@ export const createEvent = async (req, res) => {
     const {
       title,
       description,
-      startDate,
-      endDate,
+      startDateTime,
+      endDateTime,
       repeatUntil,
       location,
       capacity,
       attendancyLimit,
       joinDaysBeforeStart,
       repeatDays,
+      allowRecurringParticipation,
     } = req.body;
 
-    console.log();
+    console.log(req.body);
 
     const categoryIds = toArray(req.body.categoryIds);
     const moderatorsRaw = toArray(req.body.moderators);
     const moderators = moderatorsRaw.map((mod) => JSON.parse(mod));
 
     // ✅ Validácia
-    if (!title || !startDate || !location) {
+    if (!title || !startDateTime || !location) {
       return res.status(400).json({ message: "Vyplň všetky povinné polia." });
     }
 
@@ -54,12 +55,13 @@ export const createEvent = async (req, res) => {
       data: {
         title,
         description,
-        startDate: new Date(startDate),
-        endDate: endDate ? new Date(endDate) : null,
+        startDate: new Date(startDateTime),
+        endDate: endDateTime ? new Date(endDateTime) : null,
         repeatUntil: repeatUntil ? new Date(repeatUntil) : null,
         location,
         capacity: capacity ? parseInt(capacity) : null,
         attendancyLimit: attendancyLimit ? parseInt(attendancyLimit) : null,
+        allowRecurringAttendance: allowRecurringParticipation === "true",
         joinDaysBeforeStart: joinDaysBeforeStart
           ? parseInt(joinDaysBeforeStart)
           : null,

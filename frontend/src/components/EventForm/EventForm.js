@@ -24,9 +24,10 @@ const EventForm = ({
     repeatInterval: 1,
     repeatDays: {},
     repeat: false,
+    allowRecurringParticipation: false,
+    maxAttendancesPerCycle: "",
     location: "",
     capacity: "",
-    attendancyLimit: "",
     joinDaysBeforeStart: "",
     categoryIds: [],
     moderators: [],
@@ -36,6 +37,8 @@ const EventForm = ({
     mainImageChanged: false,
     ...initialData,
   });
+
+  console.log(form);
 
   const [daysFromAPI, setDaysFromAPI] = useState([]);
   const [error, setError] = useState(null);
@@ -49,8 +52,6 @@ const EventForm = ({
       .then((data) => setDaysFromAPI(data))
       .catch((err) => console.error("Chyba pri načítaní dní", err));
   }, []);
-
-  console.log(daysFromAPI);
 
   useEffect(() => {
     if (initialData) setForm((prev) => ({ ...prev, ...initialData }));
@@ -88,14 +89,9 @@ const EventForm = ({
     try {
       const cleanedForm = {
         ...form,
-        categoryIds: form.categoryIds.map((cat) => cat.id),
         moderators: form.moderators.map((mod) => ({ ...mod, id: mod.id })),
-        startDateTime: new Date(
-          `${form.startDate}T${form.startTime}`
-        ).toISOString(),
-        endDateTime: form.endTime
-          ? new Date(`${form.startDate}T${form.endTime}`).toISOString()
-          : null,
+        startDateTime: `${form.startDate}T${form.startTime}`,
+        endDateTime: form.endTime ? `${form.startDate}T${form.endTime}` : null,
       };
 
       await onSubmit(cleanedForm);
@@ -111,7 +107,6 @@ const EventForm = ({
   return (
     <div className={styles.eventForm}>
       <h4 className={styles.heading}>{heading}</h4>
-
       {error && <Alert variant="danger">{error}</Alert>}
       {success && <Alert variant="success">{success}</Alert>}
 
@@ -220,6 +215,30 @@ const EventForm = ({
                 </div>
               </Form.Group>
             ))}
+
+            <Form.Group className="mb-3">
+              <Form.Check
+                type="checkbox"
+                label="Povoliť pravidelnú účasť"
+                name="allowRecurringParticipation"
+                checked={form.allowRecurringParticipation}
+                onChange={handleChange}
+              />
+            </Form.Group>
+
+            {form.allowRecurringParticipation && (
+              <Form.Group className="mb-3">
+                <Form.Label>
+                  Maximálny počet účastí na jedno opakovanie
+                </Form.Label>
+                <Form.Control
+                  type="number"
+                  name="maxAttendancesPerCycle"
+                  value={form.maxAttendancesPerCycle}
+                  onChange={handleChange}
+                />
+              </Form.Group>
+            )}
           </>
         )}
 
@@ -240,16 +259,6 @@ const EventForm = ({
             type="number"
             name="capacity"
             value={form.capacity}
-            onChange={handleChange}
-          />
-        </Form.Group>
-
-        <Form.Group className="mb-3">
-          <Form.Label>Limit účasti</Form.Label>
-          <Form.Control
-            type="number"
-            name="attendancyLimit"
-            value={form.attendancyLimit}
             onChange={handleChange}
           />
         </Form.Group>
@@ -287,13 +296,13 @@ const EventForm = ({
         <ImageUploader
           ref={mainImageRef}
           label="Profilová fotka (nepovinná)"
-          onChange={({ files }) => {
+          onChange={({ files }) =>
             setForm((prev) => ({
               ...prev,
               mainImage: files,
               mainImageChanged: true,
-            }));
-          }}
+            }))
+          }
           multiple={false}
           existing={
             initialData.mainImage

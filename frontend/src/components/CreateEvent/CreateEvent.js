@@ -18,10 +18,7 @@ const CreateEvent = () => {
 
       const entries = {
         ...form,
-        categoryIds: form.categoryIds.map((c) => c.id),
         moderators: form.moderators.map((mod) => JSON.stringify(mod)),
-        startDateTime: form.startDateTime,
-        endDateTime: form.endDateTime,
         repeatDays: repeatDaysJSON,
       };
 
