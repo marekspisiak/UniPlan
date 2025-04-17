@@ -1,13 +1,11 @@
 generator client {
   provider = "prisma-client-js"
-
 }
 
 datasource db {
   provider = "mysql"
   url      = env("DATABASE_URL")
 }
-
 
 model EmailVerificationToken {
   id        Int      @id @default(autoincrement())
@@ -21,6 +19,16 @@ model EmailVerificationToken {
   @@index([userId], map: "EmailVerificationToken_userId_fkey")
 }
 
+model Category {
+  id     Int      @id @default(autoincrement())
+  name   String   @unique
+  label  String
+  icon   String?
+  events Event[]  @relation("EventCategories")
+  users  User[]   @relation("UserInterests")
+  eventChanges EventChange[] @relation("ChangeCategories")
+}
+
 model User {
   id                 Int                      @id @default(autoincrement())
   email              String                   @unique
@@ -32,77 +40,111 @@ model User {
   verificationTokens EmailVerificationToken[]
   events             Event[]                  @relation("UserEvents")
   interests          Category[]               @relation("UserInterests")
-  joinedEvents Event[] @relation("EventParticipants")
-  subscribedEvents Event[] @relation("EventSubscribers")  
-
-  moderatorIn EventModerator[]
+  joinedEvents       EventOccurrence[]        @relation("OccurrenceParticipants")
+  joinedAttendancies EventDay[]  @relation("EventDayAttendancy")
+  moderatorIn        EventModerator[]         @relation("UserModerators")
+  createdEventChanges EventChange[]           @relation("CreatedBy")
+  updatedEventChanges EventChange[]           @relation("UpdatedBy")
 
 }
 
 model Event {
-  id          Int      @id @default(autoincrement())
-  title       String
-  description String?
-  date        DateTime
-  time        String
-  endTime     String?
-  location    String
-  capacity    Int?
-  mainImage   String?
-  gallery     EventImage[]
-  createdAt   DateTime @default(now())
+  id            Int             @id @default(autoincrement())
+  title         String
+  description   String?
+  startDate     DateTime
+  endDate       DateTime?
+  repeatUntil   DateTime?
+  location      String
+  capacity      Int?
+  mainImage     String?
+  gallery       EventImage[]    
+  createdAt     DateTime        @default(now())
+  attendancyLimit Int?
 
+  joinDaysBeforeStart Int
 
-  // VZŤAHY
-  seriesId     String
-  series       EventSeries @relation(fields: [seriesId], references: [id])
-  categories   Category[] @relation("EventCategories")
-  organizer    User       @relation("UserEvents", fields: [organizerId], references: [id])
-  organizerId  Int
-  participants User[]     @relation("EventParticipants")
-  subscribers  User[]     @relation("EventSubscribers")
+  categories    Category[]      @relation("EventCategories")
+  organizerId   Int
+  organizer     User            @relation("UserEvents", fields: [organizerId], references: [id])
+  moderators EventModerator[] @relation("EventModerators")
+  eventDays     EventDay[]      @relation("EventToEventDays")
+  eventOccurrences EventOccurrence[] @relation("EventToOccurrences")
+}
 
+model EventDay {
+  id                     Int                     @id @default(autoincrement())
+  eventId                Int
+  week                    Int
+  event                  Event                   @relation("EventToEventDays", fields: [eventId], references: [id])
+ dayId       Int
+  day         Day       @relation("DayToEventDays", fields: [dayId], references: [id]) // 👈 toto je kľúčové
+  eventChanges           EventChange[]
+  users      User[]      @relation("EventDayAttendancy")
 }
 
 
-model Category {
-  id     Int     @id @default(autoincrement())
-  name   String  @unique
-  label  String
-  icon   String?
-  events Event[] @relation("EventCategories")
-  users  User[]  @relation("UserInterests")
+model EventChange {
+  id                        Int                       @id @default(autoincrement())
+  eventDayId                Int?
+  eventDay                  EventDay?                 @relation(fields: [eventDayId], references: [id])
+  title                     String?
+  description               String?
+  startDate                 DateTime
+  endDate                   DateTime?
+  location                  String?
+  capacity                  Int?
+  mainImage                 String?
+  gallery                   EventChangeImage[]              
+  categories                Category[]                @relation("ChangeCategories")
+  joinDaysBeforeStart       Int
+
+  createdBy   Int?
+  updatedBy   Int?
+
+  createdByUser User? @relation("CreatedBy", fields: [createdBy], references: [id])
+  updatedByUser User? @relation("UpdatedBy", fields: [updatedBy], references: [id])
+
+   occurrences  EventOccurrence[] @relation("ChangeToOccurrences")
+}
+
+model EventOccurrence {
+  id            Int      @id @default(autoincrement())
+  eventId       Int
+  event         Event    @relation("EventToOccurrences", fields: [eventId], references: [id])
+  eventChangeId  Int?
+  eventChange    EventChange?   @relation("ChangeToOccurrences", fields: [eventChangeId], references: [id])
+  participants User[]       @relation("OccurrenceParticipants")
+}
+
+model Day {
+  id         Int         @id @default(autoincrement())
+  name       String      @unique
+  eventDays  EventDay[]  @relation("DayToEventDays")
 }
 
 model EventImage {
-  id      Int    @id @default(autoincrement())
-  url     String
-  eventId Int
-  event   Event  @relation(fields: [eventId], references: [id])
+  id       Int    @id @default(autoincrement())
+  url      String
+  eventId  Int
+  event    Event  @relation(fields: [eventId], references: [id])
+}
 
-  @@index([eventId], map: "EventImage_eventId_fkey")
+model EventChangeImage {
+  id              Int    @id @default(autoincrement())
+  url             String
+  eventChangeId   Int
+  eventChange     EventChange @relation(fields: [eventChangeId], references: [id])
 }
 
 model EventModerator {
-  id                   Int      @id @default(autoincrement())
+  id                   Int     @id @default(autoincrement())
   userId               Int
-  user                 User     @relation(fields: [userId], references: [id])
-
-  seriesId             String
-  series               EventSeries @relation("ModeratorSeries", fields: [seriesId], references: [id])
-
+  user                 User    @relation("UserModerators", fields: [userId], references: [id])
+  events Event[] @relation("EventModerators")
   canEditEvent         Boolean @default(false)
   canManageParticipants Boolean @default(false)
-  canManageSubscribers  Boolean @default(false)
-  canManageModerators   Boolean @default(false)
-  canRepostEvent        Boolean @default(false)
-
-  @@unique([seriesId, userId])
+  canManageAttendees   Boolean @default(false)
+  canManageModerators  Boolean @default(false)
+  canRepostEvent       Boolean @default(false)
 }
-
-model EventSeries {
-  id         String            @id @default(uuid())
-  events     Event[]
-  moderators EventModerator[] @relation("ModeratorSeries") // ✅ sem to patrí
-}
-

@@ -16,11 +16,18 @@ const EventForm = ({
   const [form, setForm] = useState({
     title: "",
     description: "",
-    date: "",
+    startDate: "",
     startTime: "",
     endTime: "",
+    endDate: "",
+    repeatUntil: "",
+    repeatInterval: 1,
+    repeatDays: {},
+    repeat: false,
     location: "",
     capacity: "",
+    attendancyLimit: "",
+    joinDaysBeforeStart: "",
     categoryIds: [],
     moderators: [],
     mainImage: null,
@@ -30,20 +37,47 @@ const EventForm = ({
     ...initialData,
   });
 
-  console.log(initialData);
-
+  const [daysFromAPI, setDaysFromAPI] = useState([]);
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
   const mainImageRef = useRef();
   const galleryRef = useRef();
 
   useEffect(() => {
+    fetch("/api/days")
+      .then((res) => res.json())
+      .then((data) => setDaysFromAPI(data))
+      .catch((err) => console.error("Chyba pri načítaní dní", err));
+  }, []);
+
+  console.log(daysFromAPI);
+
+  useEffect(() => {
     if (initialData) setForm((prev) => ({ ...prev, ...initialData }));
   }, []);
 
   const handleChange = (e) => {
-    const { name, value } = e.target;
-    setForm((prev) => ({ ...prev, [name]: value }));
+    const { name, value, type, checked } = e.target;
+    setForm((prev) => ({
+      ...prev,
+      [name]: type === "checkbox" ? checked : value,
+    }));
+  };
+
+  const handleCheckboxChange = (week, dayId) => {
+    setForm((prev) => {
+      const current = prev.repeatDays[week] || [];
+      const updated = current.includes(dayId)
+        ? current.filter((d) => d !== dayId)
+        : [...current, dayId];
+      return {
+        ...prev,
+        repeatDays: {
+          ...prev.repeatDays,
+          [week]: updated,
+        },
+      };
+    });
   };
 
   const handleSubmit = async (e) => {
@@ -52,30 +86,27 @@ const EventForm = ({
     setSuccess(null);
 
     try {
-      await onSubmit(form);
+      const cleanedForm = {
+        ...form,
+        categoryIds: form.categoryIds.map((cat) => cat.id),
+        moderators: form.moderators.map((mod) => ({ ...mod, id: mod.id })),
+        startDateTime: new Date(
+          `${form.startDate}T${form.startTime}`
+        ).toISOString(),
+        endDateTime: form.endTime
+          ? new Date(`${form.startDate}T${form.endTime}`).toISOString()
+          : null,
+      };
+
+      await onSubmit(cleanedForm);
+
       setSuccess(successMessage);
       mainImageRef.current?.clear();
       galleryRef.current?.clear();
-      setForm({
-        title: "",
-        description: "",
-        date: "",
-        startTime: "",
-        endTime: "",
-        location: "",
-        capacity: "",
-        categoryIds: [],
-        moderators: [],
-        mainImage: null,
-        gallery: [],
-        deletedGallery: [],
-      });
     } catch (err) {
       setError(err.message || "Chyba pri ukladaní eventu.");
     }
   };
-
-  console.log(form);
 
   return (
     <div className={styles.eventForm}>
@@ -84,7 +115,7 @@ const EventForm = ({
       {error && <Alert variant="danger">{error}</Alert>}
       {success && <Alert variant="success">{success}</Alert>}
 
-      <Form onSubmit={handleSubmit} encType="multipart/form-data">
+      <Form onSubmit={handleSubmit}>
         <Form.Group className="mb-3">
           <Form.Label>Názov</Form.Label>
           <Form.Control
@@ -111,8 +142,8 @@ const EventForm = ({
           <Form.Label>Dátum</Form.Label>
           <Form.Control
             type="date"
-            name="date"
-            value={form.date}
+            name="startDate"
+            value={form.startDate}
             onChange={handleChange}
             required
           />
@@ -130,7 +161,7 @@ const EventForm = ({
         </Form.Group>
 
         <Form.Group className="mb-3">
-          <Form.Label>Čas konca (nepovinné)</Form.Label>
+          <Form.Label>Čas konca (nepovinný)</Form.Label>
           <Form.Control
             type="time"
             name="endTime"
@@ -138,6 +169,59 @@ const EventForm = ({
             onChange={handleChange}
           />
         </Form.Group>
+
+        <Form.Group className="mb-3">
+          <Form.Check
+            type="checkbox"
+            label="Opakovať event"
+            name="repeat"
+            checked={form.repeat}
+            onChange={handleChange}
+          />
+        </Form.Group>
+
+        {form.repeat && (
+          <>
+            <Form.Group className="mb-3">
+              <Form.Label>Opakovať do</Form.Label>
+              <Form.Control
+                type="date"
+                name="repeatUntil"
+                value={form.repeatUntil}
+                onChange={handleChange}
+              />
+            </Form.Group>
+
+            <Form.Group className="mb-3">
+              <Form.Label>Interval opakovania (v týždňoch)</Form.Label>
+              <Form.Control
+                type="number"
+                name="repeatInterval"
+                min={1}
+                value={form.repeatInterval}
+                onChange={handleChange}
+              />
+            </Form.Group>
+
+            {Array.from({ length: form.repeatInterval }, (_, week) => (
+              <Form.Group key={week} className="mb-3">
+                <Form.Label>Dni v týždni – Týždeň {week + 1}</Form.Label>
+                <div className={styles.weekdayCheckboxes}>
+                  {daysFromAPI.map((day) => (
+                    <Form.Check
+                      key={day.id}
+                      inline
+                      label={day.name}
+                      type="checkbox"
+                      checked={form.repeatDays[week]?.includes(day.id) || false}
+                      onChange={() => handleCheckboxChange(week, day.id)}
+                    />
+                  ))}
+                </div>
+              </Form.Group>
+            ))}
+          </>
+        )}
 
         <Form.Group className="mb-3">
           <Form.Label>Miesto</Form.Label>
@@ -151,11 +235,31 @@ const EventForm = ({
         </Form.Group>
 
         <Form.Group className="mb-3">
-          <Form.Label>Kapacita (nepovinné)</Form.Label>
+          <Form.Label>Kapacita</Form.Label>
           <Form.Control
             type="number"
             name="capacity"
             value={form.capacity}
+            onChange={handleChange}
+          />
+        </Form.Group>
+
+        <Form.Group className="mb-3">
+          <Form.Label>Limit účasti</Form.Label>
+          <Form.Control
+            type="number"
+            name="attendancyLimit"
+            value={form.attendancyLimit}
+            onChange={handleChange}
+          />
+        </Form.Group>
+
+        <Form.Group className="mb-3">
+          <Form.Label>Koľko dní pred začiatkom sa možno prihlásiť</Form.Label>
+          <Form.Control
+            type="number"
+            name="joinDaysBeforeStart"
+            value={form.joinDaysBeforeStart}
             onChange={handleChange}
           />
         </Form.Group>
@@ -219,8 +323,9 @@ const EventForm = ({
         <Button type="submit" variant="primary" className="w-100">
           {submitLabel}
         </Button>
+
         <Link to={`/event/${initialData.id}`} className="text-decoration-none">
-          <Button type="submit" variant="danger" className="w-100 mt-2">
+          <Button type="button" variant="danger" className="w-100 mt-2">
             Zrušiť
           </Button>
         </Link>

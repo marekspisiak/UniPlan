@@ -1,6 +1,5 @@
-// CreateEvent.js
 import EventForm from "../../components/EventForm/EventForm";
-import { useState, useRef } from "react";
+import { useState } from "react";
 
 const CreateEvent = () => {
   const [success, setSuccess] = useState(null);
@@ -13,27 +12,40 @@ const CreateEvent = () => {
     try {
       const token = localStorage.getItem("token");
       const formData = new FormData();
-      console.log(form);
 
-      Object.entries(form).forEach(([key, value]) => {
-        if (key === "categoryIds") {
-          value.forEach((v) => formData.append(key, v));
-        } else if (key === "moderators") {
-          value.forEach((mod) => {
-            formData.append("moderators", JSON.stringify(mod));
-          });
-        } else if (key === "gallery") {
+      // repeatDays je už vo formáte: { 0: [1, 3], 1: [4] }
+      const repeatDaysJSON = JSON.stringify(form.repeatDays);
+
+      const entries = {
+        ...form,
+        categoryIds: form.categoryIds.map((c) => c.id),
+        moderators: form.moderators.map((mod) => JSON.stringify(mod)),
+        startDateTime: form.startDateTime,
+        endDateTime: form.endDateTime,
+        repeatDays: repeatDaysJSON,
+      };
+
+      console.log(entries);
+
+      Object.entries(entries).forEach(([key, value]) => {
+        if (key === "gallery" && Array.isArray(value)) {
           value.forEach((img) => formData.append("gallery", img));
+        } else if (key === "moderators") {
+          value.forEach((mod) => formData.append("moderators", mod));
         } else if (key === "mainImage" && value) {
-          formData.append("mainImage", value);
+          formData.append("mainImage", value[0]);
         } else {
-          formData.append(key, value);
+          if (value !== null && value !== undefined) {
+            formData.append(key, value);
+          }
         }
       });
 
       const res = await fetch("http://localhost:5000/api/events/create", {
         method: "POST",
-        headers: { Authorization: `Bearer ${token}` },
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
         body: formData,
       });
 
@@ -45,7 +57,7 @@ const CreateEvent = () => {
       setSuccess("Akcia bola úspešne vytvorená.");
     } catch (err) {
       setError(err.message);
-      throw err; // Rethrow the error to be caught by the parent component
+      throw err;
     }
   };
 

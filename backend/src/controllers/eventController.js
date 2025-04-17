@@ -3,44 +3,45 @@ import prisma from "../../prisma/client.js";
 import path from "path";
 import fs from "fs"; // a ak ešte nemáš, aj fs budeš potrebovať
 import { toArray } from "../utils/helpers.js"; // importuj túto funkciu z utils
+import { createOccurrenceIfNeeded } from "../utils/eventOccurrences.js";
 
 export const createEvent = async (req, res) => {
   try {
     const {
       title,
       description,
-      date,
-      startTime,
-      endTime,
+      startDate,
+      endDate,
+      repeatUntil,
       location,
       capacity,
-      seriesId,
+      attendancyLimit,
+      joinDaysBeforeStart,
+      repeatDays,
     } = req.body;
+
+    console.log();
 
     const categoryIds = toArray(req.body.categoryIds);
     const moderatorsRaw = toArray(req.body.moderators);
     const moderators = moderatorsRaw.map((mod) => JSON.parse(mod));
-    console.log(moderators);
 
-    // Validácia
-    if (
-      !title ||
-      !date ||
-      !startTime ||
-      !location ||
-      !Array.isArray(categoryIds) ||
-      categoryIds.length === 0
-    ) {
+    // ✅ Validácia
+    if (!title || !startDate || !location) {
       return res.status(400).json({ message: "Vyplň všetky povinné polia." });
     }
 
-    // 💾 Spracovanie fotiek
+    // ✅ Fotky
     let mainImageUrl = null;
     let galleryUrls = [];
+
+    console.log(req.files);
 
     if (req.files?.mainImage?.[0]) {
       mainImageUrl = `/uploads/events/${req.files.mainImage[0].filename}`;
     }
+
+    console.log(mainImageUrl);
 
     if (req.files?.gallery?.length) {
       galleryUrls = req.files.gallery.map(
@@ -48,33 +49,21 @@ export const createEvent = async (req, res) => {
       );
     }
 
-    // 🌱 Vytvorenie alebo získanie série
-    const actualSeriesId = seriesId || crypto.randomUUID();
-
-    // Ak seriesId ešte neexistuje, vytvor záznam v EventSeries
-    if (!seriesId) {
-      await prisma.eventSeries.create({
-        data: {
-          id: actualSeriesId,
-        },
-      });
-    }
-
-    // 📅 Vytvorenie samotného eventu
+    // ✅ Vytvorenie eventu
     const newEvent = await prisma.event.create({
       data: {
         title,
         description,
-        date: new Date(date),
-        time: startTime,
-        endTime: endTime || null,
+        startDate: new Date(startDate),
+        endDate: endDate ? new Date(endDate) : null,
+        repeatUntil: repeatUntil ? new Date(repeatUntil) : null,
         location,
         capacity: capacity ? parseInt(capacity) : null,
+        attendancyLimit: attendancyLimit ? parseInt(attendancyLimit) : null,
+        joinDaysBeforeStart: joinDaysBeforeStart
+          ? parseInt(joinDaysBeforeStart)
+          : null,
         mainImage: mainImageUrl,
-        series: {
-          connect: { id: actualSeriesId },
-        },
-
         gallery: galleryUrls.length
           ? {
               create: galleryUrls.map((url) => ({ url })),
@@ -87,29 +76,79 @@ export const createEvent = async (req, res) => {
           connect: categoryIds.map((id) => ({ id: parseInt(id) })),
         },
       },
-      include: {
-        categories: true,
-        series: true,
-      },
     });
 
-    // 👥 Priradenie moderátorov k sérii (ak to nie je opakovanie)
+    // ✅ Moderátori (vytvárajú sa ako záznamy v EventModerator)
     if (moderators.length) {
-      await prisma.eventModerator.createMany({
-        data: moderators.map((mod) => ({
-          userId: mod.id,
-          seriesId: actualSeriesId,
-          canEditEvent: mod.canEditEvent,
-          canManageParticipants: mod.canManageParticipants,
-          canManageSubscribers: mod.canManageSubscribers,
-          canManageModerators: mod.canManageModerators,
-          canRepostEvent: mod.canRepostEvent,
-        })),
-        skipDuplicates: true, // pre prípad, že sa znovu vytvára event zo série
+      await prisma.event.update({
+        where: { id: newEvent.id },
+        data: {
+          moderators: {
+            create: moderators.map((mod) => ({
+              user: { connect: { id: mod.id } },
+              canEditEvent: mod.canEditEvent,
+              canManageParticipants: mod.canManageParticipants,
+              canManageAttendees: mod.canManageAttendees,
+              canManageModerators: mod.canManageModerators,
+              canRepostEvent: mod.canRepostEvent,
+            })),
+          },
+        },
       });
     }
 
-    res.status(201).json(newEvent);
+    // ✅ Vytvorenie EventDay na základe repeatDays
+    if (repeatDays) {
+      const parsedRepeatDays = JSON.parse(repeatDays);
+
+      for (const [week, days] of Object.entries(parsedRepeatDays)) {
+        for (const id of days) {
+          await prisma.eventDay.create({
+            data: {
+              event: {
+                connect: { id: newEvent.id },
+              },
+              week: parseInt(week),
+              day: {
+                connect: { id: parseInt(id) }, // ← teraz podľa ID, nie name!
+              },
+            },
+          });
+        }
+      }
+    }
+
+    // ✅ Vytvorenie prvej occurence ak treba
+    await createOccurrenceIfNeeded(newEvent.id);
+
+    // ✅ Finálne načítanie eventu
+    const finalEvent = await prisma.event.findUnique({
+      where: { id: newEvent.id },
+      include: {
+        categories: true,
+        gallery: true,
+        organizer: true,
+        moderators: {
+          include: {
+            user: {
+              select: {
+                id: true,
+                firstName: true,
+                lastName: true,
+                email: true,
+              },
+            },
+          },
+        },
+        eventDays: {
+          include: {
+            day: true, // <== TU bola chyba
+          },
+        },
+      },
+    });
+
+    res.status(201).json(finalEvent);
   } catch (err) {
     console.error("Chyba pri vytváraní akcie:", err);
     res.status(500).json({ message: "Chyba servera." });
