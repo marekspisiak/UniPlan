@@ -28,7 +28,7 @@ export const createEvent = async (req, res) => {
     const moderators = moderatorsRaw.map((mod) => JSON.parse(mod));
 
     // ✅ Validácia
-    if (!title || !startDateTime || !location) {
+    if (!title) {
       return res.status(400).json({ message: "Vyplň všetky povinné polia." });
     }
 
@@ -55,7 +55,7 @@ export const createEvent = async (req, res) => {
       data: {
         title,
         description,
-        startDate: new Date(startDateTime),
+        startDate: startDateTime ? new Date(startDateTime) : null,
         endDate: endDateTime ? new Date(endDateTime) : null,
         repeatUntil: repeatUntil ? new Date(repeatUntil) : null,
         location,

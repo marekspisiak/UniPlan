@@ -52,10 +52,10 @@ model Event {
   id            Int             @id @default(autoincrement())
   title         String
   description   String?
-  startDate     DateTime
+  startDate     DateTime?
   endDate       DateTime?
   repeatUntil   DateTime?
-  location      String
+  location      String?
   capacity      Int?
   mainImage     String?
   gallery       EventImage[]    
@@ -63,7 +63,7 @@ model Event {
   attendancyLimit Int?
   allowRecurringAttendance Boolean @default(false)
 
-  joinDaysBeforeStart Int
+  joinDaysBeforeStart Int?
 
   categories    Category[]      @relation("EventCategories")
   organizerId   Int
@@ -98,7 +98,8 @@ model EventChange {
   mainImage                 String?
   gallery                   EventChangeImage[]              
   categories                Category[]                @relation("ChangeCategories")
-  joinDaysBeforeStart       Int
+  joinDaysBeforeStart       Int?
+  allowRecurringAttendance Boolean?
 
   createdBy   Int?
   updatedBy   Int?

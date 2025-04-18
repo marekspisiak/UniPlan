@@ -38,8 +38,6 @@ const EventForm = ({
     ...initialData,
   });
 
-  console.log(form);
-
   const [daysFromAPI, setDaysFromAPI] = useState([]);
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
@@ -90,8 +88,14 @@ const EventForm = ({
       const cleanedForm = {
         ...form,
         moderators: form.moderators.map((mod) => ({ ...mod, id: mod.id })),
-        startDateTime: `${form.startDate}T${form.startTime}`,
-        endDateTime: form.endTime ? `${form.startDate}T${form.endTime}` : null,
+        startDateTime:
+          form.startDate && form.startTime
+            ? `${form.startDate}T${form.startTime}`
+            : null,
+        endDateTime:
+          form.startDate && form.endTime
+            ? `${form.startDate}T${form.endTime}`
+            : null,
       };
 
       await onSubmit(cleanedForm);
@@ -134,24 +138,22 @@ const EventForm = ({
         </Form.Group>
 
         <Form.Group className="mb-3">
-          <Form.Label>Dátum</Form.Label>
+          <Form.Label>Dátum (nepovinný)</Form.Label>
           <Form.Control
             type="date"
             name="startDate"
             value={form.startDate}
             onChange={handleChange}
-            required
           />
         </Form.Group>
 
         <Form.Group className="mb-3">
-          <Form.Label>Čas začiatku</Form.Label>
+          <Form.Label>Čas začiatku (nepovinný)</Form.Label>
           <Form.Control
             type="time"
             name="startTime"
             value={form.startTime}
             onChange={handleChange}
-            required
           />
         </Form.Group>
 
@@ -228,9 +230,7 @@ const EventForm = ({
 
             {form.allowRecurringParticipation && (
               <Form.Group className="mb-3">
-                <Form.Label>
-                  Maximálny počet účastí na jedno opakovanie
-                </Form.Label>
+                <Form.Label>Maximálny počet účastí na jeden cyklus</Form.Label>
                 <Form.Control
                   type="number"
                   name="maxAttendancesPerCycle"
@@ -249,7 +249,6 @@ const EventForm = ({
             name="location"
             value={form.location}
             onChange={handleChange}
-            required
           />
         </Form.Group>
 
