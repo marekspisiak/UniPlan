@@ -37,6 +37,7 @@ const EventDetail = ({ eventId: parEventId, date: parDate }) => {
       );
       const data = await res.json();
       if (!res.ok) throw new Error(data.message || "Chyba pri načítaní eventu");
+      console.log(data);
       setEvent(data);
     } catch (err) {
       setError(err.message);

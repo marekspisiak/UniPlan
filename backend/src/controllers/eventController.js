@@ -8,6 +8,9 @@ import { createUTCDate, getCurrentUTCDate } from "../utils/dateHelpers.js";
 import {
   getAllVirtualDates,
   validateEventDate,
+  normalizeDate,
+  getEventDayId,
+  getNextEventDate,
 } from "../utils/virtualizationHelpers.js";
 
 export const createEvent = async (req, res) => {
@@ -264,44 +267,58 @@ export const getAllEvents = async (req, res) => {
 };
 
 export const joinEvent = async (req, res) => {
-  const eventId = parseInt(req.params.id);
-  const userId = req.user.id;
-
   try {
+    const { id } = req.params; // event id
+    const { date } = req.query;
+    const userId = req.user.id;
+
+    if (!date) {
+      return res
+        .status(400)
+        .json({ message: "Chýba dátum v query parametri." });
+    }
+
+    const targetDate = normalizeDate(date);
+
+    // 1. Načítaj event s jeho eventDays
     const event = await prisma.event.findUnique({
-      where: { id: eventId },
+      where: { id: parseInt(id) },
       include: {
-        participants: { select: { id: true } },
+        eventDays: { include: { day: true } },
       },
     });
+
     if (!event) {
       return res.status(404).json({ message: "Event neexistuje." });
     }
 
-    // 🔒 Check: Event už skončil?
+    // 2. Skús nájsť existujúci occurrence
+    let occurrence = await prisma.eventOccurrence.findFirst({
+      where: {
+        eventId: event.id,
+        date: targetDate,
+      },
+    });
 
-    const now = getCurrentUTCDate();
+    // 3. Ak neexistuje a event je platný na daný deň, vytvor occurrence
+    if (!occurrence) {
+      const validDate = validateEventDate(event, targetDate);
 
-    if (event.endDate < now) {
-      return res.status(400).json({ message: "Tento event už prebehol." });
+      if (!validDate) {
+        return res.status(400).json({ message: "Event sa v daný deň nekoná." });
+      }
+
+      occurrence = await prisma.eventOccurrence.create({
+        data: {
+          event: { connect: { id: event.id } },
+          date: targetDate,
+        },
+      });
     }
 
-    // ✅ Už je prihlásený?
-    const alreadyJoined = event.participants.some((p) => p.id === userId);
-    if (alreadyJoined) {
-      return res
-        .status(400)
-        .json({ message: "Už si prihlásený na tento event." });
-    }
-
-    // 🚫 Kapacita plná?
-    if (event.capacity && event.participants.length >= event.capacity) {
-      return res.status(400).json({ message: "Kapacita eventu je plná." });
-    }
-
-    // 🎉 Prihlásenie
-    await prisma.event.update({
-      where: { id: eventId },
+    // 4. Pridaj používateľa do occurrence
+    await prisma.eventOccurrence.update({
+      where: { id: occurrence.id },
       data: {
         participants: {
           connect: { id: userId },
@@ -309,60 +326,85 @@ export const joinEvent = async (req, res) => {
       },
     });
 
-    res.json({ message: "Úspešne si sa prihlásil na event." });
+    return res.json({ message: "Úspešne prihlásený na event." });
   } catch (err) {
     console.error("Chyba pri prihlasovaní na event:", err);
-    res.status(500).json({ message: "Chyba servera." });
+    return res.status(500).json({ message: "Chyba servera." });
   }
 };
 
 export const getEventByDate = async (req, res) => {
   try {
     const { id } = req.params;
-    const targetDate = req.query.date ? normalizeDate(req.query.date) : null;
-
-    if (!targetDate) {
-      return res.status(400).json({ message: "Chýba dátum v query." });
-    }
+    const targetDate = normalizeDate(req.query.date);
 
     const event = await prisma.event.findUnique({
       where: { id: parseInt(id) },
       include: {
         categories: true,
         gallery: true,
-        eventDays: { include: { day: true } },
+        eventDays: {
+          include: {
+            day: true,
+            users: true, // 👈 toto je `eventDayAttendancy`
+          },
+        },
         organizer: true,
-        moderators: { include: { user: true } },
+        moderators: {
+          include: {
+            user: true,
+          },
+        },
         eventOccurrences: {
           where: { date: targetDate },
-          include: { eventChange: true },
+          include: {
+            eventChange: true,
+            participants: true, // 👈 toto je `occurrenceParticipants`
+          },
         },
       },
     });
 
+    const validDate = validateEventDate(event, targetDate);
+
+    if (!validDate) {
+      return res.status(400).json({ message: "Event sa v daný deň nekoná." });
+    }
+
     if (!event) return res.status(404).json({ message: "Event neexistuje." });
+    console.log(event);
+    const eventDayId = getEventDayId(event, targetDate);
+    let attendants = null;
+    console.log("eventDayId", eventDayId);
+    if (eventDayId !== null) {
+      attendants = await prisma.eventDay.findUnique({
+        where: { id: eventDayId },
+        include: {
+          users: true, // toto je tvoje "eventDayAttendancy"
+        },
+      });
+    }
 
     const occurrence = event.eventOccurrences[0];
     if (occurrence) {
+      console.log("ma occurence");
       return res.json({
         ...event,
         date: occurrence.date,
         eventChange: occurrence.eventChange,
+        participants: occurrence.participants,
+        attendants: attendants?.users || [],
         virtual: false,
       });
     }
 
-    const validDate = validateEventDate(event, targetDate);
-    if (validDate) {
-      return res.json({
-        ...event,
-        date: validDate,
-        eventChange: null,
-        virtual: true,
-      });
-    }
-
-    return res.status(404).json({ message: "Event sa v daný deň nekoná." });
+    return res.json({
+      ...event,
+      eventChange: null,
+      virtual: true,
+      attendants: attendants?.users || [],
+      date: getNextEventDate(event, targetDate),
+    });
   } catch (err) {
     console.error("Chyba pri načítaní eventu:", err);
     res.status(500).json({ message: "Chyba servera." });
@@ -370,28 +412,34 @@ export const getEventByDate = async (req, res) => {
 };
 
 export const leaveEvent = async (req, res) => {
-  const userId = req.user.id;
-  const eventId = parseInt(req.params.id);
-
   try {
+    const { id } = req.params;
+    const userId = req.user.id;
+    const targetDate = normalizeDate(req.query.date);
+
     const event = await prisma.event.findUnique({
-      where: { id: eventId },
-      include: { participants: true },
+      where: { id: parseInt(id) },
+      include: {
+        eventOccurrences: {
+          where: { date: targetDate },
+        },
+      },
     });
 
     if (!event) {
       return res.status(404).json({ message: "Event neexistuje." });
     }
 
-    const isParticipant = event.participants.some((p) => p.id === userId);
-    if (!isParticipant) {
-      return res
-        .status(400)
-        .json({ message: "Nie si prihlásený na tento event." });
+    console.log(event);
+
+    const occurrence = event.eventOccurrences[0];
+
+    if (!occurrence) {
+      return res.status(404).json({ message: "Výskyt eventu sa nenašiel." });
     }
 
-    await prisma.event.update({
-      where: { id: eventId },
+    const wasJoined = await prisma.eventOccurrence.update({
+      where: { id: occurrence.id },
       data: {
         participants: {
           disconnect: { id: userId },
@@ -399,9 +447,9 @@ export const leaveEvent = async (req, res) => {
       },
     });
 
-    res.json({ message: "Úspešne si sa odhlásil z eventu." });
+    return res.status(200).json({ message: "Úspešne odhlásený z eventu." });
   } catch (err) {
-    console.error("Chyba pri odhlasovaní:", err);
+    console.error("Chyba pri odhlasovaní z eventu:", err);
     res.status(500).json({ message: "Chyba servera." });
   }
 };

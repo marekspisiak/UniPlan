@@ -2,10 +2,37 @@ import { createUTCDate, getCurrentUTCDate } from "./dateHelpers.js";
 import { isAfter, isEqual } from "date-fns";
 
 export const normalizeDate = (date) => {
-  const isoString =
-    typeof date === "string" ? date : new Date(date).toISOString();
-  const [year, month, day] = isoString.split("T")[0].split("-").map(Number);
-  return new Date(Date.UTC(year, month - 1, day));
+  // Ak je null alebo undefined, vráť null
+  if (!date) {
+    return null;
+  }
+
+  // Ak je string, parsuj
+  if (typeof date === "string") {
+    if (date.trim() === "" || date === "undefined") {
+      return null;
+    }
+
+    const parsed = new Date(date);
+    if (isNaN(parsed.getTime())) {
+      return null;
+    }
+
+    date = parsed;
+  }
+
+  // Ak je objekt typu Date
+  if (date instanceof Date) {
+    const year = date.getUTCFullYear();
+    const month = date.getUTCMonth();
+    const day = date.getUTCDate();
+
+    const finalDate = new Date(Date.UTC(year, month, day));
+    return finalDate;
+  }
+
+  // Iné typy
+  return null;
 };
 
 export const getCustomStartOfWeek = (date) => {
@@ -57,24 +84,17 @@ export const getVirtualDates = (
       ) + 1
     : 52;
 
-  console.log("maxWeeks", maxWeeks);
-  console.log("repeatInterval", event.repeatInterval);
-
   const baseDate = getCustomStartOfWeek(event.startDate);
 
   for (let i = weekOffset; i < maxWeeks; i += event.repeatInterval || 1) {
-    console.log("i", i);
     for (const day of event.eventDays || []) {
       const candidate = new Date(baseDate);
       candidate.setUTCDate(
         candidate.getUTCDate() + 7 * (i + day.week) + (day.day.id - 1)
       );
       candidate.setUTCHours(0, 0, 0, 0);
-      console.log("candidate", candidate.toISOString());
-      console.log("target", targetDate.toISOString());
-      console.log(isSameOrAfter(candidate, targetDate));
       if (isSameOrAfter(candidate, targetDate)) {
-        const result = onCandidate(candidate);
+        const result = onCandidate(candidate, day.id);
         if (result === "break") return;
       }
     }
@@ -82,8 +102,13 @@ export const getVirtualDates = (
 };
 
 export const getNextEventDate = (event, targetDate = getCurrentUTCDate()) => {
-  if (!event.startDate) return null;
   const target = normalizeDate(targetDate);
+  const start = normalizeDate(event.startDate);
+
+  if (isEqual(start, target)) return target;
+
+  if (!event.startDate) return null;
+
   let nextEventDate;
   getVirtualDates(event, target, (date) => {
     if (isSameOrAfter(date, target)) {
@@ -94,7 +119,21 @@ export const getNextEventDate = (event, targetDate = getCurrentUTCDate()) => {
   return nextEventDate;
 };
 
+export const getEventDayId = (event, targetDate = getCurrentUTCDate()) => {
+  const target = normalizeDate(targetDate);
+  let eventDayId = null;
+  getVirtualDates(event, target, (date, dayId) => {
+    if (isSameOrAfter(date, target)) {
+      eventDayId = dayId;
+      return "break"; // Stop the loop when the first valid date is found
+    }
+  });
+  return eventDayId;
+};
+
 export const validateEventDate = (event, targetDate) => {
+  if (isEqual(normalizeDate(event.startDate), normalizeDate(targetDate)))
+    return true;
   if (!event.startDate) return null;
   const target = normalizeDate(targetDate);
   let result = false;
