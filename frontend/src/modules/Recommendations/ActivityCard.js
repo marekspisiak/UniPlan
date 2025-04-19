@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { act, useState } from "react";
 import { Card, Button } from "react-bootstrap";
 import styles from "./ActivityCard.module.scss";
 import Popup from "../../components/Popup/Popup";
@@ -22,7 +22,7 @@ const ActivityCard = ({ activity }) => {
           Zúčastniť sa
         </Button>
         <Popup isOpen={isOpen} onClose={() => setIsOpen(false)}>
-          <EventDetail eventId={activity.id} />
+          <EventDetail eventId={activity.id} date={activity.date} />
         </Popup>
         <Button
           onClick={() => setIsOpen(true)}

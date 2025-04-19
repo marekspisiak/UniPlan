@@ -16,79 +16,80 @@ model EmailVerificationToken {
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@index([token])
-  @@index([userId], map: "EmailVerificationToken_userId_fkey")
+  @@index([userId])
 }
 
 model Category {
-  id     Int      @id @default(autoincrement())
-  name   String   @unique
-  label  String
-  icon   String?
-  events Event[]  @relation("EventCategories")
-  users  User[]   @relation("UserInterests")
-  eventChanges EventChange[] @relation("ChangeCategories")
+  id           Int              @id @default(autoincrement())
+  name         String           @unique
+  label        String
+  icon         String?
+  events       Event[]          @relation("EventCategories")
+  users        User[]           @relation("UserInterests")
+  eventChanges EventChange[]    @relation("ChangeCategories")
 }
 
 model User {
-  id                 Int                      @id @default(autoincrement())
-  email              String                   @unique
-  password           String
-  createdAt          DateTime                 @default(now())
-  firstName          String
-  lastName           String
-  lastVerifiedAt     DateTime?
-  verificationTokens EmailVerificationToken[]
-  events             Event[]                  @relation("UserEvents")
-  interests          Category[]               @relation("UserInterests")
-  joinedEvents       EventOccurrence[]        @relation("OccurrenceParticipants")
-  joinedAttendancies EventDay[]  @relation("EventDayAttendancy")
-  moderatorIn        EventModerator[]         @relation("UserModerators")
-  createdEventChanges EventChange[]           @relation("CreatedBy")
-  updatedEventChanges EventChange[]           @relation("UpdatedBy")
-
+  id                   Int                      @id @default(autoincrement())
+  email                String                   @unique
+  password             String
+  createdAt            DateTime                 @default(now())
+  firstName            String
+  lastName             String
+  lastVerifiedAt       DateTime?
+  verificationTokens   EmailVerificationToken[]
+  events               Event[]                  @relation("UserEvents")
+  interests            Category[]               @relation("UserInterests")
+  joinedEvents         EventOccurrence[]        @relation("OccurrenceParticipants")
+  joinedAttendancies   EventDay[]               @relation("EventDayAttendancy")
+  moderatorIn          EventModerator[]         @relation("UserModerators")
+  createdEventChanges  EventChange[]            @relation("CreatedBy")
+  updatedEventChanges  EventChange[]            @relation("UpdatedBy")
 }
 
 model Event {
-  id            Int             @id @default(autoincrement())
-  title         String
-  description   String?
-  startDate     DateTime?
-  endDate       DateTime?
-  repeatUntil   DateTime?
-  location      String?
-  capacity      Int?
-  mainImage     String?
-  gallery       EventImage[]    
-  createdAt     DateTime        @default(now())
-  attendancyLimit Int?
-  allowRecurringAttendance Boolean @default(false)
+  id                         Int               @id @default(autoincrement())
+  title                      String
+  description                String?
+  startDate                  DateTime?
+  endDate                    DateTime?
+  repeatUntil                DateTime?
+  repeatInterval             Int?
+  hasStartDate               Boolean           @default(false)
+  hasStartTime               Boolean           @default(false)
+  hasEndTime                 Boolean           @default(false)
+  location                   String?
+  capacity                   Int?
+  mainImage                  String?
+  createdAt                  DateTime          @default(now())
+  attendancyLimit            Int?
+  allowRecurringAttendance   Boolean           @default(false)
+  joinDaysBeforeStart        Int?
 
-  joinDaysBeforeStart Int?
-
-  categories    Category[]      @relation("EventCategories")
-  organizerId   Int
-  organizer     User            @relation("UserEvents", fields: [organizerId], references: [id])
-  moderators EventModerator[] @relation("EventModerators")
-  eventDays     EventDay[]      @relation("EventToEventDays")
-  eventOccurrences EventOccurrence[] @relation("EventToOccurrences")
+  categories                 Category[]        @relation("EventCategories")
+  organizerId                Int
+  organizer                  User              @relation("UserEvents", fields: [organizerId], references: [id], onDelete: Cascade)
+  gallery                    EventImage[]      @relation("EventToImages")
+  moderators                 EventModerator[]  @relation("EventModerators")
+  eventDays                  EventDay[]        @relation("EventToEventDays")
+  eventOccurrences           EventOccurrence[] @relation("EventToOccurrences")
 }
 
 model EventDay {
-  id                     Int                     @id @default(autoincrement())
-  eventId                Int
-  week                    Int
-  event                  Event                   @relation("EventToEventDays", fields: [eventId], references: [id])
- dayId       Int
-  day         Day       @relation("DayToEventDays", fields: [dayId], references: [id]) // 👈 toto je kľúčové
-  eventChanges           EventChange[]
-  users      User[]      @relation("EventDayAttendancy")
+  id           Int          @id @default(autoincrement())
+  eventId      Int
+  week         Int
+  dayId        Int
+  event        Event        @relation("EventToEventDays", fields: [eventId], references: [id], onDelete: Cascade)
+  day          Day          @relation("DayToEventDays", fields: [dayId], references: [id])
+  eventChanges EventChange[]
+  users        User[]       @relation("EventDayAttendancy")
 }
-
 
 model EventChange {
   id                        Int                       @id @default(autoincrement())
   eventDayId                Int?
-  eventDay                  EventDay?                 @relation(fields: [eventDayId], references: [id])
+  eventDay                  EventDay?                 @relation(fields: [eventDayId], references: [id], onDelete: Cascade)
   title                     String?
   description               String?
   startDate                 DateTime
@@ -96,57 +97,59 @@ model EventChange {
   location                  String?
   capacity                  Int?
   mainImage                 String?
-  gallery                   EventChangeImage[]              
+  gallery                   EventChangeImage[]        @relation("ChangeImages")
   categories                Category[]                @relation("ChangeCategories")
   joinDaysBeforeStart       Int?
-  allowRecurringAttendance Boolean?
+  allowRecurringAttendance  Boolean?
 
   createdBy   Int?
   updatedBy   Int?
 
-  createdByUser User? @relation("CreatedBy", fields: [createdBy], references: [id])
-  updatedByUser User? @relation("UpdatedBy", fields: [updatedBy], references: [id])
+  createdByUser User?       @relation("CreatedBy", fields: [createdBy], references: [id])
+  updatedByUser User?       @relation("UpdatedBy", fields: [updatedBy], references: [id])
 
-   occurrences  EventOccurrence[] @relation("ChangeToOccurrences")
+  occurrences  EventOccurrence[] @relation("ChangeToOccurrences")
 }
 
 model EventOccurrence {
-  id            Int      @id @default(autoincrement())
-  eventId       Int
-  event         Event    @relation("EventToOccurrences", fields: [eventId], references: [id])
+  id             Int           @id @default(autoincrement())
+  eventId        Int
   eventChangeId  Int?
-  eventChange    EventChange?   @relation("ChangeToOccurrences", fields: [eventChangeId], references: [id])
-  participants User[]       @relation("OccurrenceParticipants")
+  date           DateTime?
+
+  event          Event         @relation("EventToOccurrences", fields: [eventId], references: [id], onDelete: Cascade)
+  eventChange    EventChange? @relation("ChangeToOccurrences", fields: [eventChangeId], references: [id], onDelete: Cascade)
+  participants   User[]        @relation("OccurrenceParticipants")
 }
 
 model Day {
-  id         Int         @id @default(autoincrement())
-  name       String      @unique
-  eventDays  EventDay[]  @relation("DayToEventDays")
+  id        Int         @id @default(autoincrement())
+  name      String      @unique
+  eventDays EventDay[]  @relation("DayToEventDays")
 }
 
 model EventImage {
   id       Int    @id @default(autoincrement())
   url      String
   eventId  Int
-  event    Event  @relation(fields: [eventId], references: [id])
+  event    Event  @relation("EventToImages", fields: [eventId], references: [id], onDelete: Cascade)
 }
 
 model EventChangeImage {
-  id              Int    @id @default(autoincrement())
+  id              Int            @id @default(autoincrement())
   url             String
   eventChangeId   Int
-  eventChange     EventChange @relation(fields: [eventChangeId], references: [id])
+  eventChange     EventChange    @relation("ChangeImages", fields: [eventChangeId], references: [id], onDelete: Cascade)
 }
 
 model EventModerator {
-  id                   Int     @id @default(autoincrement())
-  userId               Int
-  user                 User    @relation("UserModerators", fields: [userId], references: [id])
-  events Event[] @relation("EventModerators")
-  canEditEvent         Boolean @default(false)
-  canManageParticipants Boolean @default(false)
-  canManageAttendees   Boolean @default(false)
-  canManageModerators  Boolean @default(false)
-  canRepostEvent       Boolean @default(false)
+  id                     Int     @id @default(autoincrement())
+  userId                 Int
+  user                   User    @relation("UserModerators", fields: [userId], references: [id], onDelete: Cascade)
+  events                 Event[] @relation("EventModerators")
+  canEditEvent           Boolean @default(false)
+  canManageParticipants  Boolean @default(false)
+  canManageAttendees     Boolean @default(false)
+  canManageModerators    Boolean @default(false)
+  canRepostEvent         Boolean @default(false)
 }

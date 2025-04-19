@@ -1,56 +1,22 @@
-import {
-  startOfWeek,
-  addWeeks,
-  setDay,
-  isAfter,
-  isBefore,
-  isEqual,
-} from "date-fns";
-import prisma from "../../prisma/client.js"; // uprav podľa projektu
+import prisma from "../../prisma/client.js";
+import { getCurrentUTCDate } from "./dateHelpers.js";
 
-export const getNextEventDate = (event) => {
-  const now = new Date();
-  const eventDays = event.eventDays || [];
+import { getNextEventDate } from "./virtualizationHelpers.js";
 
-  let closestDate = null;
+export const shouldCreateOccurrence = (event, nextDate) => {
+  const isRecurring = event.eventDays && event.eventDays.length > 0;
+  const hasDate = event.hasStartDate;
+  const hasTime = event.hasStartTime;
 
-  for (const day of eventDays) {
-    const weekOffset = day.week || 0;
-    const dayId = day.day.id; // toto je 1 (pondelok) až 7 (nedeľa)
-
-    // `setDay` používa 0 (nedeľa) až 6 (sobota), takže to musíme premapovať:
-    const targetDay = dayId % 7; // 1->1, ..., 7->0
-
-    const baseDate = startOfWeek(now, { weekStartsOn: 1 });
-    const candidate = setDay(addWeeks(baseDate, weekOffset), targetDay, {
-      weekStartsOn: 1,
-    });
-
-    if (isAfter(candidate, now) || isEqual(candidate, now)) {
-      if (!closestDate || isBefore(candidate, closestDate)) {
-        closestDate = candidate;
-      }
-    }
-  }
-
-  return closestDate;
-};
-
-export const shouldCreateOccurrence = (event) => {
-  const now = new Date();
-
-  if (!event.eventDays || event.eventDays.length === 0) {
-    const joinableFrom = new Date(event.startDate);
-    joinableFrom.setDate(joinableFrom.getDate() - event.joinDaysBeforeStart);
-    return now >= joinableFrom;
+  if (isRecurring) {
+    if (!hasDate || !hasTime || !nextDate) return false;
+    return true;
   } else {
-    const nextDate = getNextEventDate(event);
-    if (!nextDate) return false;
-
-    const joinableFrom = new Date(nextDate);
-    joinableFrom.setDate(joinableFrom.getDate() - event.joinDaysBeforeStart);
-
-    return now >= joinableFrom;
+    if (!hasDate && !hasTime) return true;
+    if (!hasDate && hasTime) return true;
+    if (hasDate && hasTime) return true;
+    if (hasDate) return true;
+    return false;
   }
 };
 
@@ -73,10 +39,14 @@ export const createOccurrenceIfNeeded = async (eventId) => {
     },
   });
 
-  if (!existing && shouldCreateOccurrence(event)) {
+  const nextDate = getNextEventDate(event);
+  console.log("nextDate", nextDate);
+
+  if (!existing && shouldCreateOccurrence(event, nextDate)) {
     return await prisma.eventOccurrence.create({
       data: {
         event: { connect: { id: event.id } },
+        date: nextDate || event.startDate || null,
       },
     });
   }

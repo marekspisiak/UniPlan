@@ -4,45 +4,44 @@ import path from "path";
 import fs from "fs"; // a ak ešte nemáš, aj fs budeš potrebovať
 import { toArray } from "../utils/helpers.js"; // importuj túto funkciu z utils
 import { createOccurrenceIfNeeded } from "../utils/eventOccurrences.js";
+import { createUTCDate, getCurrentUTCDate } from "../utils/dateHelpers.js";
+import {
+  getAllVirtualDates,
+  validateEventDate,
+} from "../utils/virtualizationHelpers.js";
 
 export const createEvent = async (req, res) => {
   try {
     const {
       title,
       description,
-      startDateTime,
-      endDateTime,
+      startDate,
+      startTime,
+      endTime,
       repeatUntil,
       location,
       capacity,
       attendancyLimit,
       joinDaysBeforeStart,
       repeatDays,
+      repeatInterval,
       allowRecurringParticipation,
     } = req.body;
-
-    console.log(req.body);
 
     const categoryIds = toArray(req.body.categoryIds);
     const moderatorsRaw = toArray(req.body.moderators);
     const moderators = moderatorsRaw.map((mod) => JSON.parse(mod));
 
-    // ✅ Validácia
     if (!title) {
       return res.status(400).json({ message: "Vyplň všetky povinné polia." });
     }
 
-    // ✅ Fotky
     let mainImageUrl = null;
     let galleryUrls = [];
-
-    console.log(req.files);
 
     if (req.files?.mainImage?.[0]) {
       mainImageUrl = `/uploads/events/${req.files.mainImage[0].filename}`;
     }
-
-    console.log(mainImageUrl);
 
     if (req.files?.gallery?.length) {
       galleryUrls = req.files.gallery.map(
@@ -50,14 +49,45 @@ export const createEvent = async (req, res) => {
       );
     }
 
-    // ✅ Vytvorenie eventu
+    let computedStartDate = null;
+    let computedEndDate = null;
+    let hasStartDate = false;
+    let hasStartTime = false;
+    let hasEndTime = false;
+
+    if (startDate) {
+      hasStartDate = true;
+    }
+
+    if (startTime) {
+      hasStartTime = true;
+    }
+
+    if (endTime) {
+      hasEndTime = true;
+    }
+
+    // Manuálna konštrukcia dátumu v lokálnom čase bez UTC posunu
+    if (startDate || startTime) {
+      if (startTime) {
+        computedStartDate = createUTCDate(startDate, startTime);
+      } else {
+        computedStartDate = createUTCDate(startDate);
+      }
+    }
+
+    if (endTime) {
+      computedEndDate = createUTCDate(startDate, endTime);
+    }
+
     const newEvent = await prisma.event.create({
       data: {
         title,
         description,
-        startDate: startDateTime ? new Date(startDateTime) : null,
-        endDate: endDateTime ? new Date(endDateTime) : null,
-        repeatUntil: repeatUntil ? new Date(repeatUntil) : null,
+        startDate: computedStartDate,
+        endDate: computedEndDate,
+        repeatUntil: repeatUntil ? createUTCDate(repeatUntil) : null,
+        repeatInterval: repeatInterval ? parseInt(repeatInterval) : null,
         location,
         capacity: capacity ? parseInt(capacity) : null,
         attendancyLimit: attendancyLimit ? parseInt(attendancyLimit) : null,
@@ -71,6 +101,9 @@ export const createEvent = async (req, res) => {
               create: galleryUrls.map((url) => ({ url })),
             }
           : undefined,
+        hasStartDate,
+        hasStartTime,
+        hasEndTime,
         organizer: {
           connect: { id: req.user.id },
         },
@@ -80,7 +113,6 @@ export const createEvent = async (req, res) => {
       },
     });
 
-    // ✅ Moderátori (vytvárajú sa ako záznamy v EventModerator)
     if (moderators.length) {
       await prisma.event.update({
         where: { id: newEvent.id },
@@ -99,7 +131,6 @@ export const createEvent = async (req, res) => {
       });
     }
 
-    // ✅ Vytvorenie EventDay na základe repeatDays
     if (repeatDays) {
       const parsedRepeatDays = JSON.parse(repeatDays);
 
@@ -112,7 +143,7 @@ export const createEvent = async (req, res) => {
               },
               week: parseInt(week),
               day: {
-                connect: { id: parseInt(id) }, // ← teraz podľa ID, nie name!
+                connect: { id: parseInt(id) },
               },
             },
           });
@@ -120,37 +151,9 @@ export const createEvent = async (req, res) => {
       }
     }
 
-    // ✅ Vytvorenie prvej occurence ak treba
     await createOccurrenceIfNeeded(newEvent.id);
 
-    // ✅ Finálne načítanie eventu
-    const finalEvent = await prisma.event.findUnique({
-      where: { id: newEvent.id },
-      include: {
-        categories: true,
-        gallery: true,
-        organizer: true,
-        moderators: {
-          include: {
-            user: {
-              select: {
-                id: true,
-                firstName: true,
-                lastName: true,
-                email: true,
-              },
-            },
-          },
-        },
-        eventDays: {
-          include: {
-            day: true, // <== TU bola chyba
-          },
-        },
-      },
-    });
-
-    res.status(201).json(finalEvent);
+    res.status(201).json({ id: newEvent.id });
   } catch (err) {
     console.error("Chyba pri vytváraní akcie:", err);
     res.status(500).json({ message: "Chyba servera." });
@@ -171,14 +174,24 @@ export const getEventCategories = async (req, res) => {
 };
 
 // GET /api/events
+import {
+  startOfWeek,
+  addWeeks,
+  setDay,
+  isAfter,
+  isBefore,
+  isEqual,
+} from "date-fns";
+import { get } from "http";
+import { is } from "date-fns/locale";
+
 export const getAllEvents = async (req, res) => {
   try {
-    const events = await prisma.event.findMany({
-      orderBy: { date: "asc" },
+    const allEvents = await prisma.event.findMany({
       include: {
         categories: true,
         gallery: true,
-        participants: true,
+        eventDays: { include: { day: true } },
         organizer: {
           select: {
             id: true,
@@ -187,36 +200,63 @@ export const getAllEvents = async (req, res) => {
             email: true,
           },
         },
-        series: {
+        moderators: {
           include: {
-            moderators: {
-              include: {
-                user: {
-                  select: {
-                    id: true,
-                    firstName: true,
-                    lastName: true,
-                    email: true,
-                  },
-                },
+            user: {
+              select: {
+                id: true,
+                firstName: true,
+                lastName: true,
+                email: true,
               },
             },
+          },
+        },
+        eventOccurrences: {
+          include: {
+            eventChange: true,
           },
         },
       },
     });
 
-    // Ak chceš späť kompatibilitu (napr. `event.moderators`), môžeš si to premapovať:
-    const formatted = events.map((event) => ({
-      ...event,
-      moderators:
-        event.series?.moderators?.map((mod) => ({
-          ...mod.user,
-          ...mod, // pridá aj permissions
-        })) || [],
-    }));
+    const now = getCurrentUTCDate();
+    const instances = [];
 
-    res.json(formatted);
+    for (const event of allEvents) {
+      const isRecurring = event.eventDays.length > 0;
+      const hasOccurrence = event.eventOccurrences.length > 0;
+
+      for (const occ of event.eventOccurrences) {
+        instances.push({
+          ...event,
+          date: occ.date,
+          virtual: false,
+          eventChange: occ.eventChange || null,
+        });
+      }
+
+      if (isRecurring) {
+        const virtualDates = getAllVirtualDates(event, now);
+
+        for (const date of virtualDates) {
+          instances.push({ ...event, date, virtual: true });
+        }
+      }
+
+      if (!isRecurring && !hasOccurrence) {
+        const date = event.startDate || null;
+        instances.push({ ...event, date, virtual: false });
+      }
+    }
+
+    instances.sort((a, b) => {
+      if (!a.date) return 1;
+      if (!b.date) return -1;
+      return new Date(a.date) - new Date(b.date);
+    });
+
+    res.json(instances);
   } catch (err) {
     console.error("Chyba pri načítaní eventov:", err);
     res.status(500).json({ message: "Chyba pri načítaní eventov." });
@@ -239,13 +279,10 @@ export const joinEvent = async (req, res) => {
     }
 
     // 🔒 Check: Event už skončil?
-    const eventDateTimeString = `${event.date.toISOString().split("T")[0]}T${
-      event.endTime || event.time
-    }`;
-    const eventEndDateTime = new Date(eventDateTimeString);
-    const now = new Date();
 
-    if (eventEndDateTime < now) {
+    const now = getCurrentUTCDate();
+
+    if (event.endDate < now) {
       return res.status(400).json({ message: "Tento event už prebehol." });
     }
 
@@ -261,7 +298,6 @@ export const joinEvent = async (req, res) => {
     if (event.capacity && event.participants.length >= event.capacity) {
       return res.status(400).json({ message: "Kapacita eventu je plná." });
     }
-    console.log("joinEvent called");
 
     // 🎉 Prihlásenie
     await prisma.event.update({
@@ -280,82 +316,53 @@ export const joinEvent = async (req, res) => {
   }
 };
 
-export const getEventById = async (req, res) => {
-  const eventId = parseInt(req.params.id);
-
-  if (isNaN(eventId)) {
-    return res.status(400).json({ message: "Neplatné ID eventu." });
-  }
-
+export const getEventByDate = async (req, res) => {
   try {
+    const { id } = req.params;
+    const targetDate = req.query.date ? normalizeDate(req.query.date) : null;
+
+    if (!targetDate) {
+      return res.status(400).json({ message: "Chýba dátum v query." });
+    }
+
     const event = await prisma.event.findUnique({
-      where: { id: eventId },
+      where: { id: parseInt(id) },
       include: {
         categories: true,
         gallery: true,
-        participants: true,
-        subscribers: true,
-        organizer: {
-          select: {
-            id: true,
-            firstName: true,
-            lastName: true,
-            email: true,
-          },
-        },
-        series: {
-          include: {
-            moderators: {
-              include: {
-                user: {
-                  select: {
-                    id: true,
-                    firstName: true,
-                    lastName: true,
-                    email: true,
-                  },
-                },
-              },
-            },
-          },
-        },
-        participants: {
-          select: {
-            id: true,
-            firstName: true,
-            lastName: true,
-            email: true,
-          },
-        },
-        subscribers: {
-          select: {
-            id: true,
-            firstName: true,
-            lastName: true,
-            email: true,
-          },
+        eventDays: { include: { day: true } },
+        organizer: true,
+        moderators: { include: { user: true } },
+        eventOccurrences: {
+          where: { date: targetDate },
+          include: { eventChange: true },
         },
       },
     });
 
-    if (!event) {
-      return res.status(404).json({ message: "Event neexistuje." });
+    if (!event) return res.status(404).json({ message: "Event neexistuje." });
+
+    const occurrence = event.eventOccurrences[0];
+    if (occurrence) {
+      return res.json({
+        ...event,
+        date: occurrence.date,
+        eventChange: occurrence.eventChange,
+        virtual: false,
+      });
     }
 
-    // Pridanie URL k profilovkám
-    const addProfileUrl = (user) => ({
-      ...user,
-      profileImageUrl: `http://localhost:5000/uploads/profile/user_${user.id}.png`,
-    });
+    const validDate = validateEventDate(event, targetDate);
+    if (validDate) {
+      return res.json({
+        ...event,
+        date: validDate,
+        eventChange: null,
+        virtual: true,
+      });
+    }
 
-    console.log(event);
-
-    res.json({
-      ...event,
-      organizer: addProfileUrl(event.organizer),
-      moderators: event.series.moderators.map(addProfileUrl),
-      participants: event.participants.map(addProfileUrl),
-    });
+    return res.status(404).json({ message: "Event sa v daný deň nekoná." });
   } catch (err) {
     console.error("Chyba pri načítaní eventu:", err);
     res.status(500).json({ message: "Chyba servera." });
@@ -475,10 +482,6 @@ export const updateEventDetails = async (req, res) => {
     mainImage,
     mainImageChanged,
   } = req.body;
-
-  console.log("kategorie");
-
-  console.log(req.body.categoryIds);
 
   const categoryIds = toArray(req.body.categoryIds);
   const deletedGallery = toArray(req.body.deletedGallery);

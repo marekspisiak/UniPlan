@@ -4,7 +4,7 @@ import { protectVerified } from "../middleware/authMiddleware.js";
 import {
   getEventCategories,
   joinEvent,
-  getEventById,
+  getEventByDate,
   leaveEvent,
   subscribeToEvent,
   unsubscribeFromEvent,
@@ -39,6 +39,6 @@ router.put(
   protectPermission("canManageModerators"),
   updateEventModerators
 );
-router.get("/:id", protectVerified, getEventById);
+router.get("/:id", protectVerified, getEventByDate);
 
 export default router;

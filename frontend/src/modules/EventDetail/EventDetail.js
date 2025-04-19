@@ -1,15 +1,21 @@
 import styles from "./EventDetail.module.scss";
-import { Button, Alert, Spinner } from "react-bootstrap";
+import {
+  Button,
+  Alert,
+  Spinner,
+  OverlayTrigger,
+  Tooltip,
+} from "react-bootstrap";
 import UserAvatar from "../../components/UserAvatar/UserAvatar";
 import UserAvatarList from "../../components/UserAvatarList/UserAvatarList";
 import { PhotoProvider, PhotoView } from "react-photo-view";
 import "react-photo-view/dist/react-photo-view.css";
 import { useState, useEffect } from "react";
 import { useAuth } from "../../context/AuthContext";
-import { OverlayTrigger, Tooltip } from "react-bootstrap";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
-const EventDetail = ({ eventId }) => {
+const EventDetail = ({ eventId: parEventId, date: parDate }) => {
+  let { eventId, date } = useParams();
   const { user } = useAuth();
   const [event, setEvent] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -17,16 +23,18 @@ const EventDetail = ({ eventId }) => {
   const [error, setError] = useState(null);
   const navigate = useNavigate();
 
-  console.log("wtf");
+  eventId = parEventId || eventId;
+  date = parDate || date;
 
   const fetchEvent = async () => {
     try {
       setLoading(true);
-      const res = await fetch(`http://localhost:5000/api/events/${eventId}`, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-      });
+      const res = await fetch(
+        `http://localhost:5000/api/events/${eventId}?date=${date}`,
+        {
+          headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+        }
+      );
       const data = await res.json();
       if (!res.ok) throw new Error(data.message || "Chyba pri načítaní eventu");
       setEvent(data);
@@ -39,99 +47,37 @@ const EventDetail = ({ eventId }) => {
 
   useEffect(() => {
     fetchEvent();
-  }, []);
+  }, [eventId, date]);
 
-  const handleJoin = async () => {
-    setMessage(null);
-    setError(null);
+  const postAction = async (endpoint) => {
     try {
+      setMessage(null);
+      setError(null);
       const token = localStorage.getItem("token");
       const res = await fetch(
-        `http://localhost:5000/api/events/${eventId}/join`,
+        `http://localhost:5000/api/events/${eventId}/${endpoint}?date=${date}`,
         {
           method: "POST",
           headers: { Authorization: `Bearer ${token}` },
         }
       );
       const data = await res.json();
-      if (!res.ok) throw new Error(data.message || "Chyba pri prihlasovaní.");
-      setMessage("Úspešne prihlásený.");
+      if (!res.ok) throw new Error(data.message);
+      setMessage(data.message);
       fetchEvent();
     } catch (err) {
       setError(err.message);
     }
   };
 
-  const handleLeave = async () => {
-    setMessage(null);
-    setError(null);
-    try {
-      const token = localStorage.getItem("token");
-      const res = await fetch(
-        `http://localhost:5000/api/events/${eventId}/leave`,
-        {
-          method: "POST",
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      );
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.message || "Chyba pri odhlasovaní.");
-      setMessage("Úspešne odhlásený.");
-      fetchEvent();
-    } catch (err) {
-      setError(err.message);
-    }
-  };
-
-  const handleSubscribe = async () => {
-    setMessage(null);
-    setError(null);
-    try {
-      const token = localStorage.getItem("token");
-      const res = await fetch(
-        `http://localhost:5000/api/events/${eventId}/subscribe`,
-        {
-          method: "POST",
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      );
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.message || "Chyba pri subscribnutí.");
-      setMessage(data.message);
-      fetchEvent(); // obnov data
-    } catch (err) {
-      setError(err.message);
-    }
-  };
-
-  const handleUnsubscribe = async () => {
-    setMessage(null);
-    setError(null);
-    try {
-      const token = localStorage.getItem("token");
-      const res = await fetch(
-        `http://localhost:5000/api/events/${eventId}/unsubscribe`,
-        {
-          method: "POST",
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      );
-      const data = await res.json();
-      if (!res.ok) throw new Error(data.message || "Chyba pri zrušení odberu.");
-      setMessage(data.message);
-      fetchEvent(); // obnov event s novými dátami
-    } catch (err) {
-      setError(err.message);
-    }
-  };
-
+  if (error) return <Alert variant="danger">{error}</Alert>;
   if (loading || !event) return <Spinner animation="border" />;
 
   const {
     title,
     mainImage,
     description,
-    date,
+    date: eventDate,
     time,
     endTime,
     location,
@@ -143,37 +89,31 @@ const EventDetail = ({ eventId }) => {
     subscribers = [],
   } = event;
 
-  console.log(event);
-  console.log("wtf");
+  console.log(eventDate);
 
   const occupied = participants.length;
   const available = capacity ? capacity - occupied : null;
   const isParticipant = participants.some((p) => p.id === user?.id);
-
   const isOrganizer = event.organizer?.id === user?.id;
   const isModerator = event.moderators?.some((m) => m.id === user?.id);
-  console.log(capacity);
 
   return (
     <div className={styles.eventDetails}>
       {mainImage && (
         <div className={styles.header}>
-          {mainImage && (
-            <PhotoProvider>
-              <PhotoView src={`http://localhost:5000${mainImage}`}>
-                <img
-                  src={`http://localhost:5000${mainImage}`}
-                  alt={title}
-                  className={styles.mainImage}
-                />
-              </PhotoView>
-            </PhotoProvider>
-          )}
+          <PhotoProvider>
+            <PhotoView src={`http://localhost:5000${mainImage}`}>
+              <img
+                src={`http://localhost:5000${mainImage}`}
+                alt={title}
+                className={styles.mainImage}
+              />
+            </PhotoView>
+          </PhotoProvider>
         </div>
       )}
       <div className="d-flex flex-row justify-content-start align-items-center w-100">
         <div className={styles.title}>{title}</div>
-
         <OverlayTrigger
           placement="top"
           overlay={<Tooltip id="copy-tooltip">Skopírovať odkaz</Tooltip>}
@@ -181,26 +121,25 @@ const EventDetail = ({ eventId }) => {
           <button
             className={styles.copyButton}
             onClick={() => {
-              const url = `${window.location.origin}/event/${eventId}`;
+              const url = `${window.location.origin}/event/${eventId}/${eventDate}`;
               navigator.clipboard.writeText(url);
             }}
           >
             📋
           </button>
         </OverlayTrigger>
-        {isOrganizer || isModerator ? (
+        {(isOrganizer || isModerator) && (
           <Button
             variant="outline-secondary"
             size="sm"
             onClick={() => navigate(`/edit-event/${event.id}`)}
-            className="ms-auto "
+            className="ms-auto"
           >
             ✏️ Upraviť
           </Button>
-        ) : (
-          ""
         )}
       </div>
+
       {event.categories.length > 0 && (
         <div className="d-flex justify-content-between align-items-center ">
           <div className={styles.tags}>
@@ -220,7 +159,7 @@ const EventDetail = ({ eventId }) => {
             <b>📍</b> {location}
           </div>
           <div>
-            <b>📅</b> {new Date(date).toLocaleDateString()}
+            <b>📅</b> {new Date(eventDate).toISOString().slice(0, 10)}
           </div>
           <div>
             <b>⏰</b> {time}
@@ -242,20 +181,18 @@ const EventDetail = ({ eventId }) => {
               <div className={styles.organizatorTag}>Organizátor</div>
             </div>
           </div>
-          <div className="d-flex flex-column align-items-center gap-1">
-            {moderators.length > 0 && (
+          {moderators.length > 0 && (
+            <>
               <UserAvatarList
                 users={moderators}
                 size="mini"
                 interactive
                 maxVisible={4}
                 header="Moderátori"
-              ></UserAvatarList>
-            )}
-            {moderators.length > 0 && (
+              />
               <div className={styles.organizatorTag}>Moderátori</div>
-            )}
-          </div>
+            </>
+          )}
         </div>
       </div>
 
@@ -281,16 +218,16 @@ const EventDetail = ({ eventId }) => {
       <div className="d-flex flex-row justify-content-between align-items-center gap-2 w-100 mt-3">
         <div className="d-flex flex-column align-items-start gap-1">
           {moderators.length > 0 && (
-            <UserAvatarList
-              users={participants}
-              size="mini"
-              interactive
-              maxVisible={4}
-              header="Účastníci"
-            ></UserAvatarList>
-          )}
-          {moderators.length > 0 && (
-            <div className={styles.organizatorTag}>Účastníci</div>
+            <>
+              <UserAvatarList
+                users={participants}
+                size="mini"
+                interactive
+                maxVisible={4}
+                header="Účastníci"
+              />
+              <div className={styles.organizatorTag}>Účastníci</div>
+            </>
           )}
         </div>
         <div className="d-flex flex-row justify-content-end align-items-center gap-3  w-100">
@@ -298,11 +235,11 @@ const EventDetail = ({ eventId }) => {
             {capacity ? `Voľných miest: ${available}` : ""}
           </div>
           {isParticipant ? (
-            <Button variant="danger" onClick={handleLeave}>
+            <Button variant="danger" onClick={() => postAction("leave")}>
               Odhlásiť sa
             </Button>
           ) : available > 0 || !capacity ? (
-            <Button variant="primary" onClick={handleJoin}>
+            <Button variant="primary" onClick={() => postAction("join")}>
               Prihlásiť sa
             </Button>
           ) : (
@@ -312,38 +249,40 @@ const EventDetail = ({ eventId }) => {
           )}
         </div>
       </div>
+
       <div className="d-flex flex-row justify-content-between align-items-center gap-2 w-100 mt-3">
-        <div className="d-flex flex-column align-items-stsart gap-1">
-          {event.subscribers?.length > 0 && (
-            <UserAvatarList
-              users={event.subscribers}
-              size="mini"
-              interactive
-              maxVisible={4}
-              header="Odberatelia"
-            />
-          )}
-          {event.subscribers?.length > 0 && (
-            <div className={styles.organizatorTag}>Odberatelia</div>
+        <div className="d-flex flex-column align-items-start gap-1">
+          {subscribers.length > 0 && (
+            <>
+              <UserAvatarList
+                users={subscribers}
+                size="mini"
+                interactive
+                maxVisible={4}
+                header="Odberatelia"
+              />
+              <div className={styles.organizatorTag}>Odberatelia</div>
+            </>
           )}
         </div>
-
         <div className="d-flex flex-row justify-content-end align-items-center gap-3 w-100">
           <div className={styles.spotsLeft}>
             {capacity
               ? `Zostáva miest na odber: ${Math.max(
-                  capacity - event.subscribers.length,
+                  capacity - subscribers.length,
                   0
                 )}`
               : ""}
           </div>
-
-          {event.subscribers.some((s) => s.id === user?.id) ? (
-            <Button variant="outline-danger" onClick={handleUnsubscribe}>
+          {subscribers.some((s) => s.id === user?.id) ? (
+            <Button
+              variant="outline-danger"
+              onClick={() => postAction("unsubscribe")}
+            >
               Zrušiť odber
             </Button>
-          ) : event.subscribers.length < capacity ? (
-            <Button variant="secondary" onClick={handleSubscribe}>
+          ) : subscribers.length < capacity ? (
+            <Button variant="secondary" onClick={() => postAction("subscribe")}>
               Prihlásiť sa na odber
             </Button>
           ) : (
