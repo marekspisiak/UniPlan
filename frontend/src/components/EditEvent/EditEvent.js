@@ -83,8 +83,6 @@ const EditEvent = ({ eventId, date }) => {
     fetchEvent();
   }, [eventId, scope]);
 
-  console.log(initialData);
-
   const handleEdit = async (form) => {
     try {
       setError(null);

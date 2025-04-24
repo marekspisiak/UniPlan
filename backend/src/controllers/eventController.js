@@ -36,12 +36,6 @@ export const createEvent = async (req, res) => {
     const moderatorsRaw = toArray(req.body.moderators);
     const moderators = moderatorsRaw.map((mod) => JSON.parse(mod));
 
-    console.log("category ids");
-
-    console.log(req.body.categoryIds);
-
-    console.log(categoryIds);
-
     if (!title) {
       return res.status(400).json({ message: "Vyplň všetky povinné polia." });
     }
@@ -320,12 +314,29 @@ export const applyChanges = async (
       result[field] = occurrence.eventChange[field];
     } else if (eventDay?.eventChange?.[field] != null) {
       result[field] = eventDay.eventChange[field];
+    } else if (field === "startDate") {
+      result[field] = targetDate;
     }
     // ak ani jedno nemá, nechaj pôvodnú hodnotu
   }
 
   return result;
 };
+
+function canJoinEventToday(targetDate, joinDaysBeforeStart) {
+  if (!joinDaysBeforeStart) {
+    return true;
+  }
+  const today = normalizeDate(getCurrentUTCDate());
+
+  const startDate = normalizeDate(targetDate);
+
+  let joinStartDate = new Date(targetDate);
+  joinStartDate.setDate(startDate.getDate() - joinDaysBeforeStart);
+  joinStartDate = normalizeDate(joinStartDate);
+
+  return today >= joinStartDate && today <= startDate;
+}
 
 export const joinEvent = async (req, res) => {
   try {
@@ -346,6 +357,7 @@ export const joinEvent = async (req, res) => {
     const event = await applyChanges(parseInt(id), targetDate, [
       "capacity",
       "joinDaysBeforeStart",
+      "startDate",
     ]);
 
     console.log(event);
@@ -402,6 +414,10 @@ export const joinEvent = async (req, res) => {
       // 2.3. Skontroluj kapacitu
       if (event.capacity && occurrence.participants.length >= event.capacity) {
         throw new Error("Kapacita eventu je naplnená.");
+      }
+
+      if (!canJoinEventToday(event.startDate, event.joinDaysBeforeStart)) {
+        throw new Error("Neda sa este prihlasit");
       }
 
       // 2.4. Pridaj používateľa
@@ -1160,37 +1176,126 @@ export const editEvent = async (req, res) => {
 };
 
 export const updateEventModerators = async (req, res) => {
-  const eventId = parseInt(req.params.id);
-  const moderatorsRaw = toArray(req.body.moderators);
+  const moderators = req.body;
+  const { id: eventIdParam } = req.params;
+  const eventId = parseInt(eventIdParam, 10);
+
+  if (!eventId || !Array.isArray(moderators)) {
+    return res
+      .status(400)
+      .json({ error: "Missing eventId or moderators array" });
+  }
 
   try {
-    const event = await prisma.event.findUnique({
-      where: { id: eventId },
+    // 1. Získaj všetkých aktuálnych moderátorov eventu
+    const existing = await prisma.eventModerator.findMany({
+      where: { eventId },
     });
 
-    if (!event) return res.status(404).json({ message: "Event nenájdený." });
+    const existingIds = existing.map((m) => m.id);
 
-    const parsed = moderatorsRaw.map((m) => JSON.parse(m));
+    // 2. Priprav nové updaty/vytvárania
+
+    await Promise.all(
+      moderators.map(async (mod) => {
+        const {
+          moderatorId,
+          id: userId,
+          canEditEvent = false,
+          canManageParticipants = false,
+          canManageAttendees = false,
+          canManageModerators = false,
+          canRepostEvent = false,
+        } = mod;
+
+        if (moderatorId) {
+          return prisma.eventModerator.update({
+            where: { id: moderatorId },
+            data: {
+              canEditEvent,
+              canManageParticipants,
+              canManageAttendees,
+              canManageModerators,
+              canRepostEvent,
+            },
+          });
+        } else {
+          return prisma.eventModerator.create({
+            data: {
+              userId,
+              eventId,
+              canEditEvent,
+              canManageParticipants,
+              canManageAttendees,
+              canManageModerators,
+              canRepostEvent,
+            },
+          });
+        }
+      })
+    );
+
+    // 3. (Nepovinné) Vymaž moderátorov, ktorí boli odstránení z formulára
+    const receivedIds = moderators.map((m) => m.moderatorId).filter(Boolean);
+    const toDelete = existingIds.filter((id) => !receivedIds.includes(id));
 
     await prisma.eventModerator.deleteMany({
-      where: { seriesId: event.seriesId },
+      where: { id: { in: toDelete } },
     });
 
-    await prisma.eventModerator.createMany({
-      data: parsed.map((mod) => ({
-        userId: mod.id,
-        seriesId: event.seriesId,
-        canEditEvent: mod.canEditEvent,
-        canManageParticipants: mod.canManageParticipants,
-        canManageSubscribers: mod.canManageSubscribers,
-        canManageModerators: mod.canManageModerators,
-        canRepostEvent: mod.canRepostEvent,
-      })),
+    res.status(200).json("Updated");
+  } catch (error) {
+    console.error("Failed to upsert moderators:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+};
+
+export const deleteRecurringAttendance = async (req, res) => {
+  const { id: eventIdParam, eventDayId, userId } = req.params;
+
+  if (!eventDayId || !userId) {
+    return res.status(400).json({ error: "Missing eventDayId or userId" });
+  }
+
+  try {
+    await prisma.eventDay.update({
+      where: { id: parseInt(eventDayId) },
+      data: {
+        users: {
+          disconnect: { id: parseInt(userId) },
+        },
+      },
     });
 
-    res.status(200).json({ message: "Moderátori aktualizovaní." });
-  } catch (err) {
-    console.error("Chyba pri úprave moderátorov:", err);
-    res.status(500).json({ message: "Chyba servera." });
+    res
+      .status(200)
+      .json({ message: "User removed from recurring attendance." });
+  } catch (error) {
+    console.error("Error removing recurring attendance:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
+};
+
+export const deleteSingleAttendance = async (req, res) => {
+  const { id: eventIdParam, occurrenceId, userId } = req.params;
+
+  if (!occurrenceId || !userId) {
+    return res.status(400).json({ error: "Missing occurrenceId or userId" });
+  }
+
+  try {
+    await prisma.eventOccurrence.update({
+      where: { id: parseInt(occurrenceId) },
+      data: {
+        participants: {
+          disconnect: { id: parseInt(userId) },
+        },
+      },
+    });
+
+    res.status(200).json({ message: "User removed from single attendance." });
+  } catch (error) {
+    console.error("Error removing single attendance:", error);
+    res.status(500).json({ error: "Internal server error" });
   }
 };

@@ -5,6 +5,8 @@ import {
   Spinner,
   OverlayTrigger,
   Tooltip,
+  Dropdown,
+  DropdownButton,
 } from "react-bootstrap";
 import UserAvatar from "../../components/UserAvatar/UserAvatar";
 import UserAvatarList from "../../components/UserAvatarList/UserAvatarList";
@@ -16,6 +18,8 @@ import { useNavigate, useParams } from "react-router-dom";
 import EventDaySelector from "../../components/EventDaySelector/EventDaySelector";
 import Popup from "../../components/Popup/Popup";
 import { resolveEventData } from "../../utils/eventUtils";
+import ModeratorSelector from "../../components/ModeratorSelector/ModeratorSelector";
+import UserList from "../../components/UserList/UserList";
 
 const EventDetail = ({ eventId: parEventId, date: parDate }) => {
   let { eventId, date } = useParams();
@@ -26,9 +30,42 @@ const EventDetail = ({ eventId: parEventId, date: parDate }) => {
   const [error, setError] = useState(null);
   const navigate = useNavigate();
   const [showPopup, setShowPopup] = useState(false);
+  const [editModerators, setEditModerators] = useState(false);
+  const [editModeratorsValue, setEditModeratorsValue] = useState({});
+  const [editUsers, setEditUsers] = useState(false);
+  const [editAttendees, setEditAttendees] = useState(false);
 
   eventId = parEventId || eventId;
   date = parDate || date;
+
+  const onSubmitModerators = async (moderators) => {
+    try {
+      const response = await fetch(
+        `http://localhost:5000/api/events/${eventId}/edit-moderators`,
+        {
+          method: "PUT",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+          body: JSON.stringify(moderators),
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error(`Chyba ${response.status}`);
+      }
+
+      const data = await response.json();
+      setEditModerators(false);
+      fetchEvent();
+      console.log("Moderátori boli úspešne uložený:", data);
+      // Tu môžeš dať redirect, toast, atď.
+    } catch (error) {
+      console.error("Chyba pri ukladaní moderátorov:", error);
+      // Tu môžeš zobraziť chybu používateľovi
+    }
+  };
 
   const fetchEvent = async () => {
     try {
@@ -59,6 +96,18 @@ const EventDetail = ({ eventId: parEventId, date: parDate }) => {
             ? newData.endDate.split("T")[1]?.substring(0, 5)
             : undefined,
       });
+
+      setEditModeratorsValue(
+        newData.moderators.map((item) => ({
+          ...item,
+          profileImageUrl: `http://localhost:5000/uploads/profile/user_${item.user.id}.png`,
+          firstName: item.user.firstName,
+          lastName: item.user.lastName,
+          email: item.user.emal,
+          id: item.user.id,
+          moderatorId: item.id,
+        }))
+      );
     } catch (err) {
       setError(err.message);
     } finally {
@@ -66,11 +115,11 @@ const EventDetail = ({ eventId: parEventId, date: parDate }) => {
     }
   };
 
-  console.log(event);
-
   useEffect(() => {
     fetchEvent();
   }, [eventId, date]);
+
+  console.log(editModeratorsValue);
 
   const postAction = async (endpoint) => {
     try {
@@ -113,8 +162,38 @@ const EventDetail = ({ eventId: parEventId, date: parDate }) => {
     startDate,
     startTime,
     endTime,
+    eventDayId,
+    occurrenceId,
     repeatInterval,
   } = event;
+
+  const onUserDelete = async ({ userId, type }) => {
+    // type: 'recurring' alebo 'single'
+    // attendanceId: eventDayId alebo occurrenceId
+
+    const id = type === "recurring" ? eventDayId : occurrenceId;
+
+    const endpoint = `/api/events/${eventId}/attendance/${type}/${id}/${userId}`;
+    const token = localStorage.getItem("token");
+    try {
+      const response = await fetch(endpoint, {
+        method: "DELETE",
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      if (!response.ok) {
+        throw new Error(`Chyba pri mazaní: ${response.status}`);
+      }
+
+      const result = await response.json();
+      fetchEvent();
+      console.log("Úspešne odstránené:", result);
+      return true;
+    } catch (error) {
+      console.error("Chyba pri odstraňovaní používateľa:", error);
+      return false;
+    }
+  };
 
   console.log(subscribers.length);
 
@@ -122,12 +201,52 @@ const EventDetail = ({ eventId: parEventId, date: parDate }) => {
   const available = capacity ? capacity - occupied : null;
   const isParticipant = participants.some((p) => p.id === user?.id);
   const isOrganizer = event.organizer?.id === user?.id;
-  const isModerator = event.moderators?.some((m) => m.id === user?.id);
-
+  const moderator = event.moderators?.find((m) => m.userId === user?.id);
   return (
     <div className={styles.eventDetails}>
-      <Popup isOpen={showPopup} onClose={() => setShowPopup(false)}>
+      <Popup isOpen={editUsers} onClose={() => setEditUsers(false)}>
+        <UserList
+          header="Prihlásení"
+          users={participants}
+          onDelete={(params) => onUserDelete({ ...params, type: "single" })}
+        />
+      </Popup>
+      <Popup
+        isOpen={editAttendees}
+        onClose={() => {
+          setEditAttendees(false);
+          fetchEvent();
+        }}
+      >
+        <UserList
+          header="Pravidelne prihlásení"
+          users={subscribers}
+          onDelete={(params) => onUserDelete({ ...params, type: "recurring" })}
+        />
+      </Popup>
+      <Popup
+        isOpen={showPopup}
+        onClose={() => {
+          setShowPopup(false);
+          fetchEvent();
+        }}
+      >
         <EventDaySelector eventDays={event.eventDays} eventId={event.id} />
+      </Popup>
+      <Popup isOpen={editModerators} onClose={() => setEditModerators(false)}>
+        <ModeratorSelector
+          selected={editModeratorsValue}
+          onChange={(ids) => setEditModeratorsValue(ids)}
+        />
+        <div className="d-flex  justify-content-center mt-2">
+          <Button
+            variant="btn btn-primary"
+            size="sm"
+            onClick={() => onSubmitModerators(editModeratorsValue)}
+          >
+            Potvrdiť
+          </Button>
+        </div>
       </Popup>
       {mainImage && (
         <div className={styles.header}>
@@ -158,15 +277,36 @@ const EventDetail = ({ eventId: parEventId, date: parDate }) => {
             📋
           </button>
         </OverlayTrigger>
-        {(isOrganizer || isModerator) && (
-          <Button
+        {(isOrganizer || moderator) && (
+          <DropdownButton
             variant="outline-secondary"
+            title="⚙️ Správa eventu"
             size="sm"
-            onClick={() => navigate(`/edit-event/${event.id}/${date}`)}
             className="ms-auto"
           >
-            ✏️ Upraviť
-          </Button>
+            {(isOrganizer || moderator?.canEditEvent) && (
+              <Dropdown.Item
+                onClick={() => navigate(`/edit-event/${event.id}/${date}`)}
+              >
+                ✏️ Upraviť event
+              </Dropdown.Item>
+            )}
+            {(isOrganizer || moderator?.canManageModerators) && (
+              <Dropdown.Item onClick={() => setEditModerators((prev) => !prev)}>
+                ✏️ Upraviť moderátorov
+              </Dropdown.Item>
+            )}
+            {(isOrganizer || moderator?.canManageParticipants) && (
+              <Dropdown.Item onClick={() => setEditUsers((prev) => !prev)}>
+                ✏️ Upraviť prihlásených
+              </Dropdown.Item>
+            )}
+            {(isOrganizer || moderator?.canManageAttendees) && (
+              <Dropdown.Item onClick={() => setEditAttendees((prev) => !prev)}>
+                ✏️ Upraviť pravidelných
+              </Dropdown.Item>
+            )}
+          </DropdownButton>
         )}
       </div>
 
@@ -214,7 +354,7 @@ const EventDetail = ({ eventId: parEventId, date: parDate }) => {
           {moderators.length > 0 && (
             <>
               <UserAvatarList
-                users={moderators}
+                users={moderators.map((mod) => mod.user)}
                 size="mini"
                 interactive
                 maxVisible={4}
@@ -289,9 +429,9 @@ const EventDetail = ({ eventId: parEventId, date: parDate }) => {
                 size="mini"
                 interactive
                 maxVisible={4}
-                header="Odberatelia"
+                header="Pravidelní uchádzači"
               />
-              <div className={styles.organizatorTag}>Odberatelia</div>
+              <div className={styles.organizatorTag}>Pravidelní uchádzači</div>
             </>
           )}
         </div>
@@ -305,17 +445,11 @@ const EventDetail = ({ eventId: parEventId, date: parDate }) => {
                   )}`
                 : ""}
             </div>
+            {console.log(subscribers.length, capacity)}
 
-            {subscribers.some((s) => s.id === user?.id) ? (
-              <Button
-                variant="outline-danger"
-                onClick={() => postAction("unsubscribe")}
-              >
-                Zrušiť odber
-              </Button>
-            ) : subscribers.length < capacity ? (
+            {subscribers.length < capacity || !capacity ? (
               <Button variant="secondary" onClick={() => setShowPopup(true)}>
-                Prihlásiť sa na odber
+                Manažovať pravidelné
               </Button>
             ) : (
               <Button variant="secondary" disabled>

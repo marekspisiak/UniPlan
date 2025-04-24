@@ -9,6 +9,8 @@ import {
   updateEventModerators,
   editEvent,
   attendEventDays,
+  deleteRecurringAttendance,
+  deleteSingleAttendance,
 } from "../controllers/eventController.js";
 import { eventUpload } from "../middleware/uploadEventMedia.js";
 import { authorizeEventEditor } from "../middleware/authorizeEventEditor.js";
@@ -26,6 +28,16 @@ router.post("/:id/attend", protectVerified, attendEventDays);
 router.put("/:id/edit-details", protectVerified, eventUpload, editEvent);
 
 router.put("/:id/edit-moderators", protectVerified, updateEventModerators);
+router.delete(
+  "/:id/attendance/recurring/:eventDayId/:userId",
+  protectVerified,
+  deleteRecurringAttendance
+);
+router.delete(
+  "/:id/attendance/single/:occurrenceId/:userId",
+  protectVerified,
+  deleteSingleAttendance
+);
 router.get("/:id", protectVerified, getEventByDate);
 
 export default router;

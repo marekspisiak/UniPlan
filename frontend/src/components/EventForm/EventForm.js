@@ -297,7 +297,7 @@ const EventForm = ({
                 {form.allowRecurringAttendance && (
                   <Form.Group className="mb-3">
                     <Form.Label>
-                      Maximálny počet účastí na jeden cyklus
+                      Max počet dní pre pravidelné prihlásenie na jeden cyklus
                     </Form.Label>
                     <Form.Control
                       type="number"

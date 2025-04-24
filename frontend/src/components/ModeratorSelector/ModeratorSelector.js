@@ -130,7 +130,6 @@ const ModeratorSelector = ({ selected = [], onChange }) => {
                 <th>Účastníci</th>
                 <th>Odberatelia</th>
                 <th>Moderátori</th>
-                <th>Znovu postnúť</th>
                 <th></th>
               </tr>
             </thead>
@@ -148,9 +147,8 @@ const ModeratorSelector = ({ selected = [], onChange }) => {
                   {[
                     "canEditEvent",
                     "canManageParticipants",
-                    "canManageSubscribers",
+                    "canManageAttendees",
                     "canManageModerators",
-                    "canRepostEvent",
                   ].map((perm) => (
                     <td key={perm}>
                       <input
