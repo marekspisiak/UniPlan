@@ -25,7 +25,11 @@ const CreateEvent = () => {
       console.log(entries);
 
       Object.entries(entries).forEach(([key, value]) => {
-        if (key === "gallery" && Array.isArray(value)) {
+        if (key === "categoryIds") {
+          value.forEach((cat) => {
+            formData.append("categoryIds", cat); // ⬅️ iba id
+          });
+        } else if (key === "gallery" && Array.isArray(value)) {
           value.forEach((img) => formData.append("gallery", img));
         } else if (key === "moderators") {
           value.forEach((mod) => formData.append("moderators", mod));

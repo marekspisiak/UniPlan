@@ -13,6 +13,9 @@ import "react-photo-view/dist/react-photo-view.css";
 import { useState, useEffect } from "react";
 import { useAuth } from "../../context/AuthContext";
 import { useNavigate, useParams } from "react-router-dom";
+import EventDaySelector from "../../components/EventDaySelector/EventDaySelector";
+import Popup from "../../components/Popup/Popup";
+import { resolveEventData } from "../../utils/eventUtils";
 
 const EventDetail = ({ eventId: parEventId, date: parDate }) => {
   let { eventId, date } = useParams();
@@ -22,6 +25,7 @@ const EventDetail = ({ eventId: parEventId, date: parDate }) => {
   const [message, setMessage] = useState(null);
   const [error, setError] = useState(null);
   const navigate = useNavigate();
+  const [showPopup, setShowPopup] = useState(false);
 
   eventId = parEventId || eventId;
   date = parDate || date;
@@ -37,14 +41,32 @@ const EventDetail = ({ eventId: parEventId, date: parDate }) => {
       );
       const data = await res.json();
       if (!res.ok) throw new Error(data.message || "Chyba pri načítaní eventu");
-      console.log(data);
-      setEvent(data);
+      const newData = { ...data, ...resolveEventData(data) };
+
+      console.log(resolveEventData(data));
+      console.log(newData);
+      date = data.date;
+      setEvent({
+        ...newData,
+        startDate: newData.hasStartDate
+          ? newData.startDate.split("T")[0]
+          : undefined,
+        startTime: newData.hasStartTime
+          ? newData.startDate.split("T")[1]?.substring(0, 5)
+          : undefined,
+        endTime:
+          newData.hasEndTime && newData.endDate
+            ? newData.endDate.split("T")[1]?.substring(0, 5)
+            : undefined,
+      });
     } catch (err) {
       setError(err.message);
     } finally {
       setLoading(false);
     }
   };
+
+  console.log(event);
 
   useEffect(() => {
     fetchEvent();
@@ -78,19 +100,23 @@ const EventDetail = ({ eventId: parEventId, date: parDate }) => {
     title,
     mainImage,
     description,
-    date: eventDate,
     time,
-    endTime,
     location,
     capacity,
     gallery = [],
     organizer,
     moderators = [],
     participants = [],
-    subscribers = [],
+    attendants: subscribers = [],
+    allowRecurringAttendance = false,
+
+    startDate,
+    startTime,
+    endTime,
+    repeatInterval,
   } = event;
 
-  console.log(eventDate);
+  console.log(subscribers.length);
 
   const occupied = participants.length;
   const available = capacity ? capacity - occupied : null;
@@ -100,6 +126,9 @@ const EventDetail = ({ eventId: parEventId, date: parDate }) => {
 
   return (
     <div className={styles.eventDetails}>
+      <Popup isOpen={showPopup} onClose={() => setShowPopup(false)}>
+        <EventDaySelector eventDays={event.eventDays} eventId={event.id} />
+      </Popup>
       {mainImage && (
         <div className={styles.header}>
           <PhotoProvider>
@@ -122,7 +151,7 @@ const EventDetail = ({ eventId: parEventId, date: parDate }) => {
           <button
             className={styles.copyButton}
             onClick={() => {
-              const url = `${window.location.origin}/event/${eventId}/${eventDate}`;
+              const url = `${window.location.origin}/event/${eventId}/${date}`;
               navigator.clipboard.writeText(url);
             }}
           >
@@ -133,7 +162,7 @@ const EventDetail = ({ eventId: parEventId, date: parDate }) => {
           <Button
             variant="outline-secondary"
             size="sm"
-            onClick={() => navigate(`/edit-event/${event.id}`)}
+            onClick={() => navigate(`/edit-event/${event.id}/${date}`)}
             className="ms-auto"
           >
             ✏️ Upraviť
@@ -160,10 +189,10 @@ const EventDetail = ({ eventId: parEventId, date: parDate }) => {
             <b>📍</b> {location}
           </div>
           <div>
-            <b>📅</b> {new Date(eventDate).toISOString().slice(0, 10)}
+            <b>📅</b> {startDate}
           </div>
           <div>
-            <b>⏰</b> {time}
+            <b>⏰</b> {startTime}
             {endTime ? ` – ${endTime}` : ""}
           </div>
           {capacity && (
@@ -218,7 +247,7 @@ const EventDetail = ({ eventId: parEventId, date: parDate }) => {
 
       <div className="d-flex flex-row justify-content-between align-items-center gap-2 w-100 mt-3">
         <div className="d-flex flex-column align-items-start gap-1">
-          {moderators.length > 0 && (
+          {participants.length > 0 && (
             <>
               <UserAvatarList
                 users={participants}
@@ -266,32 +295,35 @@ const EventDetail = ({ eventId: parEventId, date: parDate }) => {
             </>
           )}
         </div>
-        <div className="d-flex flex-row justify-content-end align-items-center gap-3 w-100">
-          <div className={styles.spotsLeft}>
-            {capacity
-              ? `Zostáva miest na odber: ${Math.max(
-                  capacity - subscribers.length,
-                  0
-                )}`
-              : ""}
+        {allowRecurringAttendance && (
+          <div className="d-flex flex-row justify-content-end align-items-center gap-3 w-100">
+            <div className={styles.spotsLeft}>
+              {capacity
+                ? `Zostáva miest na odber: ${Math.max(
+                    capacity - event.attendants.length,
+                    0
+                  )}`
+                : ""}
+            </div>
+
+            {subscribers.some((s) => s.id === user?.id) ? (
+              <Button
+                variant="outline-danger"
+                onClick={() => postAction("unsubscribe")}
+              >
+                Zrušiť odber
+              </Button>
+            ) : subscribers.length < capacity ? (
+              <Button variant="secondary" onClick={() => setShowPopup(true)}>
+                Prihlásiť sa na odber
+              </Button>
+            ) : (
+              <Button variant="secondary" disabled>
+                Plný počet odberateľov
+              </Button>
+            )}
           </div>
-          {subscribers.some((s) => s.id === user?.id) ? (
-            <Button
-              variant="outline-danger"
-              onClick={() => postAction("unsubscribe")}
-            >
-              Zrušiť odber
-            </Button>
-          ) : subscribers.length < capacity ? (
-            <Button variant="secondary" onClick={() => postAction("subscribe")}>
-              Prihlásiť sa na odber
-            </Button>
-          ) : (
-            <Button variant="secondary" disabled>
-              Plný počet odberateľov
-            </Button>
-          )}
-        </div>
+        )}
       </div>
     </div>
   );

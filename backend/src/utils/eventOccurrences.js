@@ -1,7 +1,11 @@
 import prisma from "../../prisma/client.js";
 import { getCurrentUTCDate } from "./dateHelpers.js";
 
-import { getNextEventDate } from "./virtualizationHelpers.js";
+import {
+  getEventDayId,
+  getNextEventDate,
+  normalizeDate,
+} from "./virtualizationHelpers.js";
 
 export const shouldCreateOccurrence = (event, nextDate) => {
   const isRecurring = event.eventDays && event.eventDays.length > 0;
@@ -36,18 +40,30 @@ export const createOccurrenceIfNeeded = async (eventId) => {
     where: {
       eventId: event.id,
       eventChangeId: null,
+      date: {
+        gt: getCurrentUTCDate(), // len ak je dátum v budúcnosti
+      },
+    },
+    orderBy: {
+      date: "asc", // nájde najbližší budúci výskyt
     },
   });
 
   const nextDate = getNextEventDate(event);
+  const eventDayId = getEventDayId(event);
   console.log("nextDate", nextDate);
 
   if (!existing && shouldCreateOccurrence(event, nextDate)) {
+    const occurrenceData = {
+      event: { connect: { id: event.id } },
+      date: normalizeDate(nextDate || event.startDate),
+    };
+
+    if (eventDayId) {
+      occurrenceData.eventDay = { connect: { id: eventDayId } };
+    }
     return await prisma.eventOccurrence.create({
-      data: {
-        event: { connect: { id: event.id } },
-        date: nextDate || event.startDate || null,
-      },
+      data: occurrenceData,
     });
   }
 

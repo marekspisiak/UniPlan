@@ -28,12 +28,19 @@ export const createEvent = async (req, res) => {
       joinDaysBeforeStart,
       repeatDays,
       repeatInterval,
-      allowRecurringParticipation,
+      allowRecurringAttendance,
+      maxAttendancesPerCycle,
     } = req.body;
 
     const categoryIds = toArray(req.body.categoryIds);
     const moderatorsRaw = toArray(req.body.moderators);
     const moderators = moderatorsRaw.map((mod) => JSON.parse(mod));
+
+    console.log("category ids");
+
+    console.log(req.body.categoryIds);
+
+    console.log(categoryIds);
 
     if (!title) {
       return res.status(400).json({ message: "Vyplň všetky povinné polia." });
@@ -58,29 +65,31 @@ export const createEvent = async (req, res) => {
     let hasStartTime = false;
     let hasEndTime = false;
 
-    if (startDate) {
+    if (startDate && startDate !== "undefined" && startDate !== "") {
       hasStartDate = true;
     }
 
-    if (startTime) {
+    if (startTime && startTime !== "undefined" && startTime !== "") {
       hasStartTime = true;
     }
 
-    if (endTime) {
+    if (endTime && endTime !== "undefined" && endTime !== "") {
       hasEndTime = true;
     }
 
     // Manuálna konštrukcia dátumu v lokálnom čase bez UTC posunu
-    if (startDate || startTime) {
-      if (startTime) {
+    if (hasStartDate || hasStartTime) {
+      if (hasStartTime) {
         computedStartDate = createUTCDate(startDate, startTime);
       } else {
         computedStartDate = createUTCDate(startDate);
       }
+    } else {
+      computedStartDate = getCurrentUTCDate();
     }
 
-    if (endTime) {
-      computedEndDate = createUTCDate(startDate, endTime);
+    if (hasEndTime) {
+      computedEndDate = createUTCDate(null, endTime);
     }
 
     const newEvent = await prisma.event.create({
@@ -94,7 +103,7 @@ export const createEvent = async (req, res) => {
         location,
         capacity: capacity ? parseInt(capacity) : null,
         attendancyLimit: attendancyLimit ? parseInt(attendancyLimit) : null,
-        allowRecurringAttendance: allowRecurringParticipation === "true",
+        allowRecurringAttendance: allowRecurringAttendance === "true",
         joinDaysBeforeStart: joinDaysBeforeStart
           ? parseInt(joinDaysBeforeStart)
           : null,
@@ -107,6 +116,7 @@ export const createEvent = async (req, res) => {
         hasStartDate,
         hasStartTime,
         hasEndTime,
+        attendancyLimit: parseInt(maxAttendancesPerCycle),
         organizer: {
           connect: { id: req.user.id },
         },
@@ -266,6 +276,57 @@ export const getAllEvents = async (req, res) => {
   }
 };
 
+export const applyChanges = async (
+  eventId,
+  targetDate,
+  fieldsToOverride = []
+) => {
+  const event = await prisma.event.findUnique({
+    where: { id: eventId },
+    include: {
+      eventDays: {
+        include: {
+          eventChange: true,
+          day: true,
+        },
+      },
+    },
+  });
+
+  if (!event) throw new Error("Event not found");
+
+  const result = { ...event };
+
+  const eventDayId = getEventDayId(event, targetDate);
+
+  const [eventDay, occurrence] = await Promise.all([
+    eventDayId
+      ? prisma.eventDay.findUnique({
+          where: { id: eventDayId },
+          include: { eventChange: true },
+        })
+      : null,
+    prisma.eventOccurrence.findFirst({
+      where: {
+        eventId: event.id,
+        date: targetDate,
+      },
+      include: { eventChange: true },
+    }),
+  ]);
+
+  for (const field of fieldsToOverride) {
+    if (occurrence?.eventChange?.[field] != null) {
+      result[field] = occurrence.eventChange[field];
+    } else if (eventDay?.eventChange?.[field] != null) {
+      result[field] = eventDay.eventChange[field];
+    }
+    // ak ani jedno nemá, nechaj pôvodnú hodnotu
+  }
+
+  return result;
+};
+
 export const joinEvent = async (req, res) => {
   try {
     const { id } = req.params; // event id
@@ -281,55 +342,84 @@ export const joinEvent = async (req, res) => {
     const targetDate = normalizeDate(date);
 
     // 1. Načítaj event s jeho eventDays
-    const event = await prisma.event.findUnique({
-      where: { id: parseInt(id) },
-      include: {
-        eventDays: { include: { day: true } },
-      },
-    });
+
+    const event = await applyChanges(parseInt(id), targetDate, [
+      "capacity",
+      "joinDaysBeforeStart",
+    ]);
+
+    console.log(event);
 
     if (!event) {
       return res.status(404).json({ message: "Event neexistuje." });
     }
 
-    // 2. Skús nájsť existujúci occurrence
-    let occurrence = await prisma.eventOccurrence.findFirst({
-      where: {
-        eventId: event.id,
-        date: targetDate,
-      },
-    });
-
-    // 3. Ak neexistuje a event je platný na daný deň, vytvor occurrence
-    if (!occurrence) {
-      const validDate = validateEventDate(event, targetDate);
-
-      if (!validDate) {
-        return res.status(400).json({ message: "Event sa v daný deň nekoná." });
-      }
-
-      occurrence = await prisma.eventOccurrence.create({
-        data: {
-          event: { connect: { id: event.id } },
+    // 2. Všetko robíme v rámci transakcie, aby sme boli thread-safe
+    await prisma.$transaction(async (tx) => {
+      // 2.1. Získaj alebo vytvor occurrence
+      let occurrence = await tx.eventOccurrence.findFirst({
+        where: {
+          eventId: event.id,
           date: targetDate,
         },
-      });
-    }
-
-    // 4. Pridaj používateľa do occurrence
-    await prisma.eventOccurrence.update({
-      where: { id: occurrence.id },
-      data: {
-        participants: {
-          connect: { id: userId },
+        include: {
+          participants: {
+            select: { id: true },
+          },
         },
-      },
+      });
+
+      if (!occurrence) {
+        const validDate = validateEventDate(event, targetDate);
+        const eventDayId = getEventDayId(event, targetDate);
+
+        if (!validDate) {
+          throw new Error("Event sa v daný deň nekoná.");
+        }
+
+        occurrence = await tx.eventOccurrence.create({
+          data: {
+            event: { connect: { id: event.id } },
+            date: targetDate,
+            eventDay: eventDayId && { connect: { id: eventDayId } },
+          },
+          include: {
+            participants: {
+              select: { id: true },
+            },
+          },
+        });
+      }
+
+      // 2.2. Skontroluj, či už je používateľ prihlásený
+      const alreadyJoined = occurrence.participants.some(
+        (p) => p.id === userId
+      );
+      if (alreadyJoined) {
+        throw new Error("Už si prihlásený na tento event.");
+      }
+
+      // 2.3. Skontroluj kapacitu
+      if (event.capacity && occurrence.participants.length >= event.capacity) {
+        throw new Error("Kapacita eventu je naplnená.");
+      }
+
+      // 2.4. Pridaj používateľa
+      await tx.eventOccurrence.update({
+        where: { id: occurrence.id },
+        data: {
+          participants: {
+            connect: { id: userId },
+          },
+        },
+      });
     });
 
     return res.json({ message: "Úspešne prihlásený na event." });
   } catch (err) {
     console.error("Chyba pri prihlasovaní na event:", err);
-    return res.status(500).json({ message: "Chyba servera." });
+    const msg = err?.message || "Chyba servera.";
+    return res.status(400).json({ message: msg });
   }
 };
 
@@ -372,38 +462,41 @@ export const getEventByDate = async (req, res) => {
     }
 
     if (!event) return res.status(404).json({ message: "Event neexistuje." });
-    console.log(event);
     const eventDayId = getEventDayId(event, targetDate);
-    let attendants = null;
-    console.log("eventDayId", eventDayId);
+    let eventDay = null;
     if (eventDayId !== null) {
-      attendants = await prisma.eventDay.findUnique({
+      eventDay = await prisma.eventDay.findUnique({
         where: { id: eventDayId },
         include: {
-          users: true, // toto je tvoje "eventDayAttendancy"
+          users: true,
+          eventChange: true, // toto je tvoje "eventDayAttendancy"
         },
       });
     }
 
     const occurrence = event.eventOccurrences[0];
     if (occurrence) {
-      console.log("ma occurence");
       return res.json({
         ...event,
         date: occurrence.date,
         eventChange: occurrence.eventChange,
+        eventChangeDay: eventDay?.eventChange || null,
         participants: occurrence.participants,
-        attendants: attendants?.users || [],
+        attendants: eventDay?.users || [],
+        eventDayId: eventDayId,
+        occurrenceId: occurrence.id,
+
         virtual: false,
       });
     }
 
     return res.json({
       ...event,
-      eventChange: null,
+      eventChangeDay: eventDay?.eventChange || null,
       virtual: true,
-      attendants: attendants?.users || [],
-      date: getNextEventDate(event, targetDate),
+      attendants: eventDay?.users || [],
+      date: targetDate,
+      eventDayId: eventDayId,
     });
   } catch (err) {
     console.error("Chyba pri načítaní eventu:", err);
@@ -430,8 +523,6 @@ export const leaveEvent = async (req, res) => {
       return res.status(404).json({ message: "Event neexistuje." });
     }
 
-    console.log(event);
-
     const occurrence = event.eventOccurrences[0];
 
     if (!occurrence) {
@@ -454,156 +545,616 @@ export const leaveEvent = async (req, res) => {
   }
 };
 
-export const subscribeToEvent = async (req, res) => {
-  const userId = req.user.id;
-  const eventId = parseInt(req.params.id);
-
+export const attendEventDays = async (req, res) => {
   try {
-    // Najprv načítaj event aj s počtom subscriberov
+    const userId = req.user.id;
+    const eventId = parseInt(req.params.id);
+    const { eventDayIds } = req.body;
+
+    if (!Array.isArray(eventDayIds)) {
+      return res.status(400).json({ message: "Neplatný formát požiadavky." });
+    }
+
+    // Získaj event s kapacitou
     const event = await prisma.event.findUnique({
       where: { id: eventId },
-      include: {
-        subscribers: true,
-      },
     });
 
     if (!event) {
       return res.status(404).json({ message: "Event neexistuje." });
     }
 
-    if (event.capacity && event.subscribers.length >= event.capacity) {
-      return res
-        .status(400)
-        .json({ message: "Kapacita odberateľov tohto eventu je plná." });
-    }
-
-    // Pridaj subscribera (ak ešte nie je pridaný)
-    await prisma.event.update({
-      where: { id: eventId },
-      data: {
-        subscribers: {
-          connect: { id: userId },
+    // Všetko v transakcii, aby sme sa vyhli race condition
+    await prisma.$transaction(async (tx) => {
+      // Získaj všetky dni eventu, kde môže byť používateľ prihlásený
+      const allEventDays = await tx.eventDay.findMany({
+        where: { eventId },
+        include: {
+          users: { select: { id: true } },
+          eventChange: true,
         },
-      },
-    });
+      });
 
-    res
-      .status(200)
-      .json({ message: "Úspešne si sa prihlásil na odber eventu." });
-  } catch (err) {
-    console.error("Chyba pri subscribnutí:", err);
-    res.status(500).json({ message: "Chyba servera pri subscribnutí." });
-  }
-};
+      const toConnect = eventDayIds;
+      const toDisconnect = allEventDays
+        .filter(
+          (ed) =>
+            ed.users.some((u) => u.id === userId) &&
+            !eventDayIds.includes(ed.id)
+        )
+        .map((ed) => ed.id);
 
-export const unsubscribeFromEvent = async (req, res) => {
-  const userId = req.user.id;
-  const eventId = parseInt(req.params.id);
+      // Over kapacitu pre každý deň, na ktorý sa používateľ chce prihlásiť
+      for (const dayId of toConnect) {
+        const day = allEventDays.find((d) => d.id === dayId);
 
-  try {
-    await prisma.event.update({
-      where: { id: eventId },
-      data: {
-        subscribers: {
-          disconnect: { id: userId },
-        },
-      },
-    });
+        if (!day) {
+          throw new Error(`Deň s ID ${dayId} neexistuje.`);
+        }
 
-    res.status(200).json({ message: "Odhlásený z odberu eventu." });
-  } catch (err) {
-    console.error("Chyba pri odhlasovaní z odberu:", err);
-    res.status(500).json({ message: "Chyba servera pri odhlasovaní." });
-  }
-};
+        const isAlreadyRegistered = day.users.some((u) => u.id === userId);
+        const currentCount = day.users.length;
 
-export const updateEventDetails = async (req, res) => {
-  const eventId = parseInt(req.params.id);
-  const {
-    title,
-    description,
-    date,
-    time,
-    endTime,
-    location,
-    capacity,
-    mainImage,
-    mainImageChanged,
-  } = req.body;
+        if (
+          !isAlreadyRegistered &&
+          event.capacity &&
+          currentCount >= (day?.eventChange?.capacity || event.capacity)
+        ) {
+          throw new Error(`Kapacita pre deň ${dayId} je naplnená.`);
+        }
+      }
 
-  const categoryIds = toArray(req.body.categoryIds);
-  const deletedGallery = toArray(req.body.deletedGallery);
-
-  try {
-    const event = await prisma.event.findUnique({
-      where: { id: eventId },
-      include: { gallery: true },
-    });
-
-    if (!event) return res.status(404).json({ message: "Event nenájdený." });
-
-    // Vymazanie starej galérie
-    if (deletedGallery.length > 0) {
-      const relativePaths = deletedGallery.map((fullUrl) =>
-        new URL(fullUrl).pathname.replace(/^\/+/, "/")
+      // Odpojiť z dní, kde už nemá byť
+      await Promise.all(
+        toDisconnect.map((id) =>
+          tx.eventDay.update({
+            where: { id },
+            data: {
+              users: {
+                disconnect: { id: userId },
+              },
+            },
+          })
+        )
       );
 
-      await prisma.eventImage.deleteMany({
-        where: { url: { in: relativePaths } },
-      });
+      // Pripojiť k novým dňom
+      await Promise.all(
+        toConnect.map((id) =>
+          tx.eventDay.update({
+            where: { id },
+            data: {
+              users: {
+                connect: { id: userId },
+              },
+            },
+          })
+        )
+      );
+    });
 
-      relativePaths.forEach((urlPath) => {
-        const pathWithoutLeadingSlash = urlPath.replace(/^\/+/, "");
-        const filePath = path.join(pathWithoutLeadingSlash);
-        if (fs.existsSync(filePath)) fs.unlinkSync(filePath);
-      });
+    res.json({ message: "Prihlásenie na dni aktualizované." });
+  } catch (err) {
+    console.error("Chyba pri aktualizácii účasti na dňoch:", err);
+    res.status(400).json({ message: err.message || "Chyba servera." });
+  }
+};
+
+function buildEventChangePayload(
+  newDataRaw,
+  original,
+  computedStartDate,
+  computedEndDate,
+  targetBaseDate
+) {
+  const newData = {};
+
+  const nullIfSame = (key, newValue, originalValue) => {
+    newData[key] =
+      newValue === undefined
+        ? null
+        : newValue === originalValue
+        ? null
+        : newValue;
+  };
+
+  console.log(newDataRaw);
+  newData.hasEndTime =
+    newDataRaw?.endTime !== "null" && newDataRaw?.endTime !== "undefined";
+  newData.hasStartDate =
+    newDataRaw?.startDate !== "null" && newDataRaw?.startDate !== "undefined";
+  newData.hasStartTime =
+    newDataRaw?.startTime !== "null" && newDataRaw?.startTime !== "undefined";
+
+  // Spracovanie dátumu s kombináciou času
+  if (targetBaseDate && original.startDate) {
+    const originalStart = new Date(original.startDate);
+    const base = new Date(targetBaseDate);
+    base.setUTCHours(
+      originalStart.getUTCHours(),
+      originalStart.getUTCMinutes(),
+      0,
+      0
+    );
+    computedStartDate = base;
+  }
+
+  if (targetBaseDate && original.endDate) {
+    const originalEnd = new Date(original.endDate);
+    const base = new Date(targetBaseDate);
+    base.setUTCHours(
+      originalEnd.getUTCHours(),
+      originalEnd.getUTCMinutes(),
+      0,
+      0
+    );
+    computedEndDate = base;
+  }
+
+  // StartDate
+  newData.startDate =
+    computedStartDate &&
+    (!original.startDate ||
+      new Date(original.startDate).getTime() !==
+        new Date(computedStartDate).getTime())
+      ? computedStartDate
+      : null;
+
+  // EndDate
+  newData.endDate =
+    computedEndDate &&
+    (!original.endDate ||
+      new Date(original.endDate).getTime() !==
+        new Date(computedEndDate).getTime())
+      ? computedEndDate
+      : null;
+
+  // Ostatné polia
+  nullIfSame("title", newDataRaw.title, original.title);
+  nullIfSame("description", newDataRaw.description, original.description);
+  nullIfSame("location", newDataRaw.location, original.location);
+
+  nullIfSame(
+    "capacity",
+    newDataRaw.capacity ? parseInt(newDataRaw.capacity) : undefined,
+    original.capacity
+  );
+
+  nullIfSame(
+    "joinDaysBeforeStart",
+    newDataRaw.joinDaysBeforeStart
+      ? parseInt(newDataRaw.joinDaysBeforeStart)
+      : undefined,
+    original.joinDaysBeforeStart
+  );
+
+  nullIfSame(
+    "allowRecurringAttendance",
+    typeof newDataRaw.allowRecurringAttendance === "boolean"
+      ? newDataRaw.allowRecurringAttendance
+      : undefined,
+    original.allowRecurringAttendance
+  );
+
+  return newData;
+}
+
+async function updateEventImages({
+  files,
+  mainImageChanged,
+  deletedGallery,
+  previousMainImage,
+  eventId,
+}) {
+  // 1. Vymaž starý hlavný obrázok ak bol zmenený a nový nie je prítomný
+  if (mainImageChanged && !files?.mainImage?.[0] && previousMainImage) {
+    const oldPath = path.join(".", previousMainImage);
+    try {
+      if (fs.existsSync(oldPath) && fs.statSync(oldPath).isFile()) {
+        fs.unlinkSync(oldPath);
+      }
+    } catch (err) {
+      console.warn("⚠️ Chyba pri mazaní hlavného obrázka:", err.message);
     }
 
-    // Nové fotky galérie
-    const newGalleryImages = req.files?.gallery || [];
-    const galleryData = newGalleryImages.map((file) => ({
-      url: "/uploads/events/" + file.filename,
-      eventId: event.id,
-    }));
-    await prisma.eventImage.createMany({ data: galleryData });
+    await prisma.event.update({
+      where: { id: eventId },
+      data: { mainImage: null },
+    });
+  }
 
-    // Main image
-    let mainImageUrl = event.mainImage || null;
+  // 2. Nastavenie nového hlavného obrázka (ak je)
+  if (mainImageChanged && files?.mainImage?.[0]) {
+    const mainImageUrl = `/uploads/events/${files.mainImage[0].filename}`;
+    await prisma.event.update({
+      where: { id: eventId },
+      data: { mainImage: mainImageUrl },
+    });
 
-    if (mainImageChanged === "true") {
-      if (event.mainImage) {
-        const oldRelativePath = event.mainImage.replace(/^\/+/, "");
-        const oldPath = path.join("uploads", oldRelativePath);
-        if (fs.existsSync(oldPath)) fs.unlinkSync(oldPath);
+    // Zmaž predchádzajúci obrázok, ak existuje a je iný
+    if (
+      previousMainImage &&
+      previousMainImage !== mainImageUrl &&
+      fs.existsSync(path.join(".", previousMainImage)) &&
+      fs.statSync(path.join(".", previousMainImage)).isFile()
+    ) {
+      fs.unlinkSync(path.join(".", previousMainImage));
+    }
+  }
+
+  // 2.5 Vymazanie označených galérií (DB aj súbory)
+  if (Array.isArray(deletedGallery) && deletedGallery.length > 0) {
+    const strippedUrls = deletedGallery.map((fullUrl) => {
+      try {
+        const url = new URL(fullUrl);
+        return url.pathname; // napr. "/uploads/events/obrazok.png"
+      } catch {
+        return fullUrl; // fallback
       }
+    });
 
-      if (req.files?.mainImage?.[0]) {
-        mainImageUrl = "/uploads/events/" + req.files.mainImage[0].filename;
-      } else {
-        mainImageUrl = null;
+    // 🧹 Vymazanie súborov
+    for (const filePath of strippedUrls) {
+      const absolute = path.join(".", filePath);
+      try {
+        if (fs.existsSync(absolute) && fs.statSync(absolute).isFile()) {
+          fs.unlinkSync(absolute);
+        }
+      } catch (err) {
+        console.warn(
+          "⚠️ Nepodarilo sa zmazať galérijný súbor:",
+          filePath,
+          err.message
+        );
       }
     }
 
-    const updatedEvent = await prisma.event.update({
+    // 🧹 Vymazanie z databázy
+    await prisma.eventImage.deleteMany({
+      where: {
+        eventId,
+        url: { in: strippedUrls },
+      },
+    });
+  }
+
+  // 3. Pridanie novej galérie
+  if (files?.gallery?.length) {
+    const newGalleryUrls = files.gallery.map(
+      (file) => `/uploads/events/${file.filename}`
+    );
+
+    await prisma.event.update({
       where: { id: eventId },
       data: {
-        title,
-        description,
-        date: new Date(date),
-        time,
-        endTime: endTime || null,
-        location,
-        capacity: capacity ? parseInt(capacity) : null,
-        mainImage: mainImageUrl,
-        categories: {
-          set: categoryIds.map((id) => ({ id: parseInt(id) })),
+        gallery: {
+          create: newGalleryUrls.map((url) => ({ url })),
         },
       },
     });
+  }
+}
 
-    res.status(200).json(updatedEvent);
+export const editEvent = async (req, res) => {
+  try {
+    const { scope, eventDayId, occurrenceId } = req.body;
+    const userId = req.user.id;
+    const eventId = parseInt(req.body.id);
+
+    if (!eventId || !scope) {
+      return res.status(400).json({ message: "Chýbajúce parametre." });
+    }
+
+    const {
+      title,
+      description,
+      startDate,
+      location,
+      capacity,
+      attendancyLimit,
+      allowRecurringAttendance,
+      joinDaysBeforeStart,
+      repeatUntil,
+      repeatInterval,
+      repeatDays,
+      startTime,
+      endTime,
+    } = req.body;
+
+    console.log(req.body.categoryIds);
+
+    const categoryIds = toArray(req.body.categoryIds);
+
+    const rawGallery = req.body.deletedGallery;
+
+    const deletedGallery =
+      typeof rawGallery === "string"
+        ? rawGallery.split(",").map((url) => {
+            try {
+              const parsed = new URL(url);
+              return parsed.pathname; // odstráni "http://localhost:5000"
+            } catch {
+              return url; // fallback, ak to už je len cesta
+            }
+          })
+        : [];
+
+    let computedStartDate = null;
+    let computedEndDate = null;
+    let hasStartDate = false;
+    let hasStartTime = false;
+    let hasEndTime = false;
+
+    if (startDate && startDate !== "undefined" && startDate !== "") {
+      hasStartDate = true;
+    }
+
+    if (startTime && startTime !== "undefined" && startTime !== "") {
+      hasStartTime = true;
+    }
+
+    if (endTime && endTime !== "undefined" && endTime !== "") {
+      hasEndTime = true;
+    }
+
+    // Manuálna konštrukcia dátumu v lokálnom čase bez UTC posunu
+    if (hasStartDate || hasStartTime) {
+      if (hasStartTime) {
+        computedStartDate = createUTCDate(startDate, startTime);
+      } else {
+        computedStartDate = createUTCDate(startDate);
+      }
+    } else {
+      computedStartDate = getCurrentUTCDate();
+    }
+
+    if (hasEndTime) {
+      computedEndDate = createUTCDate(null, endTime);
+    }
+
+    if (scope === "event") {
+      await updateEventImages({
+        files: req.files,
+        mainImageChanged: req.body.mainImageChanged === "true",
+        deletedGallery: deletedGallery,
+        eventId,
+        previousMainImage: req.body.previousMainImage || null,
+      });
+
+      const updated = await prisma.event.update({
+        where: { id: eventId },
+        data: {
+          title,
+          description,
+          startDate: computedStartDate,
+          endDate: computedEndDate,
+          hasStartDate,
+          hasStartTime,
+          hasEndTime,
+          location,
+          capacity: parseInt(capacity),
+          attendancyLimit: parseInt(attendancyLimit),
+          allowRecurringAttendance: allowRecurringAttendance === "true",
+          joinDaysBeforeStart: parseInt(joinDaysBeforeStart),
+          repeatUntil:
+            repeatUntil !== "null" ? createUTCDate(repeatUntil) : null,
+          categories: {
+            set: categoryIds.map((id) => ({ id: parseInt(id) })),
+          },
+        },
+      });
+
+      // Spracovanie repeatDays
+      const parsedRepeatDays = JSON.parse(repeatDays || "{}");
+
+      const existingDays = await prisma.eventDay.findMany({
+        where: { eventId },
+        include: { day: true },
+      });
+
+      const newWeekDayPairs = Object.entries(parsedRepeatDays).flatMap(
+        ([week, days]) =>
+          days.map((day) => ({ week: parseInt(week), dayId: parseInt(day) }))
+      );
+
+      // Vymaž staré dni + occurrences, ktoré sa na ne viažu
+      for (const oldDay of existingDays) {
+        const stillExists = newWeekDayPairs.some(
+          (pair) => pair.week === oldDay.week && pair.dayId === oldDay.day.id
+        );
+
+        if (!stillExists) {
+          // Vymaž occurrences naviazané na tento deň
+          await prisma.eventOccurrence.deleteMany({
+            where: { eventDayId: oldDay.id },
+          });
+
+          // Vymaž samotný eventDay
+          await prisma.eventDay.delete({ where: { id: oldDay.id } });
+        }
+      }
+
+      // Pridaj nové dni, ktoré ešte neexistujú
+      for (const pair of newWeekDayPairs) {
+        const alreadyExists = existingDays.some(
+          (ed) => ed.week === pair.week && ed.day.id === pair.dayId
+        );
+
+        if (!alreadyExists) {
+          await prisma.eventDay.create({
+            data: {
+              event: { connect: { id: eventId } },
+              week: pair.week,
+              day: { connect: { id: pair.dayId } },
+            },
+          });
+        }
+      }
+
+      // Vytvor nové occurrences podľa aktuálneho stavu
+      await createOccurrenceIfNeeded(eventId);
+
+      return res.json(updated);
+    }
+
+    if (scope === "eventDay") {
+      if (!eventDayId) {
+        return res.status(400).json({ message: "Chýba eventDayId." });
+      }
+
+      const eventDay = await prisma.eventDay.findUnique({
+        where: { id: parseInt(eventDayId) },
+        include: {
+          event: true,
+        },
+      });
+
+      if (!eventDay) {
+        return res.status(404).json({ message: "EventDay neexistuje." });
+      }
+
+      const original = eventDay.event;
+      const newData = buildEventChangePayload(
+        req.body,
+        original,
+        computedStartDate,
+        computedEndDate // použijeme startDate eventDay ako základ pre nový dátum
+      );
+      console.log(newData);
+
+      let change = await prisma.eventChange.findFirst({
+        where: {
+          eventDay: {
+            id: parseInt(eventDayId),
+          },
+        },
+      });
+
+      if (change) {
+        change = await prisma.eventChange.update({
+          where: { id: change.id },
+          data: { ...newData, updatedByUser: { connect: { id: userId } } },
+        });
+      } else {
+        change = await prisma.eventChange.create({
+          data: {
+            ...newData,
+            eventDay: { connect: { id: parseInt(eventDayId) } },
+            createdByUser: { connect: { id: userId } },
+          },
+        });
+      }
+
+      return res.json(change);
+    }
+
+    if (scope === "occurrence") {
+      if (parseInt(req.body.repeatInterval) === 0) {
+        await updateEventImages({
+          files: req.files,
+          mainImageChanged: req.body.mainImageChanged === "true",
+          deletedGallery: deletedGallery,
+          eventId,
+          previousMainImage: req.body.previousMainImage || null,
+        });
+
+        await prisma.event.update({
+          where: { id: eventId },
+          data: {
+            categories: {
+              set: categoryIds.map((id) => ({ id: parseInt(id) })),
+            },
+          },
+        });
+      }
+
+      if (!eventId || !computedStartDate) {
+        return res.status(400).json({ message: "Chýba eventId alebo dátum." });
+      }
+      console.log("req.date");
+      // Skús nájsť existujúcu occurrence pre daný event a dátum
+      let occurrence = await prisma.eventOccurrence.findFirst({
+        where: {
+          eventId: parseInt(eventId),
+          date: req.body.date,
+        },
+        include: {
+          event: true,
+          eventChange: true,
+        },
+      });
+
+      // Ak neexistuje, vytvor ju
+      if (!occurrence) {
+        const event = await prisma.event.findUnique({
+          where: { id: parseInt(eventId) },
+          include: { eventDays: { include: { day: true } } },
+        });
+
+        if (!event) {
+          return res.status(404).json({ message: "Event neexistuje." });
+        }
+
+        // Validácia dátumu (napr. či patrí do cyklu)
+        const validDate = getNextEventDate(event, req.date);
+        if (!validDate) {
+          return res
+            .status(400)
+            .json({ message: "Neplatný dátum pre tento event." });
+        }
+
+        occurrence = await prisma.eventOccurrence.create({
+          data: {
+            event: { connect: { id: event.id } },
+            date: validDate,
+          },
+          include: {
+            event: true,
+            eventChange: true,
+          },
+        });
+      }
+
+      const original = occurrence.event;
+      const newData = buildEventChangePayload(
+        req.body,
+        original,
+        computedStartDate,
+        computedEndDate,
+        req.date
+      );
+
+      console.log(newData);
+
+      if (Object.keys(newData).length === 0) {
+        return res
+          .status(200)
+          .json({ message: "Žiadne zmeny neboli zistené." });
+      }
+
+      if (occurrence.eventChangeId) {
+        const updatedChange = await prisma.eventChange.update({
+          where: { id: occurrence.eventChangeId },
+          data: { ...newData, updatedByUser: { connect: { id: userId } } },
+        });
+        return res.json(updatedChange);
+      } else {
+        const newChange = await prisma.eventChange.create({
+          data: { ...newData, createdByUser: { connect: { id: userId } } },
+        });
+
+        await prisma.eventOccurrence.update({
+          where: { id: occurrence.id },
+          data: { eventChangeId: newChange.id },
+        });
+
+        return res.json(newChange);
+      }
+    }
+
+    return res.status(400).json({ message: "Neznámy scope." });
   } catch (err) {
-    console.error("Chyba pri úprave detailov eventu:", err);
+    console.error("Chyba pri editácii eventu:", err);
     res.status(500).json({ message: "Chyba servera." });
   }
 };
@@ -615,7 +1166,6 @@ export const updateEventModerators = async (req, res) => {
   try {
     const event = await prisma.event.findUnique({
       where: { id: eventId },
-      include: { series: true },
     });
 
     if (!event) return res.status(404).json({ message: "Event nenájdený." });

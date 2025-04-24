@@ -26,7 +26,6 @@ model Category {
   icon         String?
   events       Event[]          @relation("EventCategories")
   users        User[]           @relation("UserInterests")
-  eventChanges EventChange[]    @relation("ChangeCategories")
 }
 
 model User {
@@ -65,8 +64,6 @@ model Event {
   attendancyLimit            Int?
   allowRecurringAttendance   Boolean           @default(false)
   joinDaysBeforeStart        Int?
-
-  categories                 Category[]        @relation("EventCategories")
   organizerId                Int
   organizer                  User              @relation("UserEvents", fields: [organizerId], references: [id], onDelete: Cascade)
   gallery                    EventImage[]      @relation("EventToImages")
@@ -76,50 +73,57 @@ model Event {
 }
 
 model EventDay {
-  id           Int          @id @default(autoincrement())
-  eventId      Int
-  week         Int
-  dayId        Int
-  event        Event        @relation("EventToEventDays", fields: [eventId], references: [id], onDelete: Cascade)
-  day          Day          @relation("DayToEventDays", fields: [dayId], references: [id])
-  eventChanges EventChange[]
-  users        User[]       @relation("EventDayAttendancy")
+  id              Int         @id @default(autoincrement())
+  eventId         Int
+  week            Int
+  dayId           Int
+  event           Event       @relation("EventToEventDays", fields: [eventId], references: [id], onDelete: Cascade)
+  day             Day         @relation("DayToEventDays", fields: [dayId], references: [id])
+  eventChange     EventChange? @relation(fields: [eventChangeId], references: [id])
+  eventChangeId   Int?        @unique
+  users           User[]      @relation("EventDayAttendancy")
+  eventOccurrences EventOccurrence[] @relation("EventDayOccurrences")
 }
 
 model EventChange {
   id                        Int                       @id @default(autoincrement())
-  eventDayId                Int?
-  eventDay                  EventDay?                 @relation(fields: [eventDayId], references: [id], onDelete: Cascade)
-  title                     String?
-  description               String?
-  startDate                 DateTime
-  endDate                   DateTime?
-  location                  String?
-  capacity                  Int?
-  mainImage                 String?
-  gallery                   EventChangeImage[]        @relation("ChangeImages")
-  categories                Category[]                @relation("ChangeCategories")
-  joinDaysBeforeStart       Int?
-  allowRecurringAttendance  Boolean?
+  eventDay                 EventDay?                  // ← Nepotrebuje `@relation`, už je definovaná opačne
+  title                    String?
+  description              String?
+  startDate                DateTime?
+  endDate                  DateTime?
+  hasStartDate            Boolean?           
+  hasStartTime            Boolean?           
+  hasEndTime              Boolean? 
+  location                 String?
+  capacity                 Int?
+  categories               Category[]                @relation("ChangeCategories")
+  joinDaysBeforeStart      Int?
+  allowRecurringAttendance Boolean?
+  createdBy                Int?
+  updatedBy                Int?
+  createdByUser            User?       @relation("CreatedBy", fields: [createdBy], references: [id])
+  updatedByUser            User?       @relation("UpdatedBy", fields: [updatedBy], references: [id])
+  eventOccurrence EventOccurrence? @relation("OccurrenceToChange")
 
-  createdBy   Int?
-  updatedBy   Int?
-
-  createdByUser User?       @relation("CreatedBy", fields: [createdBy], references: [id])
-  updatedByUser User?       @relation("UpdatedBy", fields: [updatedBy], references: [id])
-
-  occurrences  EventOccurrence[] @relation("ChangeToOccurrences")
 }
+
 
 model EventOccurrence {
   id             Int           @id @default(autoincrement())
   eventId        Int
-  eventChangeId  Int?
   date           DateTime?
 
   event          Event         @relation("EventToOccurrences", fields: [eventId], references: [id], onDelete: Cascade)
-  eventChange    EventChange? @relation("ChangeToOccurrences", fields: [eventChangeId], references: [id], onDelete: Cascade)
   participants   User[]        @relation("OccurrenceParticipants")
+  eventDayId     Int?
+  eventDay       EventDay?     @relation("EventDayOccurrences", fields: [eventDayId], references: [id],  onDelete: Cascade)
+  isCancelled    Boolean @default(false)
+
+  eventChangeId Int? @unique
+eventChange   EventChange? @relation("OccurrenceToChange", fields: [eventChangeId], references: [id], onDelete: Cascade)
+
+
 }
 
 model Day {
@@ -135,18 +139,12 @@ model EventImage {
   event    Event  @relation("EventToImages", fields: [eventId], references: [id], onDelete: Cascade)
 }
 
-model EventChangeImage {
-  id              Int            @id @default(autoincrement())
-  url             String
-  eventChangeId   Int
-  eventChange     EventChange    @relation("ChangeImages", fields: [eventChangeId], references: [id], onDelete: Cascade)
-}
-
 model EventModerator {
   id                     Int     @id @default(autoincrement())
   userId                 Int
   user                   User    @relation("UserModerators", fields: [userId], references: [id], onDelete: Cascade)
-  events                 Event[] @relation("EventModerators")
+  eventId                Int
+  event                  Event @relation("EventModerators", fields: [eventId], references: [id], onDelete: Cascade)
   canEditEvent           Boolean @default(false)
   canManageParticipants  Boolean @default(false)
   canManageAttendees     Boolean @default(false)

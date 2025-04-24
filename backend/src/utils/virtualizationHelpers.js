@@ -105,7 +105,7 @@ export const getNextEventDate = (event, targetDate = getCurrentUTCDate()) => {
   const target = normalizeDate(targetDate);
   const start = normalizeDate(event.startDate);
 
-  if (isEqual(start, target)) return target;
+  if (isEqual(start, target) && event.repeatInterval == 0) return target;
 
   if (!event.startDate) return null;
 
@@ -138,8 +138,11 @@ export const validateEventDate = (event, targetDate) => {
   const target = normalizeDate(targetDate);
   let result = false;
   getVirtualDates(event, target, (date) => {
-    result = isEqual(date, target);
-    return "break";
+    if (isEqual(date, target)) {
+      console.log(date, target);
+      result = true;
+      return "break"; // Stop the loop when the first valid date is found
+    }
   });
   return result;
 };

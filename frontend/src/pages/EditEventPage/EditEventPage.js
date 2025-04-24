@@ -3,9 +3,11 @@ import MainLayout from "../../layouts/MainLayout";
 import EditEvent from "../../components/EditEvent/EditEvent";
 
 const EditEventPage = () => {
-  const { id } = useParams(); // ⬅️ získa id z URL
+  const { id, date } = useParams(); // ⬅️ získa id z URL
 
-  return <MainLayout center={<EditEvent eventId={parseInt(id)} />} />;
+  return (
+    <MainLayout center={<EditEvent eventId={parseInt(id)} date={date} />} />
+  );
 };
 
 export default EditEventPage;

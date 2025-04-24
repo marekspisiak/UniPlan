@@ -6,10 +6,9 @@ import {
   joinEvent,
   getEventByDate,
   leaveEvent,
-  subscribeToEvent,
-  unsubscribeFromEvent,
   updateEventModerators,
-  updateEventDetails,
+  editEvent,
+  attendEventDays,
 } from "../controllers/eventController.js";
 import { eventUpload } from "../middleware/uploadEventMedia.js";
 import { authorizeEventEditor } from "../middleware/authorizeEventEditor.js";
@@ -22,23 +21,11 @@ router.get("/categories", protectVerified, getEventCategories);
 router.get("/get", protectVerified, getAllEvents);
 router.post("/:id/join", protectVerified, joinEvent);
 router.post("/:id/leave", protectVerified, leaveEvent);
-router.post("/:id/subscribe", protectVerified, subscribeToEvent);
-router.post("/:id/unsubscribe", protectVerified, unsubscribeFromEvent);
+router.post("/:id/attend", protectVerified, attendEventDays);
 
-router.put(
-  "/:id/edit-details",
-  protectVerified,
-  protectPermission("canEditEvent"),
-  eventUpload,
-  updateEventDetails
-);
+router.put("/:id/edit-details", protectVerified, eventUpload, editEvent);
 
-router.put(
-  "/:id/edit-moderators",
-  protectVerified,
-  protectPermission("canManageModerators"),
-  updateEventModerators
-);
+router.put("/:id/edit-moderators", protectVerified, updateEventModerators);
 router.get("/:id", protectVerified, getEventByDate);
 
 export default router;
