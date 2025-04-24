@@ -8,7 +8,7 @@ const UserList = ({ users = [], header = "", onDelete }) => {
       {header && <div className={styles.header}>{header}</div>}
       <div className={styles.list}>
         {users.map((user) => (
-          <div className="d-flex">
+          <div className="d-flex align-items-center justify-content-center">
             <ClickMenuWrapper key={user.id} user={user}>
               <div className={styles.userItem}>
                 <UserAvatar user={user} interactive={false} />
@@ -20,7 +20,7 @@ const UserList = ({ users = [], header = "", onDelete }) => {
             </ClickMenuWrapper>
             {onDelete && (
               <button
-                className="border border-none background-none"
+                className="btn btn-sm text-danger bg-transparent border-0 p-0 ms-2"
                 onClick={() => onDelete({ userId: user.id })}
                 title="Odstrániť používateľa"
               >
