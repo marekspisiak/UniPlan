@@ -1,0 +1,32 @@
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin-bottom: 0.5rem;
+}
+
+.tag {
+  display: inline-flex;
+  align-items: center;
+  background-color: #eef6fc;
+  color: #0d6efd; // Bootstrap primary
+  font-size: 0.75rem;
+  padding: 0.25rem 0.65rem;
+  border-radius: 16px;
+  border: 1px solid #cce5ff;
+  font-weight: 500;
+  white-space: nowrap;
+  line-height: 1;
+  transition: background-color 0.2s ease;
+
+  &:hover {
+    background-color: #d9efff;
+  }
+}
+
+.tagIcon {
+  margin-right: 6px;
+  display: inline-flex;
+  align-items: center;
+  font-size: 0.85rem;
+}

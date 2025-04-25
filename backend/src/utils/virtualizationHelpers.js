@@ -1,5 +1,6 @@
 import { createUTCDate, getCurrentUTCDate } from "./dateHelpers.js";
 import { isAfter, isEqual } from "date-fns";
+import { applyChangesData } from "./helpers.js";
 
 export const normalizeDate = (date) => {
   // Ak je null alebo undefined, vráť null
@@ -94,7 +95,7 @@ export const getVirtualDates = (
       );
       candidate.setUTCHours(0, 0, 0, 0);
       if (isSameOrAfter(candidate, targetDate)) {
-        const result = onCandidate(candidate, day.id);
+        const result = onCandidate(candidate, day.id, day.eventChange);
         if (result === "break") return;
       }
     }
@@ -139,7 +140,6 @@ export const validateEventDate = (event, targetDate) => {
   let result = false;
   getVirtualDates(event, target, (date) => {
     if (isEqual(date, target)) {
-      console.log(date, target);
       result = true;
       return "break"; // Stop the loop when the first valid date is found
     }
@@ -155,6 +155,20 @@ export const getAllVirtualDates = (event, now = getCurrentUTCDate()) => {
   getVirtualDates(event, now, (candidate) => {
     if (!existingDates.has(candidate.toISOString())) {
       dates.push(candidate);
+    }
+  });
+  return dates;
+};
+
+export const getAllVirtualEvents = (event, now = getCurrentUTCDate()) => {
+  const dates = [];
+  const existingDates = new Set(
+    event.eventOccurrences.map((occ) => new Date(occ.date).toISOString())
+  );
+  getVirtualDates(event, now, (candidate, dayId, dayChanges) => {
+    if (!existingDates.has(candidate.toISOString())) {
+      const changedEvent = applyChangesData(event, [dayChanges]);
+      dates.push({ ...changedEvent, date: candidate, virtual: true });
     }
   });
   return dates;

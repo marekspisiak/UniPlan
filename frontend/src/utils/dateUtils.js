@@ -11,3 +11,10 @@ export const combineDateTimeUTC = (dateStr, timeStr) => {
   const [hour, minute] = timeStr.split(":").map(Number);
   return new Date(Date.UTC(year, month - 1, day, hour, minute));
 };
+
+export const formatDateSlovak = (dateString) => {
+  if (!dateString) return "";
+
+  const [year, month, day] = dateString.split("-");
+  return `${parseInt(day)}. ${parseInt(month)}. ${year}`;
+};

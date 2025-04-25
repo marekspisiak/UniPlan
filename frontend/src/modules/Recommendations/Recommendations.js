@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import ActivityCard from "./ActivityCard";
 import styles from "./Recommendations.module.scss";
 import { Spinner, Alert } from "react-bootstrap";
+import EventCard from "../../components/EventCard/EventCard";
 
 const Recommendations = () => {
   const [activities, setActivities] = useState([]);
@@ -43,7 +44,7 @@ const Recommendations = () => {
       <h4 className={styles.title}>Odporúčané aktivity</h4>
       <div className={styles.list}>
         {activities.map((activity) => (
-          <ActivityCard key={activity.id} activity={activity} />
+          <EventCard key={activity.id} event={activity} />
         ))}
       </div>
     </div>

@@ -2,15 +2,20 @@ import e from "express";
 import prisma from "../../prisma/client.js";
 import path from "path";
 import fs from "fs"; // a ak ešte nemáš, aj fs budeš potrebovať
-import { toArray } from "../utils/helpers.js"; // importuj túto funkciu z utils
+import { toArray, applyChangesData } from "../utils/helpers.js"; // importuj túto funkciu z utils
 import { createOccurrenceIfNeeded } from "../utils/eventOccurrences.js";
-import { createUTCDate, getCurrentUTCDate } from "../utils/dateHelpers.js";
+import {
+  createUTCDate,
+  getCurrentUTCDate,
+  mergeDateAndTime,
+} from "../utils/dateHelpers.js";
 import {
   getAllVirtualDates,
   validateEventDate,
   normalizeDate,
   getEventDayId,
   getNextEventDate,
+  getAllVirtualEvents,
 } from "../utils/virtualizationHelpers.js";
 
 export const createEvent = async (req, res) => {
@@ -181,24 +186,13 @@ export const getEventCategories = async (req, res) => {
 };
 
 // GET /api/events
-import {
-  startOfWeek,
-  addWeeks,
-  setDay,
-  isAfter,
-  isBefore,
-  isEqual,
-} from "date-fns";
-import { get } from "http";
-import { is } from "date-fns/locale";
 
 export const getAllEvents = async (req, res) => {
   try {
     const allEvents = await prisma.event.findMany({
       include: {
         categories: true,
-        gallery: true,
-        eventDays: { include: { day: true } },
+        eventDays: { include: { day: true, eventChange: true } },
         organizer: {
           select: {
             id: true,
@@ -207,6 +201,7 @@ export const getAllEvents = async (req, res) => {
             email: true,
           },
         },
+
         moderators: {
           include: {
             user: {
@@ -222,6 +217,8 @@ export const getAllEvents = async (req, res) => {
         eventOccurrences: {
           include: {
             eventChange: true,
+            eventDay: { include: { eventChange: true } },
+            participants: true,
           },
         },
       },
@@ -235,19 +232,23 @@ export const getAllEvents = async (req, res) => {
       const hasOccurrence = event.eventOccurrences.length > 0;
 
       for (const occ of event.eventOccurrences) {
+        const changedEvent = applyChangesData(
+          { ...event, startDate: mergeDateAndTime(event.startDate, occ.date) },
+          [occ?.eventChange, occ?.eventDay?.eventChange]
+        );
         instances.push({
-          ...event,
+          ...changedEvent,
           date: occ.date,
           virtual: false,
-          eventChange: occ.eventChange || null,
+          participants: occ.participants,
         });
       }
 
       if (isRecurring) {
-        const virtualDates = getAllVirtualDates(event, now);
+        const virtualEvents = getAllVirtualEvents(event, now);
 
-        for (const date of virtualDates) {
-          instances.push({ ...event, date, virtual: true });
+        for (const virtualEvent of virtualEvents) {
+          instances.push(virtualEvent);
         }
       }
 
@@ -271,11 +272,12 @@ export const getAllEvents = async (req, res) => {
 };
 
 export const applyChanges = async (
+  prismaClient, // prisma alebo tx
   eventId,
   targetDate,
   fieldsToOverride = []
 ) => {
-  const event = await prisma.event.findUnique({
+  const event = await prismaClient.event.findUnique({
     where: { id: eventId },
     include: {
       eventDays: {
@@ -289,18 +291,16 @@ export const applyChanges = async (
 
   if (!event) throw new Error("Event not found");
 
-  const result = { ...event };
-
   const eventDayId = getEventDayId(event, targetDate);
 
   const [eventDay, occurrence] = await Promise.all([
     eventDayId
-      ? prisma.eventDay.findUnique({
+      ? prismaClient.eventDay.findUnique({
           where: { id: eventDayId },
           include: { eventChange: true },
         })
       : null,
-    prisma.eventOccurrence.findFirst({
+    prismaClient.eventOccurrence.findFirst({
       where: {
         eventId: event.id,
         date: targetDate,
@@ -309,18 +309,12 @@ export const applyChanges = async (
     }),
   ]);
 
-  for (const field of fieldsToOverride) {
-    if (occurrence?.eventChange?.[field] != null) {
-      result[field] = occurrence.eventChange[field];
-    } else if (eventDay?.eventChange?.[field] != null) {
-      result[field] = eventDay.eventChange[field];
-    } else if (field === "startDate") {
-      result[field] = targetDate;
-    }
-    // ak ani jedno nemá, nechaj pôvodnú hodnotu
-  }
-
-  return result;
+  return applyChangesData(
+    event,
+    [occurrence?.eventChange, eventDay?.eventChange],
+    fieldsToOverride,
+    { startDate: targetDate }
+  );
 };
 
 function canJoinEventToday(targetDate, joinDaysBeforeStart) {
@@ -354,13 +348,11 @@ export const joinEvent = async (req, res) => {
 
     // 1. Načítaj event s jeho eventDays
 
-    const event = await applyChanges(parseInt(id), targetDate, [
+    const event = await applyChanges(prisma, parseInt(id), targetDate, [
       "capacity",
       "joinDaysBeforeStart",
       "startDate",
     ]);
-
-    console.log(event);
 
     if (!event) {
       return res.status(404).json({ message: "Event neexistuje." });
@@ -501,6 +493,7 @@ export const getEventByDate = async (req, res) => {
         attendants: eventDay?.users || [],
         eventDayId: eventDayId,
         occurrenceId: occurrence.id,
+        startDate: mergeDateAndTime(event.startDate, targetDate),
 
         virtual: false,
       });
@@ -674,7 +667,6 @@ function buildEventChangePayload(
         : newValue;
   };
 
-  console.log(newDataRaw);
   newData.hasEndTime =
     newDataRaw?.endTime !== "null" && newDataRaw?.endTime !== "undefined";
   newData.hasStartDate =
@@ -683,29 +675,29 @@ function buildEventChangePayload(
     newDataRaw?.startTime !== "null" && newDataRaw?.startTime !== "undefined";
 
   // Spracovanie dátumu s kombináciou času
-  if (targetBaseDate && original.startDate) {
-    const originalStart = new Date(original.startDate);
-    const base = new Date(targetBaseDate);
-    base.setUTCHours(
-      originalStart.getUTCHours(),
-      originalStart.getUTCMinutes(),
-      0,
-      0
-    );
-    computedStartDate = base;
-  }
+  // if (targetBaseDate && original.startDate) {
+  //   const originalStart = new Date(original.startDate);
+  //   const base = new Date(targetBaseDate);
+  //   base.setUTCHours(
+  //     originalStart.getUTCHours(),
+  //     originalStart.getUTCMinutes(),
+  //     0,
+  //     0
+  //   );
+  //   computedStartDate = base;
+  // }
 
-  if (targetBaseDate && original.endDate) {
-    const originalEnd = new Date(original.endDate);
-    const base = new Date(targetBaseDate);
-    base.setUTCHours(
-      originalEnd.getUTCHours(),
-      originalEnd.getUTCMinutes(),
-      0,
-      0
-    );
-    computedEndDate = base;
-  }
+  // if (targetBaseDate && original.endDate) {
+  //   const originalEnd = new Date(original.endDate);
+  //   const base = new Date(targetBaseDate);
+  //   base.setUTCHours(
+  //     originalEnd.getUTCHours(),
+  //     originalEnd.getUTCMinutes(),
+  //     0,
+  //     0
+  //   );
+  //   computedEndDate = base;
+  // }
 
   // StartDate
   newData.startDate =
@@ -877,8 +869,6 @@ export const editEvent = async (req, res) => {
       endTime,
     } = req.body;
 
-    console.log(req.body.categoryIds);
-
     const categoryIds = toArray(req.body.categoryIds);
 
     const rawGallery = req.body.deletedGallery;
@@ -916,16 +906,21 @@ export const editEvent = async (req, res) => {
     // Manuálna konštrukcia dátumu v lokálnom čase bez UTC posunu
     if (hasStartDate || hasStartTime) {
       if (hasStartTime) {
+        console.log("1");
         computedStartDate = createUTCDate(startDate, startTime);
       } else {
+        console.log("2");
+
         computedStartDate = createUTCDate(startDate);
       }
     } else {
+      console.log("3");
+
       computedStartDate = getCurrentUTCDate();
     }
 
     if (hasEndTime) {
-      computedEndDate = createUTCDate(null, endTime);
+      computedEndDate = createUTCDate(startDate, endTime);
     }
 
     if (scope === "event") {
@@ -1036,7 +1031,6 @@ export const editEvent = async (req, res) => {
         computedStartDate,
         computedEndDate // použijeme startDate eventDay ako základ pre nový dátum
       );
-      console.log(newData);
 
       let change = await prisma.eventChange.findFirst({
         where: {
@@ -1088,6 +1082,7 @@ export const editEvent = async (req, res) => {
         return res.status(400).json({ message: "Chýba eventId alebo dátum." });
       }
       console.log("req.date");
+      console.log(req.body.date);
       // Skús nájsť existujúcu occurrence pre daný event a dátum
       let occurrence = await prisma.eventOccurrence.findFirst({
         where: {
@@ -1112,7 +1107,7 @@ export const editEvent = async (req, res) => {
         }
 
         // Validácia dátumu (napr. či patrí do cyklu)
-        const validDate = getNextEventDate(event, req.date);
+        const validDate = getNextEventDate(event, req.body.date);
         if (!validDate) {
           return res
             .status(400)
@@ -1137,10 +1132,8 @@ export const editEvent = async (req, res) => {
         original,
         computedStartDate,
         computedEndDate,
-        req.date
+        req.body.date
       );
-
-      console.log(newData);
 
       if (Object.keys(newData).length === 0) {
         return res

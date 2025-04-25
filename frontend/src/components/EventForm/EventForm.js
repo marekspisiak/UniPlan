@@ -157,6 +157,8 @@ const EventForm = ({
     }
   };
 
+  console.log(form);
+
   return (
     <div className={styles.eventForm}>
       <h4 className={styles.heading}>{heading}</h4>
@@ -190,6 +192,7 @@ const EventForm = ({
         </Form.Group>
 
         {/* Dátum */}
+        {console.log(form.startDate)}
         {(!scope || scope === "occurrence") && (
           <Form.Group className="mb-3">
             <Form.Label>Dátum</Form.Label>

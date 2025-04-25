@@ -39,9 +39,8 @@ export const createOccurrenceIfNeeded = async (eventId) => {
   const existing = await prisma.eventOccurrence.findFirst({
     where: {
       eventId: event.id,
-      eventChangeId: null,
       date: {
-        gt: getCurrentUTCDate(), // len ak je dátum v budúcnosti
+        gte: normalizeDate(getCurrentUTCDate()), // len ak je dátum v budúcnosti
       },
     },
     orderBy: {
@@ -51,7 +50,6 @@ export const createOccurrenceIfNeeded = async (eventId) => {
 
   const nextDate = getNextEventDate(event);
   const eventDayId = getEventDayId(event);
-  console.log("nextDate", nextDate);
 
   if (!existing && shouldCreateOccurrence(event, nextDate)) {
     const occurrenceData = {
@@ -62,6 +60,7 @@ export const createOccurrenceIfNeeded = async (eventId) => {
     if (eventDayId) {
       occurrenceData.eventDay = { connect: { id: eventDayId } };
     }
+    console.log("vytvaram occurrence");
     return await prisma.eventOccurrence.create({
       data: occurrenceData,
     });

@@ -47,13 +47,12 @@ const EditEvent = ({ eventId, date }) => {
         console.log(data.endDate);
 
         const newData = { ...data, ...resolveEventData(data, scope) };
-        console.log(data);
 
         setInitialData({
           ...newData,
 
           startDate: newData.hasStartDate
-            ? newData.date.split("T")[0]
+            ? newData.startDate.split("T")[0]
             : undefined,
           startTime: newData.hasStartTime
             ? newData.startDate.split("T")[1]?.substring(0, 5)
@@ -79,6 +78,8 @@ const EditEvent = ({ eventId, date }) => {
     };
     fetchEvent();
   }, [eventId, scope]);
+
+  console.log(initialData);
 
   const handleEdit = async (form) => {
     try {

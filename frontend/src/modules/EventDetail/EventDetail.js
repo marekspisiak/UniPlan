@@ -20,6 +20,8 @@ import Popup from "../../components/Popup/Popup";
 import { resolveEventData } from "../../utils/eventUtils";
 import ModeratorSelector from "../../components/ModeratorSelector/ModeratorSelector";
 import UserList from "../../components/UserList/UserList";
+import { formatDateSlovak } from "../../utils/dateUtils";
+import CategoryList from "../../components/CategoryList/CategoryList";
 
 const EventDetail = ({ eventId: parEventId, date: parDate }) => {
   let { eventId, date } = useParams();
@@ -74,9 +76,6 @@ const EventDetail = ({ eventId: parEventId, date: parDate }) => {
       if (!res.ok) throw new Error(data.message || "Chyba pri načítaní eventu");
       const newData = { ...data, ...resolveEventData(data) };
 
-      console.log(resolveEventData(data));
-      console.log(newData);
-      date = data.date;
       setEvent({
         ...newData,
         startDate: newData.hasStartDate
@@ -304,18 +303,7 @@ const EventDetail = ({ eventId: parEventId, date: parDate }) => {
         )}
       </div>
 
-      {event.categories.length > 0 && (
-        <div className="d-flex justify-content-between align-items-center ">
-          <div className={styles.tags}>
-            {event.categories.map((cat) => (
-              <span key={cat.id} className={styles.tag}>
-                <span className={styles.tagIcon}>{cat.icon}</span>
-                {cat.label || cat.name}
-              </span>
-            ))}
-          </div>
-        </div>
-      )}
+      <CategoryList categories={event.categories} />
 
       <div className="d-flex fex-row justify-content-between align-items-start gap-2 w-100">
         <div className={styles.details}>
@@ -323,11 +311,11 @@ const EventDetail = ({ eventId: parEventId, date: parDate }) => {
             <b>📍</b> {location}
           </div>
           <div>
-            <b>📅</b> {startDate}
+            <b>📅</b> {formatDateSlovak(startDate)}
           </div>
           <div>
             <b>⏰</b> {startTime}
-            {endTime ? ` – ${endTime}` : ""}
+            {endTime ? ` - ${endTime}` : ""}
           </div>
           {capacity && (
             <div>

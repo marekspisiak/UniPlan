@@ -6,7 +6,7 @@ export const createUTCDate = (dateString, timeString) => {
   if (dateString) {
     [year, month, day] = dateString.split("-").map(Number);
   } else {
-    const today = new Date();
+    const today = getCurrentUTCDate();
     year = today.getUTCFullYear();
     month = today.getUTCMonth() + 1;
     day = today.getUTCDate();
@@ -41,4 +41,18 @@ const getMondayOfWeekUTC = (date) => {
   );
   monday.setUTCDate(monday.getUTCDate() - diff);
   return monday;
+};
+
+export const mergeDateAndTime = (startDate, targetDate) => {
+  const time = {
+    hours: startDate.getHours(),
+    minutes: startDate.getMinutes(),
+    seconds: startDate.getSeconds(),
+    milliseconds: startDate.getMilliseconds(),
+  };
+
+  const merged = new Date(targetDate);
+  merged.setHours(time.hours, time.minutes, time.seconds, time.milliseconds);
+
+  return merged;
 };
