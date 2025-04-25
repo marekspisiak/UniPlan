@@ -389,9 +389,7 @@ const EventForm = ({
                 }));
               }}
               multiple={false}
-              existing={
-                form.mainImage ? [`http://localhost:5000${form.mainImage}`] : []
-              }
+              existing={form.mainImage ? [`${form.mainImage}`] : []}
             />
 
             <ImageUploader
@@ -406,9 +404,7 @@ const EventForm = ({
               }
               multiple
               max={5}
-              existing={
-                form.gallery?.map((g) => `http://localhost:5000${g.url}`) || []
-              }
+              existing={form.gallery?.map((g) => `${g.url}`) || []}
             />
           </>
         )}

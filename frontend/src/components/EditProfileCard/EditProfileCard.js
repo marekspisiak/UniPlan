@@ -35,7 +35,7 @@ const EditProfileCard = ({ setIsEditing }) => {
       form.interests.forEach((id) => formData.append("interests[]", id));
       if (form.photo) formData.append("photo", form.photo);
 
-      const res = await fetch("http://localhost:5000/api/user/profile", {
+      const res = await fetch("/api/user/profile", {
         method: "PUT",
         headers: {
           Authorization: `Bearer ${localStorage.getItem("token")}`,

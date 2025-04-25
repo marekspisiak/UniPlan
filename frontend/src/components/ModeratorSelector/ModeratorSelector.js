@@ -28,7 +28,7 @@ const ModeratorSelector = ({ selected = [], onChange }) => {
     setLoading(true);
     try {
       const res = await fetch(
-        `http://localhost:5000/api/user/search?q=${encodeURIComponent(term)}`,
+        `/api/user/search?q=${encodeURIComponent(term)}`,
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,

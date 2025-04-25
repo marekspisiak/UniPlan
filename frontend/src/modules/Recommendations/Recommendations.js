@@ -12,7 +12,7 @@ const Recommendations = () => {
     const fetchActivities = async () => {
       try {
         const token = localStorage.getItem("token");
-        const res = await fetch("http://localhost:5000/api/events/get", {
+        const res = await fetch("/api/events/get", {
           headers: {
             Authorization: `Bearer ${token}`,
           },

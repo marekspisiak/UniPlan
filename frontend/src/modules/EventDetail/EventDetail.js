@@ -40,17 +40,14 @@ const EventDetail = ({ eventId: parEventId, date: parDate }) => {
 
   const onSubmitModerators = async (moderators) => {
     try {
-      const response = await fetch(
-        `http://localhost:5000/api/events/${eventId}/edit-moderators`,
-        {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-          body: JSON.stringify(moderators),
-        }
-      );
+      const response = await fetch(`/api/events/${eventId}/edit-moderators`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+        body: JSON.stringify(moderators),
+      });
 
       if (!response.ok) {
         throw new Error(`Chyba ${response.status}`);
@@ -70,12 +67,9 @@ const EventDetail = ({ eventId: parEventId, date: parDate }) => {
   const fetchEvent = async () => {
     try {
       setLoading(true);
-      const res = await fetch(
-        `http://localhost:5000/api/events/${eventId}?date=${date}`,
-        {
-          headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-        }
-      );
+      const res = await fetch(`/api/events/${eventId}?date=${date}`, {
+        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+      });
       const data = await res.json();
       if (!res.ok) throw new Error(data.message || "Chyba pri načítaní eventu");
       const newData = { ...data, ...resolveEventData(data) };
@@ -100,7 +94,7 @@ const EventDetail = ({ eventId: parEventId, date: parDate }) => {
       setEditModeratorsValue(
         newData.moderators.map((item) => ({
           ...item,
-          profileImageUrl: `http://localhost:5000/uploads/profile/user_${item.user.id}.png`,
+          profileImageUrl: `/uploads/profile/user_${item.user.id}.png`,
           firstName: item.user.firstName,
           lastName: item.user.lastName,
           email: item.user.emal,
@@ -127,7 +121,7 @@ const EventDetail = ({ eventId: parEventId, date: parDate }) => {
       setError(null);
       const token = localStorage.getItem("token");
       const res = await fetch(
-        `http://localhost:5000/api/events/${eventId}/${endpoint}?date=${date}`,
+        `/api/events/${eventId}/${endpoint}?date=${date}`,
         {
           method: "POST",
           headers: { Authorization: `Bearer ${token}` },
@@ -251,9 +245,9 @@ const EventDetail = ({ eventId: parEventId, date: parDate }) => {
       {mainImage && (
         <div className={styles.header}>
           <PhotoProvider>
-            <PhotoView src={`http://localhost:5000${mainImage}`}>
+            <PhotoView src={`${mainImage}`}>
               <img
-                src={`http://localhost:5000${mainImage}`}
+                src={`${mainImage}`}
                 alt={title}
                 className={styles.mainImage}
               />
@@ -372,9 +366,9 @@ const EventDetail = ({ eventId: parEventId, date: parDate }) => {
           <div className={styles.gallery}>
             {gallery.map((img, index) => (
               <div className={styles.galleryImageWrapper}>
-                <PhotoView key={index} src={`http://localhost:5000${img.url}`}>
+                <PhotoView key={index} src={`${img.url}`}>
                   <img
-                    src={`http://localhost:5000${img.url}`}
+                    src={`${img.url}`}
                     alt={`gallery-${index}`}
                     className={styles.galleryImage}
                   />

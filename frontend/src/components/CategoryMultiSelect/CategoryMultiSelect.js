@@ -9,7 +9,7 @@ const CategoryMultiSelect = ({ selectedIds, onChange }) => {
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const res = await fetch("http://localhost:5000/api/events/categories", {
+        const res = await fetch("/api/events/categories", {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
           },

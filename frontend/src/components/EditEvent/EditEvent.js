@@ -34,14 +34,11 @@ const EditEvent = ({ eventId, date }) => {
     const fetchEvent = async () => {
       try {
         const token = localStorage.getItem("token");
-        const res = await fetch(
-          `http://localhost:5000/api/events/${eventId}?date=${date}`,
-          {
-            headers: {
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        );
+        const res = await fetch(`/api/events/${eventId}?date=${date}`, {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
         const data = await res.json();
         if (!res.ok)
           throw new Error(data.message || "Chyba pri načítaní eventu");
@@ -129,14 +126,11 @@ const EditEvent = ({ eventId, date }) => {
         }
       }
 
-      const res = await fetch(
-        `http://localhost:5000/api/events/${eventId}/edit-details`,
-        {
-          method: "PUT",
-          headers: { Authorization: `Bearer ${token}` },
-          body: formData,
-        }
-      );
+      const res = await fetch(`/api/events/${eventId}/edit-details`, {
+        method: "PUT",
+        headers: { Authorization: `Bearer ${token}` },
+        body: formData,
+      });
 
       const data = await res.json();
       if (!res.ok) throw new Error(data.message || "Chyba pri editovaní");

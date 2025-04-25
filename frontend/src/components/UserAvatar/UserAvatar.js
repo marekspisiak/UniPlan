@@ -16,7 +16,7 @@ const UserAvatar = ({
     const fetchUser = async () => {
       if (!providedUser && userId) {
         try {
-          const res = await fetch(`http://localhost:5000/api/user/${userId}`, {
+          const res = await fetch(`/api/user/${userId}`, {
             headers: {
               Authorization: `Bearer ${localStorage.getItem("token")}`,
             },
@@ -46,7 +46,7 @@ const UserAvatar = ({
 
   const avatarImg = (
     <img
-      src={`http://localhost:5000/uploads/profile/user_${user.id}.png`}
+      src={`/uploads/profile/user_${user.id}.png`}
       alt="Avatar"
       className={`${styles.avatar} ${sizeClass}`}
     />

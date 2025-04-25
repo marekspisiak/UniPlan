@@ -35,17 +35,14 @@ const EventDaySelector = ({ eventId, eventDays }) => {
     setMessage(null);
     setError(null);
     try {
-      const res = await fetch(
-        `http://localhost:5000/api/events/${eventId}/attend`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
-          },
-          body: JSON.stringify({ eventDayIds: selected }),
-        }
-      );
+      const res = await fetch(`/api/events/${eventId}/attend`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+        body: JSON.stringify({ eventDayIds: selected }),
+      });
 
       const data = await res.json();
       if (!res.ok) throw new Error(data.message || "Chyba pri prihlasovaní.");
