@@ -1,8 +1,10 @@
 import prisma from "../../prisma/client.js";
+import { toArray } from "../utils/helpers.js";
 import {
   createAndSendVerificationEmail,
   needsReverification,
 } from "../utils/verificationHelpers.js";
+import bcrypt from "bcrypt";
 
 export const getUserProfile = async (req, res) => {
   const userId = parseInt(req.params.id);
@@ -46,13 +48,10 @@ export const getUserProfile = async (req, res) => {
 export const updateUserInterests = async (req, res) => {
   const userId = req.user.id;
   const categoryIds = toArray(req.body.categoryIds);
-
-  if (!Array.isArray(categoryIds)) {
-    return res.status(400).json({ message: "Neplatné údaje." });
-  }
+  console.log(categoryIds);
 
   try {
-    const updatedUser = await prisma.user.update({
+    await prisma.user.update({
       where: { id: userId },
       data: {
         interests: {
@@ -60,12 +59,9 @@ export const updateUserInterests = async (req, res) => {
           connect: categoryIds.map((id) => ({ id })),
         },
       },
-      include: {
-        interests: true,
-      },
     });
 
-    res.json(updatedUser);
+    return res.json({ message: "Úspešne editované" });
   } catch (err) {
     console.error("Chyba pri aktualizácii záujmov:", err);
     res.status(500).json({ message: "Server error." });
@@ -89,8 +85,8 @@ export const updateProfilePhoto = async (req, res) => {
 
 export const updateProfile = async (req, res) => {
   const userId = req.user.id;
-  const { firstName, lastName, email, interests } = req.body;
-  console.log(firstName);
+  const { firstName, lastName, email } = req.body;
+  const interests = toArray(req.body.interests);
 
   try {
     const user = await prisma.user.findUnique({ where: { id: userId } });
@@ -192,5 +188,44 @@ export const searchUsers = async (req, res) => {
   } catch (err) {
     console.error("Chyba pri vyhľadávaní používateľov:", err);
     res.status(500).json({ message: "Chyba servera." });
+  }
+};
+
+// controllers/user/changePassword.js
+
+export const changePassword = async (req, res) => {
+  try {
+    const userId = req.user.id; // <- ID z tokenu, predpokladám že protect middleware to tam dá
+    const { currentPassword, newPassword } = req.body;
+
+    if (!currentPassword || !newPassword) {
+      return res.status(400).json({ message: "Prosím, vyplň všetky polia." });
+    }
+
+    const user = await prisma.user.findUnique({
+      where: { id: userId },
+      select: { password: true },
+    });
+
+    if (!user || !user.password) {
+      return res.status(400).json({ message: "Používateľ nenájdený." });
+    }
+
+    const isMatch = await bcrypt.compare(currentPassword, user.password);
+    if (!isMatch) {
+      return res.status(401).json({ message: "Nesprávne aktuálne heslo." });
+    }
+
+    const hashedNewPassword = await bcrypt.hash(newPassword, 12);
+
+    await prisma.user.update({
+      where: { id: userId },
+      data: { password: hashedNewPassword },
+    });
+
+    return res.status(200).json({ message: "Heslo bolo úspešne zmenené." });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ message: "Nastala chyba pri zmene hesla." });
   }
 };

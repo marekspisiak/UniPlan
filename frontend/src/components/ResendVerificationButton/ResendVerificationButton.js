@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { Button, Alert } from "react-bootstrap";
+import Toast from "../Toast/Toast";
 
 const ResendVerificationButton = ({ auto = false }) => {
   const [message, setMessage] = useState(null);
@@ -44,8 +45,18 @@ const ResendVerificationButton = ({ auto = false }) => {
 
   return (
     <>
-      {message && <Alert variant="success">{message}</Alert>}
-      {error && <Alert variant="danger">{error}</Alert>}
+      {error && (
+        <Toast
+          error={error}
+          onClose={() => setError("")} // <<< Parent ovláda, kedy zmizne
+        />
+      )}
+      {message && (
+        <Toast
+          success={message}
+          onClose={() => setError("")} // <<< Parent ovláda, kedy zmizne
+        />
+      )}
 
       <Button
         variant="primary"

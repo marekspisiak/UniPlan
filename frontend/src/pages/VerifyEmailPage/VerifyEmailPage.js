@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useSearchParams, Link } from "react-router-dom";
-import { Alert, Button, Spinner } from "react-bootstrap";
+import { Alert, Button, Container, Spinner } from "react-bootstrap";
 import AuthLayout from "../../layouts/AuthLayout";
 
 const VerifyEmailPage = () => {
@@ -44,7 +44,14 @@ const VerifyEmailPage = () => {
     <AuthLayout>
       <h4 className="mb-3">Overenie emailu</h4>
 
-      {status === "loading" && <Spinner animation="border" />}
+      {status === "loading" && (
+        <Container
+          className="d-flex justify-content-center align-items-center"
+          style={{ minHeight: "50vh" }}
+        >
+          <Spinner animation="border" />
+        </Container>
+      )}
       {status === "success" && <Alert variant="success">{message}</Alert>}
       {status === "error" && <Alert variant="danger">{message}</Alert>}
       <Button className="mt-3 w-100" onClick={handleClick}>

@@ -3,6 +3,7 @@ import { Form, Button, Alert } from "react-bootstrap";
 import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import styles from "./LoginForm.module.scss";
+import Toast from "../Toast/Toast";
 
 const LoginForm = () => {
   const [form, setForm] = useState({ email: "", password: "" });
@@ -46,7 +47,12 @@ const LoginForm = () => {
 
   return (
     <Form onSubmit={handleSubmit}>
-      {error && <Alert variant="danger">{error}</Alert>}
+      {error && (
+        <Toast
+          error={error}
+          onClose={() => setError("")} // <<< Parent ovláda, kedy zmizne
+        />
+      )}
 
       <Form.Group className="mb-3" controlId="formEmail">
         <Form.Label>Email</Form.Label>

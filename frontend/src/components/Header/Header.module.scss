@@ -5,12 +5,17 @@
   top: 0;
   left: 0;
   right: 0;
-  height: 48px;
-  background-color: $white;
-  border-bottom: 1px solid $border-color;
-  z-index: 998;
+  height: 56px;
+  background-color: white;
+  border-bottom: 1px solid #dee2e6;
+  z-index: 1000;
   display: flex;
   align-items: center;
+  padding: 0 1rem;
+
+  @media (max-width: 768px) {
+    height: 48px;
+  }
 }
 
 .content {

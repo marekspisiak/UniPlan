@@ -1,17 +1,107 @@
-@import "../../styles/variables";
-
 .recommendations {
-  // obal, ak bude potrebné neskôr niečo layoutovať
+  width: 100%;
+  padding: 1rem 0rem;
 }
 
-.title {
-  font-weight: bold;
-  color: $primary-color;
-  margin-bottom: 20px;
+.mobileFiltersToggle {
+  display: none;
+  margin-bottom: 1rem;
+  position: sticky;
+  top: 70px;
+  z-index: 100;
+
+  @media (max-width: 768px) {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+}
+
+.mainContent {
+  display: flex;
+  gap: 1rem;
+  width: 100%;
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+  }
+}
+
+.sidebar {
+  width: 300px;
+  flex-shrink: 0;
+  position: sticky;
+  top: 70px;
+  align-self: flex-start;
+  background: #f8f9fa;
+  padding: 0.5rem;
+  height: fit-content;
+  overflow: auto;
+  border-radius: 0.5rem;
+  max-height: calc(100vh - 100px);
+
+  @media (max-width: 768px) {
+    position: static;
+    width: 100%;
+    background: #eef2f7; // trochu jemnejšia farba na mobile
+  }
+}
+
+.filters {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.filterRow {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.daysGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0.4rem;
+  margin-top: 0.5rem;
 }
 
 .list {
+  flex-grow: 1;
   display: flex;
   flex-direction: column;
   gap: 1rem;
+  width: 100%;
+}
+
+.submitWrapper {
+  position: sticky;
+  bottom: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding-top: 10px;
+
+  background-color: #f8f9fa;
+  width: 100%;
+  height: 100%;
+}
+
+.filterSection {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.dateTimeGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.5rem;
+  width: 100%; // veľmi dôležité
+}
+
+.dateTimeGrid input {
+  width: 100%; // natiahnuť inputy aby sa prispôsobili rodičovi
+  min-width: 0; // odstrániť defaultné minimum čo robí problém
 }

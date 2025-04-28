@@ -1,9 +1,9 @@
-import { Card, Button, Spinner, Alert } from "react-bootstrap";
+import { Card, Button, Spinner, Alert, Container } from "react-bootstrap";
 import { useEffect, useState } from "react";
 import { useAuth } from "../../context/AuthContext";
 import styles from "./ViewProfileCard.module.scss";
 
-const ProfileCard = ({ userId, setIsEditing }) => {
+const ProfileCard = ({ userId, setIsEditing, setIsChangingPassword }) => {
   const { user } = useAuth();
   const [profile, setProfile] = useState(null);
   const [error, setError] = useState(null);
@@ -32,7 +32,15 @@ const ProfileCard = ({ userId, setIsEditing }) => {
   }, [userId]);
 
   if (error) return <Alert variant="danger">{error}</Alert>;
-  if (!profile) return <Spinner animation="border" />;
+  if (!profile)
+    return (
+      <Container
+        className="d-flex justify-content-center align-items-center"
+        style={{ minHeight: "50vh" }}
+      >
+        <Spinner animation="border" />
+      </Container>
+    );
 
   console.log(profile);
 
@@ -62,13 +70,22 @@ const ProfileCard = ({ userId, setIsEditing }) => {
       )}
 
       {isOwner && (
-        <Button
-          variant="outline-primary"
-          className={styles.editButton}
-          onClick={() => setIsEditing(true)}
-        >
-          Upraviť profil
-        </Button>
+        <>
+          <Button
+            variant="primary"
+            className={styles.editButton}
+            onClick={() => setIsEditing(true)}
+          >
+            Upraviť profil
+          </Button>
+          <Button
+            variant="outline-primary mt-3 "
+            className={styles.changePasswordButton}
+            onClick={() => setIsChangingPassword(true)}
+          >
+            Zmeniť heslo
+          </Button>
+        </>
       )}
     </Card>
   );

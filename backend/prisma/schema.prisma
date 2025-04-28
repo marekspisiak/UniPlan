@@ -26,6 +26,7 @@ model Category {
   icon         String?
   events       Event[]          @relation("EventCategories")
   users        User[]           @relation("UserInterests")
+  eventChanges EventChange[] @relation("ChangeCategories")
 }
 
 model User {
@@ -44,6 +45,14 @@ model User {
   moderatorIn          EventModerator[]         @relation("UserModerators")
   createdEventChanges  EventChange[]            @relation("CreatedBy")
   updatedEventChanges  EventChange[]            @relation("UpdatedBy")
+    roomMembers RoomMember[]
+  messages    Message[]
+  role      Role     @default(USER)
+}
+
+enum Role {
+  USER
+  ADMIN
 }
 
 model Event {
@@ -70,6 +79,9 @@ model Event {
   moderators                 EventModerator[]  @relation("EventModerators")
   eventDays                  EventDay[]        @relation("EventToEventDays")
   eventOccurrences           EventOccurrence[] @relation("EventToOccurrences")
+    categories                 Category[]        @relation("EventCategories")
+    room      Room?
+
 }
 
 model EventDay {
@@ -79,8 +91,9 @@ model EventDay {
   dayId           Int
   event           Event       @relation("EventToEventDays", fields: [eventId], references: [id], onDelete: Cascade)
   day             Day         @relation("DayToEventDays", fields: [dayId], references: [id])
-  eventChange     EventChange? @relation(fields: [eventChangeId], references: [id])
-  eventChangeId   Int?        @unique
+eventChange   EventChange? @relation(fields: [eventChangeId], references: [id], onDelete: Cascade)
+eventChangeId Int? @unique
+
   users           User[]      @relation("EventDayAttendancy")
   eventOccurrences EventOccurrence[] @relation("EventDayOccurrences")
 }
@@ -123,7 +136,7 @@ model EventOccurrence {
   eventChangeId Int? @unique
 eventChange   EventChange? @relation("OccurrenceToChange", fields: [eventChangeId], references: [id], onDelete: Cascade)
 
-
+@@unique([eventId, date])
 }
 
 model Day {
@@ -150,4 +163,33 @@ model EventModerator {
   canManageAttendees     Boolean @default(false)
   canManageModerators    Boolean @default(false)
   canRepostEvent         Boolean @default(false)
+}
+
+model Room {
+  id        Int      @id @default(autoincrement())
+  eventId   Int      @unique
+  event     Event    @relation(fields: [eventId], references: [id], onDelete: Cascade)
+  members   RoomMember[]
+  messages  Message[]
+}
+
+model RoomMember {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  roomId    Int
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  room      Room     @relation(fields: [roomId], references: [id], onDelete: Cascade)
+  lastSeen  DateTime @default(now())
+
+  @@unique([roomId, userId])
+}
+
+model Message {
+  id        Int      @id @default(autoincrement())
+  roomId    Int
+  userId    Int
+  text      String
+  createdAt DateTime @default(now())
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  room      Room     @relation(fields: [roomId], references: [id], onDelete: Cascade)
 }

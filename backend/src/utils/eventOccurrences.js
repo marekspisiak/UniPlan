@@ -52,19 +52,79 @@ export const createOccurrenceIfNeeded = async (eventId) => {
   const eventDayId = getEventDayId(event);
 
   if (!existing && shouldCreateOccurrence(event, nextDate)) {
-    const occurrenceData = {
-      event: { connect: { id: event.id } },
-      date: normalizeDate(nextDate || event.startDate),
-    };
-
-    if (eventDayId) {
-      occurrenceData.eventDay = { connect: { id: eventDayId } };
-    }
-    console.log("vytvaram occurrence");
-    return await prisma.eventOccurrence.create({
-      data: occurrenceData,
-    });
+    return await createOccurrence(
+      prisma,
+      event.id, // eventId
+      normalizeDate(nextDate || event.startDate), // dátum
+      eventDayId || null // eventDayId (ak nie je, pošle sa null)
+      // excludeUserId môžeš zatiaľ nechať nedefinované alebo pridať ak potrebuješ
+    );
   }
-
   return null;
 };
+
+export async function createOccurrence(
+  tx,
+  eventId,
+  date,
+  eventDayId = null,
+  excludeUserId = null
+) {
+  try {
+    // 1. Vytvoríme nový occurrence
+    const newOccurrence = await tx.eventOccurrence.create({
+      data: {
+        eventId,
+        eventDayId: eventDayId,
+        date,
+      },
+      include: {
+        participants: {
+          select: { id: true },
+        },
+        event: true,
+      },
+    });
+
+    // 2. Ak máme eventDayId, hľadáme userov a pripájame ich
+    if (eventDayId) {
+      const users = await tx.user.findMany({
+        where: {
+          joinedAttendancies: {
+            some: { id: eventDayId },
+          },
+          ...(excludeUserId && {
+            NOT: { id: excludeUserId },
+          }),
+        },
+        select: { id: true },
+      });
+
+      if (users.length > 0) {
+        await tx.eventOccurrence.update({
+          where: { id: newOccurrence.id },
+          data: {
+            participants: {
+              connect: users.map((user) => ({ id: user.id })),
+            },
+          },
+        });
+        const updatedOccurrence = await tx.eventOccurrence.findUnique({
+          where: { id: newOccurrence.id },
+          include: {
+            participants: {
+              select: { id: true },
+            },
+            event: true,
+          },
+        });
+        return updatedOccurrence;
+      }
+    }
+
+    return newOccurrence;
+  } catch (error) {
+    console.error("Failed to create occurrence:", error);
+    throw error;
+  }
+}

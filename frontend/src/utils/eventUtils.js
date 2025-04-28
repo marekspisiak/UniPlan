@@ -1,41 +1,82 @@
-export const resolveEventData = (data, scope = null) => {
+import { createUTCDate } from "./dateUtils";
+
+export const resolveEventData = (event, scope = null) => {
   const fieldsToOverride = [
     "title",
     "description",
-    "startDate",
-    "endDate",
     "location",
     "capacity",
     "joinDaysBeforeStart",
+    "allowRecurringAttendance",
+    "hasEndTime",
     "hasStartDate",
     "hasStartTime",
-    "hasEndTime",
   ];
 
   let sources = [];
 
   if (scope === "occurrence") {
-    sources = ["eventChange", "eventChangeDay", "event"];
+    sources = ["eventChange", "eventChangeDay"];
   } else if (scope === "eventDay") {
-    sources = ["eventChangeDay", "event"];
-  } else if (scope === "event") {
-    sources = ["event"];
+    sources = ["eventChangeDay"];
   } else {
     // ak scope nie je špecifikovaný, použijeme všetko
-    sources = ["eventChange", "eventChangeDay", "event"];
+    sources = ["eventChange", "eventChangeDay"];
   }
 
-  const resolved = {};
+  const result = {};
+  result.startDate = new Date(event.startDate).toISOString().slice(0, 10);
+
+  result.startTime = event.hasStartTime
+    ? new Date(event.startDate).toISOString().slice(11, 16)
+    : "";
+
+  result.endTime = event.hasEndTime
+    ? new Date(event.endDate).toISOString().slice(11, 16)
+    : "";
+
+  if (scope === "event") {
+    return result;
+  }
 
   for (const key of fieldsToOverride) {
-    for (const source of sources) {
-      const sourceData = data[source];
-      if (sourceData?.[key] !== undefined && sourceData?.[key] !== null) {
-        resolved[key] = sourceData[key];
+    for (const sourceKey of sources) {
+      const data = event?.[sourceKey];
+
+      console.log(result.startDate);
+
+      if (data?.[key] != null) {
+        console.log(data[key]);
+        console.log(key);
+        if (key === "hasStartTime" && data[key]) {
+          result.startTime = new Date(data.startDate)
+            .toISOString()
+            .slice(11, 16);
+        } else if (key === "hasEndTime" && data[key]) {
+          result.endTime = new Date(data.endDate).toISOString().slice(11, 16);
+        } else if (key === "hasStartDate" && data[key]) {
+          result.startDate = new Date(data.startDate)
+            .toISOString()
+            .slice(0, 10);
+        }
+        result[key] = data[key];
+
         break;
       }
     }
   }
 
-  return resolved;
+  console.log(result);
+
+  return result;
 };
+
+export function isEmpty(value) {
+  return (
+    value === null ||
+    value === "null" ||
+    value === undefined ||
+    value === "undefined" ||
+    value === ""
+  );
+}

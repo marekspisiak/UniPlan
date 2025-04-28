@@ -1,39 +1,25 @@
-import { useEffect } from "react";
+import { Modal } from "react-bootstrap";
 import styles from "./Popup.module.scss";
 
-let popupCount = 0;
-
 const Popup = ({ isOpen, onClose, children }) => {
-  console.log(isOpen);
-  console.log("nacitam sa");
-  console.log(children);
-  useEffect(() => {
-    if (isOpen) {
-      popupCount++;
-      document.body.style.overflow = "hidden";
-    }
-
-    return () => {
-      if (isOpen) {
-        popupCount = Math.max(0, popupCount - 1);
-        if (popupCount === 0) {
-          document.body.style.overflow = "";
-        }
-      }
-    };
-  }, [isOpen]);
-
-  if (!isOpen) return null;
-
   return (
-    <div className={styles.overlay} onClick={onClose}>
-      <div className={styles.popup} onClick={(e) => e.stopPropagation()}>
-        <button className={styles.closeButton} onClick={onClose}>
+    <Modal
+      show={isOpen}
+      onHide={onClose}
+      centered
+      backdrop="static"
+      keyboard={true}
+      contentClassName={styles.popup} // 👈 aplikuje tvoje štýly na Modal
+      dialogClassName={styles.popupDialog} // 👈 ak chceš extra štýly na obal
+    >
+      <Modal.Body className="position-relative">
+        <button type="button" className={styles.closeButton} onClick={onClose}>
           &times;
         </button>
+
         {children}
-      </div>
-    </div>
+      </Modal.Body>
+    </Modal>
   );
 };
 

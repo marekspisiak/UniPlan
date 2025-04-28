@@ -33,6 +33,8 @@ export const protect = async (req, res, next) => {
       profileImageUrl,
     };
 
+    console.log(req.user);
+
     next();
   } catch (err) {
     return res.status(401).json({ message: "Neplatný token" });

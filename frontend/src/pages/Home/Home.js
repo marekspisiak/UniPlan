@@ -1,5 +1,5 @@
 import { useMediaQuery } from "react-responsive";
-import { Navigate, useParams } from "react-router-dom";
+import { Link, Navigate, useParams } from "react-router-dom";
 import MainLayout from "../../layouts/MainLayout";
 import MobileLayout from "../../layouts/MobileLayout";
 
@@ -11,13 +11,22 @@ import Popup from "../../components/Popup/Popup";
 import EventDetail from "../../modules/EventDetail/EventDetail";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { Plus } from "lucide-react";
+import styles from "./Home.module.scss";
+import MiniChatList from "../../components/MiniChatList/MiniChatList";
+import ChatModal from "../../components/ChatModal/ChatModal";
+import { useChatModal } from "../../context/ChatModalContext";
+import ChatPage from "../../components/ChatPage/ChatPage";
+import { useAuth } from "../../context/AuthContext";
 
 const Home = () => {
   const isMobile = useMediaQuery({ maxWidth: 767 });
   const { id: eventId } = useParams();
   const [isOpen, setIsOpen] = useState(true);
   const Navigate = useNavigate();
-  console.log(eventId);
+  const { openedRoomId, openChat, closeChat } = useChatModal();
+
+  const { user } = useAuth();
 
   const renderPopup = () =>
     eventId ? (
@@ -42,21 +51,36 @@ const Home = () => {
   }
 
   return (
-    <MainLayout
-      left={
-        <>
-          <Calendar />
-          <UpcomingEvents />
-        </>
-      }
-      center={
-        <>
-          <Recommendations />
-          {renderPopup()}
-        </>
-      }
-      right={<ChatWindow />}
-    />
+    <>
+      <Link to="/create-event">
+        <button className={styles.createButton}>
+          <Plus size={24} />
+        </button>
+      </Link>
+      <MainLayout
+        center={
+          <>
+            <Recommendations />
+            {renderPopup()}
+          </>
+        }
+        right={
+          <>
+            <MiniChatList
+              onOpenChat={(room) => {
+                openChat(room); // cez hook
+              }}
+            />
+            {console.log(openedRoomId)}
+            <ChatModal show={!!openedRoomId} onHide={closeChat}>
+              {openedRoomId && (
+                <ChatPage roomId={openedRoomId} userId={user.id} />
+              )}
+            </ChatModal>
+          </>
+        }
+      />
+    </>
   );
 };
 

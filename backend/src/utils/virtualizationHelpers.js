@@ -83,7 +83,7 @@ export const getVirtualDates = (
     ? Math.ceil(
         (repeatUntil.getTime() - now.getTime()) / (7 * 24 * 60 * 60 * 1000)
       ) + 1
-    : 52;
+    : weekOffset + 52;
 
   const baseDate = getCustomStartOfWeek(event.startDate);
 
@@ -91,11 +91,12 @@ export const getVirtualDates = (
     for (const day of event.eventDays || []) {
       const candidate = new Date(baseDate);
       candidate.setUTCDate(
-        candidate.getUTCDate() + 7 * (i + day.week) + (day.day.id - 1)
+        candidate.getUTCDate() + 7 * (i + day.week) + (day.dayId - 1)
       );
       candidate.setUTCHours(0, 0, 0, 0);
+
       if (isSameOrAfter(candidate, targetDate)) {
-        const result = onCandidate(candidate, day.id, day.eventChange);
+        const result = onCandidate(candidate, day.id, day);
         if (result === "break") return;
       }
     }
@@ -160,15 +161,28 @@ export const getAllVirtualDates = (event, now = getCurrentUTCDate()) => {
   return dates;
 };
 
-export const getAllVirtualEvents = (event, now = getCurrentUTCDate()) => {
+export const getAllVirtualEvents = (
+  event,
+  now = getCurrentUTCDate(),
+  end = null
+) => {
   const dates = [];
   const existingDates = new Set(
     event.eventOccurrences.map((occ) => new Date(occ.date).toISOString())
   );
-  getVirtualDates(event, now, (candidate, dayId, dayChanges) => {
+  getVirtualDates(event, now, (candidate, dayId, day) => {
     if (!existingDates.has(candidate.toISOString())) {
-      const changedEvent = applyChangesData(event, [dayChanges]);
-      dates.push({ ...changedEvent, date: candidate, virtual: true });
+      const changedEvent = applyChangesData(event, [day.eventChange]);
+      dates.push({
+        ...changedEvent,
+        date: candidate,
+        virtual: true,
+        participants: day.users,
+      });
+    }
+    if (end && isSameOrAfter(candidate, end)) {
+      console.log(candidate);
+      return "break";
     }
   });
   return dates;

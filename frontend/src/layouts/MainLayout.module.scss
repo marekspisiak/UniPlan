@@ -1,26 +1,65 @@
-@import "../styles/variables";
-@import "../styles/mixins";
+.layout {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.mainContent {
+  flex-grow: 1;
+  padding-top: 56px;
+  padding-bottom: 0;
+}
 
 .mainLayout {
-  min-height: 100vh;
-  padding: 20px;
-  max-width: 1600px;
-  margin: 0 auto;
+}
+
+.leftPanel,
+.rightPanel {
+  padding: 1rem;
 }
 
 .centered {
   margin: 0 auto;
-  float: none;
 }
 
-.leftPanel {
-  @include panel-padding;
+.mobileNav {
+  display: none;
+
+  @media (max-width: 768px) {
+    display: flex;
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    background: white;
+    border-top: 1px solid #ddd;
+    z-index: 1000;
+  }
 }
 
-.centerPanel {
-  @include panel-padding;
+.createButton {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  width: 60px;
+  height: 60px;
+  background-color: #007bff;
+  color: white;
+  border-radius: 50%;
+  border: none;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 32px;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  transition: background-color 0.3s, transform 0.2s;
+
+  &:hover {
+    background-color: #0056b3;
+    transform: scale(1.05);
+  }
 }
 
 .rightPanel {
-  @include panel-padding;
+  height: 80vh;
 }

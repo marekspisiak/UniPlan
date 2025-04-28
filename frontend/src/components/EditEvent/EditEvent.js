@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import EventForm from "../../components/EventForm/EventForm";
 import { Form } from "react-bootstrap";
-import { resolveEventData } from "../../utils/eventUtils";
+import { isEmpty, resolveEventData } from "../../utils/eventUtils";
 
 function groupEventDaysByWeek(eventDays) {
   const grouped = {};
@@ -40,33 +40,40 @@ const EditEvent = ({ eventId, date }) => {
           },
         });
         const data = await res.json();
+        console.log(data);
+
         if (!res.ok)
           throw new Error(data.message || "Chyba pri načítaní eventu");
 
-        console.log(data.date);
-        console.log(data.endDate);
-
         const newData = { ...data, ...resolveEventData(data, scope) };
 
-        setInitialData({
-          ...newData,
+        const cleanedData = {};
 
-          startDate: newData.hasStartDate
-            ? newData.startDate.split("T")[0]
-            : undefined,
-          startTime: newData.hasStartTime
-            ? newData.startDate.split("T")[1]?.substring(0, 5)
-            : undefined,
-          endTime:
-            newData.hasEndTime && newData.endDate
-              ? newData.endDate.split("T")[1]?.substring(0, 5)
-              : undefined,
+        for (const key in newData) {
+          if (Object.prototype.hasOwnProperty.call(newData, key)) {
+            cleanedData[key] = isEmpty(newData[key]) ? "" : newData[key];
+          }
+        }
+
+        setInitialData({
+          ...cleanedData,
 
           categoryIds: newData.categories.map((cat) => cat.id),
 
-          previousMainImage: newData.mainImage,
           repeat: newData.repeatInterval > 0,
           repeatDays: groupEventDaysByWeek(newData.eventDays),
+          repeatUntil: isEmpty(newData.repeatUntil)
+            ? ""
+            : newData.repeatUntil.split("T")[0],
+          previousMainImage: newData.mainImage,
+          capacity: newData.capacity === 0 ? "" : newData.capacity,
+          attendancyLimit:
+            newData.attendancyLimit === 0 ? "" : newData.attendancyLimit,
+
+          joinDaysBeforeStart:
+            newData.joinDaysBeforeStart === 0
+              ? ""
+              : newData.joinDaysBeforeStart,
         });
 
         if (newData.repeatInterval === 0) {
@@ -89,14 +96,95 @@ const EditEvent = ({ eventId, date }) => {
       const token = localStorage.getItem("token");
       const formData = new FormData();
 
-      const repeatDaysJSON = JSON.stringify(form.repeatDays);
+      const eventChange = [
+        "title",
+        "description",
+        "startTime",
+        "endTime",
+        "repeatUntil",
+        "repeatDays",
+        "location",
+        "capacity",
+        "joinDaysBeforeStart",
+        "categoryIds",
+        "mainImage",
+        "mainImageChanged",
+        "previousMainImage",
+        "deletedGallery",
+        "gallery",
+      ];
+
+      const eventDayChange = [
+        "title",
+        "description",
+        "startTime",
+        "endTime",
+        "location",
+        "capacity",
+        "joinDaysBeforeStart",
+      ];
+
+      const eventOccurrenceChange = [
+        "title",
+        "description",
+        "startDate",
+        "startTime",
+        "endTime",
+        "location",
+        "capacity",
+        "joinDaysBeforeStart",
+      ];
+
+      const eventSingleChange = [
+        "title",
+        "description",
+        "startDate",
+        "startTime",
+        "endTime",
+        "location",
+        "capacity",
+        "joinDaysBeforeStart",
+        "categoryIds",
+        "mainImage",
+        "mainImageChanged",
+        "previousMainImage",
+        "deletedGallery",
+        "gallery",
+      ];
+
+      let keysToUse = [];
+
+      if (scope === "event") {
+        keysToUse = eventChange;
+      } else if (scope === "eventDay") {
+        keysToUse = eventDayChange;
+      } else if (scope === "occurrence" && form.repeatInterval === 0) {
+        keysToUse = eventSingleChange;
+      } else if (scope === "occurrence") {
+        keysToUse = eventOccurrenceChange;
+      }
+
+      const filtered = {};
+
+      for (const key of keysToUse) {
+        console.log(key);
+        console.log(form[key]);
+        console.log(initialData[key]);
+
+        if (key in form && form[key] !== initialData[key]) {
+          filtered[key] = form[key];
+        }
+      }
 
       const entries = {
-        ...form,
-        moderators: form.moderators.map((mod) => JSON.stringify(mod)),
-        repeatDays: repeatDaysJSON,
+        ...filtered,
+        id: form.id,
+        date: form.date,
+        previousMainImage: initialData.previousMainImage,
+        repeatInterval: initialData.repeatInterval,
+        eventDayId: initialData.eventDayId,
       };
-
+      console.log(entries);
       console.log(form);
 
       Object.entries(entries).forEach(([key, value]) => {
@@ -104,10 +192,8 @@ const EditEvent = ({ eventId, date }) => {
           value.forEach((cat) => {
             formData.append("categoryIds", cat); // ⬅️ iba id
           });
-        } else if (key === "moderators") {
-          value.forEach((mod) => {
-            formData.append("moderators", JSON.stringify(mod)); // ⬅️ celý objekt
-          });
+        } else if (key === "repeatDays") {
+          formData.append("repeatDays", JSON.stringify(filtered.repeatDays));
         } else if (key === "gallery") {
           value.forEach((img) => formData.append("gallery", img));
         } else if (key === "mainImage" && value) {
@@ -137,7 +223,7 @@ const EditEvent = ({ eventId, date }) => {
       if (!res.ok) throw new Error(data.message || "Chyba pri editovaní");
 
       setSuccess("Akcia bola úspešne upravená.");
-      navigate(`/event/${eventId}`);
+      navigate(`/event/${eventId}/${form.date}`);
     } catch (err) {
       setError(err.message);
       throw err; // Rethrow the error to be caught by the parent component
@@ -167,7 +253,6 @@ const EditEvent = ({ eventId, date }) => {
           )}
         </EventForm>
       )}
-      {error && <p className="text-danger">{error}</p>}
     </>
   );
 };

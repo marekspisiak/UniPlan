@@ -1,12 +1,26 @@
-import { useState, useImperativeHandle, forwardRef, useRef } from "react";
+import {
+  useState,
+  useImperativeHandle,
+  forwardRef,
+  useRef,
+  useEffect,
+} from "react";
 import { Form } from "react-bootstrap";
 import styles from "./ImageUploader.module.scss";
 
 const ImageUploader = forwardRef(
   ({ label, multiple = false, max = 5, onChange, existing = [] }, ref) => {
-    const [previews, setPreviews] = useState([
-      ...existing.map((url) => ({ url, existing: true })),
-    ]);
+    const [previews, setPreviews] = useState([]);
+
+    useEffect(() => {
+      if (existing && existing.length > 0 && previews.length === 0) {
+        const mapped = existing.map((url) => ({ url, existing: true }));
+        console.log(mapped);
+        setPreviews(mapped);
+      }
+    }, [existing]); // ← spustiť iba raz pri mountnutí
+
+    console.log(previews);
     const [deleted, setDeleted] = useState([]);
     const fileInputRef = useRef();
 
@@ -25,8 +39,6 @@ const ImageUploader = forwardRef(
       setPreviews(combined);
       triggerChange(combined, deleted);
     };
-
-    console.log(existing);
 
     const handleDrop = (e) => {
       e.preventDefault();
@@ -78,6 +90,7 @@ const ImageUploader = forwardRef(
       >
         <Form.Label>{label}</Form.Label>
         <div className={styles.previewWrapper}>
+          {console.log(previews)}
           {previews.map((preview, index) => (
             <div key={index} className={styles.preview}>
               <img src={preview.url} alt="preview" />

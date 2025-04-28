@@ -11,6 +11,7 @@ import {
   attendEventDays,
   deleteRecurringAttendance,
   deleteSingleAttendance,
+  deleteEvent,
 } from "../controllers/eventController.js";
 import { eventUpload } from "../middleware/uploadEventMedia.js";
 import { authorizeEventEditor } from "../middleware/authorizeEventEditor.js";
@@ -25,17 +26,33 @@ router.post("/:id/join", protectVerified, joinEvent);
 router.post("/:id/leave", protectVerified, leaveEvent);
 router.post("/:id/attend", protectVerified, attendEventDays);
 
-router.put("/:id/edit-details", protectVerified, eventUpload, editEvent);
+router.put(
+  "/:id/edit-details",
+  protectVerified,
+  protectPermission("canEditEvent"),
+  eventUpload,
+  editEvent
+);
 
-router.put("/:id/edit-moderators", protectVerified, updateEventModerators);
+router.delete("/:id", protectVerified, deleteEvent);
+
+router.put(
+  "/:id/edit-moderators",
+  protectVerified,
+  protectPermission("canManageModerators"),
+  updateEventModerators
+);
 router.delete(
   "/:id/attendance/recurring/:eventDayId/:userId",
   protectVerified,
+  protectPermission("canManageAttendees"),
+
   deleteRecurringAttendance
 );
 router.delete(
   "/:id/attendance/single/:occurrenceId/:userId",
   protectVerified,
+  protectPermission("canManageParticipants"),
   deleteSingleAttendance
 );
 router.get("/:id", protectVerified, getEventByDate);

@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Form, Button, Alert } from "react-bootstrap";
 import { useNavigate, Link } from "react-router-dom";
 import styles from "./RegisterForm.module.scss";
+import Toast from "../Toast/Toast";
 
 const RegisterForm = () => {
   const [form, setForm] = useState({
@@ -48,8 +49,18 @@ const RegisterForm = () => {
 
   return (
     <>
-      {message && <Alert variant="success">{message}</Alert>}
-      {error && <Alert variant="danger">{error}</Alert>}
+      {error && (
+        <Toast
+          error={error}
+          onClose={() => setError("")} // <<< Parent ovláda, kedy zmizne
+        />
+      )}
+      {message && (
+        <Toast
+          success={message}
+          onClose={() => setError("")} // <<< Parent ovláda, kedy zmizne
+        />
+      )}
 
       <Form onSubmit={handleSubmit}>
         <Form.Group className="mb-3" controlId="formFirstName">

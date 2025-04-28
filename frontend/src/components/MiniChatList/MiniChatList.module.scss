@@ -1,0 +1,22 @@
+.chatList {
+  gap: 0.5rem;
+  flex: 1;
+  overflow-y: auto;
+  min-height: 0;
+  height: 100%;
+}
+
+.chatItemWrapper {
+  background-color: #ffffff;
+  border: 1px solid #dee2e6;
+  border-radius: 8px;
+  overflow: hidden;
+  transition: box-shadow 0.2s;
+  min-height: 85px; // napríklad
+  padding: 0.5rem; // aby obsah nebol úplne nalepený
+
+  &:hover {
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+  }
+}

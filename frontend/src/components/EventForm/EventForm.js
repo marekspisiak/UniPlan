@@ -5,6 +5,8 @@ import ImageUploader from "../ImageUploader/ImageUploader";
 import ModeratorSelector from "../ModeratorSelector/ModeratorSelector";
 import styles from "./EventForm.module.scss";
 import { Link } from "react-router-dom";
+import Toast from "../Toast/Toast";
+import { isEmpty } from "../../utils/eventUtils";
 
 const EventForm = ({
   initialData = null,
@@ -15,44 +17,48 @@ const EventForm = ({
   children,
   scope = null,
 }) => {
-  const [form, setForm] = useState({});
-
-  const setInitialData = () => {
-    setForm({
-      title: "",
-      description: "",
-      startDate: "",
-      startTime: "",
-      endTime: "",
-      repeatUntil: "",
-      repeatInterval: 0,
-      repeatDays: {},
-      repeat: false,
-      allowRecurringAttendance: false,
-      maxAttendancesPerCycle: "",
-      location: "",
-      capacity: "",
-      joinDaysBeforeStart: "",
-      categoryIds: [],
-      moderators: [],
-      mainImage: null,
-      gallery: [],
-      deletedGallery: [],
-      mainImageChanged: false,
-
-      ...initialData,
-    });
+  const defaultDataForm = {
+    title: "",
+    description: "",
+    startDate: "",
+    startTime: "",
+    endTime: "",
+    repeatUntil: "",
+    repeatInterval: 0,
+    repeatDays: {},
+    repeat: false,
+    allowRecurringAttendance: false,
+    maxAttendancesPerCycle: "",
+    location: "",
+    capacity: "",
+    joinDaysBeforeStart: "",
+    categoryIds: [],
+    moderators: [],
+    mainImage: null,
+    gallery: [],
+    deletedGallery: [],
+    mainImageChanged: false,
   };
+
+  const [form, setForm] = useState(defaultDataForm);
 
   useEffect(() => {
     if (initialData) {
-      setInitialData();
+      const cleanedData = {};
+
+      for (const key in initialData) {
+        if (Object.prototype.hasOwnProperty.call(initialData, key)) {
+          cleanedData[key] = isEmpty(initialData[key]) ? "" : initialData[key];
+        }
+      }
+
+      console.log(cleanedData);
+
+      setForm(cleanedData);
     }
   }, [initialData]);
 
-  useEffect(() => {
-    setInitialData();
-  }, []);
+  console.log(form);
 
   const [daysFromAPI, setDaysFromAPI] = useState([]);
   const [error, setError] = useState(null);
@@ -113,7 +119,7 @@ const EventForm = ({
     }
 
     if (form.repeat) {
-      if (!form.startTime || !form.endTime)
+      if (!form.startTime)
         return "Pri opakovaní eventu je potrebné zadať aj čas začiatku aj konca.";
 
       if (form.repeatUntil && form.repeatUntil < form.startDate)
@@ -122,6 +128,8 @@ const EventForm = ({
 
     return null;
   };
+
+  console.log(form.repeatUntil);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -157,13 +165,17 @@ const EventForm = ({
     }
   };
 
-  console.log(form);
-
   return (
     <div className={styles.eventForm}>
       <h4 className={styles.heading}>{heading}</h4>
-      {error && <Alert variant="danger">{error}</Alert>}
-      {success && <Alert variant="success">{success}</Alert>}
+
+      {error && (
+        <Toast
+          error={error}
+          onClose={() => setError("")} // <<< Parent ovláda, kedy zmizne
+        />
+      )}
+
       {children}
 
       <Form onSubmit={handleSubmit}>
@@ -195,7 +207,11 @@ const EventForm = ({
         {console.log(form.startDate)}
         {(!scope || scope === "occurrence") && (
           <Form.Group className="mb-3">
-            <Form.Label>Dátum</Form.Label>
+            <Form.Label>
+              {!form.repeat || scope === "occurrence"
+                ? "Dátum"
+                : "V ktorom týždni začať interval"}
+            </Form.Label>
             <Form.Control
               type="date"
               name="startDate"
@@ -222,6 +238,7 @@ const EventForm = ({
           <Form.Control
             type="time"
             name="endTime"
+            min={form.startTime}
             value={form.endTime}
             onChange={handleChange}
           />
@@ -248,6 +265,7 @@ const EventForm = ({
                   <Form.Control
                     type="date"
                     name="repeatUntil"
+                    min={form.startDate}
                     value={form.repeatUntil}
                     onChange={handleChange}
                   />
@@ -334,6 +352,8 @@ const EventForm = ({
             name="capacity"
             value={form.capacity}
             onChange={handleChange}
+            min="1"
+            step="1"
           />
         </Form.Group>
 
@@ -343,6 +363,7 @@ const EventForm = ({
           <Form.Control
             type="number"
             name="joinDaysBeforeStart"
+            min="1"
             value={form.joinDaysBeforeStart}
             onChange={handleChange}
           />
@@ -381,6 +402,7 @@ const EventForm = ({
           (scope === "occurrence" && form.repeatInterval === 0) ||
           !scope) && (
           <>
+            {console.log(form.mainImage?.length)}
             <ImageUploader
               ref={mainImageRef}
               label="Profilová fotka (nepovinná)"
@@ -392,7 +414,7 @@ const EventForm = ({
                 }));
               }}
               multiple={false}
-              existing={form.mainImage ? [`${form.mainImage}`] : []}
+              existing={form.mainImage?.length > 0 ? [`${form.mainImage}`] : []}
             />
 
             <ImageUploader
@@ -416,7 +438,10 @@ const EventForm = ({
           {submitLabel}
         </Button>
 
-        <Link to={`/event/${form.id}`} className="text-decoration-none">
+        <Link
+          to={`/event/${form.id}/${form.date}`}
+          className="text-decoration-none"
+        >
           <Button type="button" variant="danger" className="w-100 mt-2">
             Zrušiť
           </Button>

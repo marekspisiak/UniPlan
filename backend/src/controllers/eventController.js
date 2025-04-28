@@ -2,8 +2,11 @@ import e from "express";
 import prisma from "../../prisma/client.js";
 import path from "path";
 import fs from "fs"; // a ak ešte nemáš, aj fs budeš potrebovať
-import { toArray, applyChangesData } from "../utils/helpers.js"; // importuj túto funkciu z utils
-import { createOccurrenceIfNeeded } from "../utils/eventOccurrences.js";
+import { toArray, applyChangesData, isEmpty } from "../utils/helpers.js"; // importuj túto funkciu z utils
+import {
+  createOccurrenceIfNeeded,
+  createOccurrence,
+} from "../utils/eventOccurrences.js";
 import {
   createUTCDate,
   getCurrentUTCDate,
@@ -17,9 +20,70 @@ import {
   getNextEventDate,
   getAllVirtualEvents,
 } from "../utils/virtualizationHelpers.js";
+import { createRoom, joinRoom } from "../services/roomService.js";
+
+function validateEventData(
+  {
+    startDate,
+    startTime,
+    endTime,
+    repeatUntil,
+    repeatInterval,
+    maxAttendancesPerCycle,
+    capacity,
+    joinDaysBeforeStart,
+  },
+  editing
+) {
+  if (!editing && isEmpty(startDate)) {
+    throw new Error("startDate je povinný pri vytváraní.");
+  }
+
+  const startDateObj = createUTCDate(startDate);
+
+  if (startTime && endTime && startTime > endTime) {
+    throw new Error("Čas konca musí byť po Čas začiatku.");
+  }
+  console.log(repeatUntil);
+  if (
+    repeatUntil &&
+    !isEmpty(repeatUntil) &&
+    new Date(repeatUntil) < startDateObj
+  ) {
+    throw new Error("Opakovať do nemôže byť pred startDate.");
+  }
+
+  if (!isEmpty(repeatInterval) && repeatInterval < 0) {
+    throw new Error("Interval opakovania musí byť 0 alebo väčší.");
+  }
+  console.log(maxAttendancesPerCycle);
+
+  if (
+    !isEmpty(maxAttendancesPerCycle) &&
+    (isNaN(maxAttendancesPerCycle) || Number(maxAttendancesPerCycle) < 1)
+  ) {
+    throw new Error(
+      "Max počet dní pre pravidelné prihlásenie na jeden cyklus musí byť prázdne alebo aspoň 1."
+    );
+  }
+
+  if (!isEmpty(capacity) && (isNaN(capacity) || Number(capacity) < 1)) {
+    throw new Error("Kapacita musí byť prázdne alebo aspoň 1.");
+  }
+
+  if (
+    !isEmpty(joinDaysBeforeStart) &&
+    (isNaN(joinDaysBeforeStart) || Number(joinDaysBeforeStart) < 1)
+  ) {
+    throw new Error(
+      "Koľko dní pred začiatkom sa možno prihlásiť musí byť prázdne alebo aspoň 1."
+    );
+  }
+}
 
 export const createEvent = async (req, res) => {
   try {
+    validateEventData(req.body);
     const {
       title,
       description,
@@ -91,84 +155,102 @@ export const createEvent = async (req, res) => {
       computedEndDate = createUTCDate(null, endTime);
     }
 
-    const newEvent = await prisma.event.create({
-      data: {
-        title,
-        description,
-        startDate: computedStartDate,
-        endDate: computedEndDate,
-        repeatUntil: repeatUntil ? createUTCDate(repeatUntil) : null,
-        repeatInterval: repeatInterval ? parseInt(repeatInterval) : null,
-        location,
-        capacity: capacity ? parseInt(capacity) : null,
-        attendancyLimit: attendancyLimit ? parseInt(attendancyLimit) : null,
-        allowRecurringAttendance: allowRecurringAttendance === "true",
-        joinDaysBeforeStart: joinDaysBeforeStart
-          ? parseInt(joinDaysBeforeStart)
-          : null,
-        mainImage: mainImageUrl,
-        gallery: galleryUrls.length
-          ? {
-              create: galleryUrls.map((url) => ({ url })),
-            }
-          : undefined,
-        hasStartDate,
-        hasStartTime,
-        hasEndTime,
-        attendancyLimit: parseInt(maxAttendancesPerCycle),
-        organizer: {
-          connect: { id: req.user.id },
-        },
-        categories: {
-          connect: categoryIds.map((id) => ({ id: parseInt(id) })),
-        },
-      },
-    });
-
-    if (moderators.length) {
-      await prisma.event.update({
-        where: { id: newEvent.id },
+    const newEvent = await prisma.$transaction(async (tx) => {
+      const newEvent = await tx.event.create({
         data: {
-          moderators: {
-            create: moderators.map((mod) => ({
-              user: { connect: { id: mod.id } },
-              canEditEvent: mod.canEditEvent,
-              canManageParticipants: mod.canManageParticipants,
-              canManageAttendees: mod.canManageAttendees,
-              canManageModerators: mod.canManageModerators,
-              canRepostEvent: mod.canRepostEvent,
-            })),
+          title,
+          description,
+          startDate: computedStartDate,
+          endDate: computedEndDate,
+          repeatUntil: repeatUntil ? createUTCDate(repeatUntil) : null,
+          repeatInterval: repeatInterval ? parseInt(repeatInterval) : null,
+          location,
+          capacity: capacity ? parseInt(capacity) : null,
+          attendancyLimit: attendancyLimit ? parseInt(attendancyLimit) : null,
+          allowRecurringAttendance: allowRecurringAttendance === "true",
+          joinDaysBeforeStart: joinDaysBeforeStart
+            ? parseInt(joinDaysBeforeStart)
+            : null,
+          mainImage: mainImageUrl,
+          gallery: galleryUrls.length
+            ? {
+                create: galleryUrls.map((url) => ({ url })),
+              }
+            : undefined,
+          hasStartDate,
+          hasStartTime,
+          hasEndTime,
+          attendancyLimit: parseInt(maxAttendancesPerCycle),
+          organizer: {
+            connect: { id: req.user.id },
+          },
+          categories: {
+            connect: categoryIds.map((id) => ({ id: parseInt(id) })),
           },
         },
       });
-    }
 
-    if (repeatDays) {
-      const parsedRepeatDays = JSON.parse(repeatDays);
+      const room = await createRoom(tx, { eventId: newEvent.id }); // vytvoríš room
+      const roomId = room.id;
 
-      for (const [week, days] of Object.entries(parsedRepeatDays)) {
-        for (const id of days) {
-          await prisma.eventDay.create({
-            data: {
-              event: {
-                connect: { id: newEvent.id },
-              },
-              week: parseInt(week),
-              day: {
-                connect: { id: parseInt(id) },
-              },
+      if (moderators.length) {
+        await tx.event.update({
+          where: { id: newEvent.id },
+          data: {
+            moderators: {
+              create: moderators.map((mod) => ({
+                user: { connect: { id: mod.id } },
+                canEditEvent: mod.canEditEvent,
+                canManageParticipants: mod.canManageParticipants,
+                canManageAttendees: mod.canManageAttendees,
+                canManageModerators: mod.canManageModerators,
+                canRepostEvent: mod.canRepostEvent,
+              })),
             },
-          });
+          },
+        });
+        // await joinRoom(tx, roomId, userId);
+      }
+
+      // Teraz pripravíš pole všetkých userId
+      const allUserIds = [
+        req.user.id, // organizátor
+        ...moderators.map((mod) => mod.id), // všetci moderátori
+      ];
+
+      // A každého pripojíš do room
+      for (const userId of allUserIds) {
+        await joinRoom(tx, roomId, userId);
+      }
+
+      if (repeatDays) {
+        const parsedRepeatDays = JSON.parse(repeatDays);
+
+        for (const [week, days] of Object.entries(parsedRepeatDays)) {
+          for (const id of days) {
+            await tx.eventDay.create({
+              data: {
+                event: {
+                  connect: { id: newEvent.id },
+                },
+                week: parseInt(week),
+                day: {
+                  connect: { id: parseInt(id) },
+                },
+              },
+            });
+          }
         }
       }
-    }
+      return newEvent;
+    });
 
     await createOccurrenceIfNeeded(newEvent.id);
 
     res.status(201).json({ id: newEvent.id });
   } catch (err) {
     console.error("Chyba pri vytváraní akcie:", err);
-    res.status(500).json({ message: "Chyba servera." });
+    res.status(500).json({ message: err.message });
   }
 };
 
@@ -185,14 +267,424 @@ export const getEventCategories = async (req, res) => {
   }
 };
 
+const doesEventMatchFilters = (event, filters) => {
+  const {
+    search,
+    searchLocation,
+    onlyAvailable,
+    categories,
+    allCategories,
+    onlySingle,
+    onlyRecurring,
+    daysOfWeek,
+    startDate,
+    endDate,
+    startTime,
+    endTime,
+  } = filters;
+
+  const eventStartDate = event.startDate ? new Date(event.startDate) : null;
+  const eventEndDate = event.endDate ? new Date(event.endDate) : null;
+
+  // 🕒 Výpočet eventStartTime a eventEndTime ak existujú
+  const eventStartTime =
+    event.hasStartTime && eventStartDate
+      ? eventStartDate.getUTCHours() * 60 + eventStartDate.getUTCMinutes()
+      : null;
+
+  const eventEndTime =
+    event.hasEndTime && eventEndDate
+      ? eventEndDate.getUTCHours() * 60 + eventEndDate.getUTCMinutes()
+      : null;
+
+  // 1. Search podľa názvu (TITLE)
+  if (search) {
+    const title = event.title?.toLowerCase() || "";
+    if (!title.includes(search.toLowerCase())) {
+      return false;
+    }
+  }
+
+  if (searchLocation) {
+    const location = event.location?.toLowerCase() || "";
+    if (!location.includes(searchLocation.toLowerCase())) {
+      return false;
+    }
+  }
+
+  // 2. Dátumy (startDate / endDate) - kontrola event.startDate
+  if (startDate || endDate) {
+    const searchStart = startDate ? createUTCDate(startDate) : null;
+    const searchEnd = endDate ? createUTCDate(endDate) : null;
+
+    const eventDate = event.startDate ? event.startDate : null;
+    if (!eventDate) {
+      return false; // ak event nemá startDate, nemá zmysel ho zobrazovať
+    }
+
+    // console.log("searchStart", searchStart);
+    // console.log("eventDate", eventDate);
+
+    if (searchStart && normalizeDate(eventDate) < searchStart) {
+      return false;
+    }
+
+    if (searchEnd && normalizeDate(eventDate) > searchEnd) {
+      return false;
+    }
+  }
+
+  // 3. Dni v týždni
+  const daysOfWeekArray = toArray(daysOfWeek)?.map(Number); // <-- tu zmeníš na čísla
+
+  if (daysOfWeekArray?.length > 0) {
+    if (!eventStartDate) return false;
+
+    const dayOfWeek = eventStartDate.getUTCDay(); // 0 = nedeľa
+    const mappedDay = dayOfWeek === 0 ? 7 : dayOfWeek;
+
+    if (!daysOfWeekArray.includes(mappedDay)) {
+      return false;
+    }
+  }
+
+  // 4. Čas (startTime / endTime)
+  if (startTime || endTime) {
+    // Ak event nemá definovaný startTime, rovno vypadáva
+    if (eventStartTime === null) {
+      return false;
+    }
+
+    const [startHour = 0, startMin = 0] = startTime
+      ? startTime.split(":").map(Number)
+      : [];
+    const [endHour = 23, endMin = 59] = endTime
+      ? endTime.split(":").map(Number)
+      : [];
+
+    const searchStartMinutes = startHour * 60 + startMin;
+    const searchEndMinutes = endHour * 60 + endMin;
+
+    if (startTime) {
+      // Musí event začať po zadanom čase (rovné alebo neskôr)
+      if (eventStartTime < searchStartMinutes) {
+        return false;
+      }
+    }
+
+    if (endTime) {
+      // Ak existuje eventEndTime, musí byť pred koncom
+      if (eventEndTime !== null) {
+        if (eventEndTime > searchEndMinutes) {
+          return false;
+        }
+      }
+      // Ak eventEndTime nie je, je to OK - berieme že event končí v rozumnom čase
+    }
+  }
+
+  // 5. Kapacita (len voľné kapacity)
+  if (onlyAvailable) {
+    if (event?.capacity && event?.participants?.length >= event?.capacity) {
+      return false;
+    }
+  }
+
+  // 6. Opakovanie (jednorazové vs. opakované)
+  if (onlyRecurring && (!event.repeatInterval || event.repeatInterval === 0)) {
+    return false;
+  }
+  if (onlySingle && event.repeatInterval && event.repeatInterval > 0) {
+    return false;
+  }
+
+  // 7. Kategórie
+  const categoriesArray = toArray(categories);
+  if (categoriesArray?.length > 0) {
+    const eventCategoryIds = event.categories?.map((cat) => cat.id) || [];
+    console.log(eventCategoryIds);
+
+    if (allCategories) {
+      const allIncluded = categoriesArray.every((id) =>
+        eventCategoryIds.includes(parseInt(id))
+      );
+      if (!allIncluded) {
+        return false;
+      }
+    } else {
+      const someIncluded = categoriesArray.some((id) =>
+        eventCategoryIds.includes(parseInt(id))
+      );
+      if (!someIncluded) {
+        return false;
+      }
+    }
+  }
+
+  if (filters.myEvents && filters.userId) {
+    const userId = filters.userId;
+
+    const isParticipant = event.participants?.some((p) => p.id === userId);
+
+    if (!isParticipant) {
+      return false;
+    }
+  }
+
+  return true; // všetko OK
+};
+
 // GET /api/events
 
 export const getAllEvents = async (req, res) => {
   try {
+    const {
+      search,
+      searchLocation,
+      onlyAvailable,
+      categories,
+      allCategories,
+      onlySingle,
+      onlyRecurring,
+      daysOfWeek,
+      startTime,
+      endTime,
+      manage,
+      myEvents,
+    } = req.query;
+
+    const userId = req.user.id;
+
+    const startDate = req.query.startDate
+      ? createUTCDate(req.query.startDate)
+      : null;
+    const endDate = req.query.endDate ? createUTCDate(req.query.endDate) : null;
+
+    const filters = [];
+
+    if (manage && userId) {
+      filters.push({
+        OR: [
+          { organizerId: userId },
+          {
+            moderators: {
+              some: {
+                userId: userId,
+              },
+            },
+          },
+        ],
+      });
+    }
+
+    if (myEvents && userId) {
+      filters.push({
+        OR: [
+          {
+            eventDays: {
+              some: {
+                users: {
+                  some: {
+                    id: userId,
+                  },
+                },
+              },
+            },
+          },
+          {
+            eventOccurrences: {
+              some: {
+                participants: {
+                  some: {
+                    id: userId,
+                  },
+                },
+              },
+            },
+          },
+        ],
+      });
+    }
+
+    if (search) {
+      filters.push({
+        OR: [
+          {
+            title: { contains: search },
+          },
+          {
+            eventDays: {
+              some: {
+                eventChange: {
+                  title: { contains: search },
+                },
+              },
+            },
+          },
+          {
+            eventOccurrences: {
+              some: {
+                eventChange: {
+                  title: { contains: search },
+                },
+              },
+            },
+          },
+        ],
+      });
+    }
+
+    if (searchLocation) {
+      filters.push({
+        OR: [
+          {
+            location: { contains: searchLocation },
+          },
+          {
+            eventDays: {
+              some: {
+                eventChange: {
+                  location: { contains: searchLocation },
+                },
+              },
+            },
+          },
+          {
+            eventOccurrences: {
+              some: {
+                eventChange: {
+                  location: { contains: searchLocation },
+                },
+              },
+            },
+          },
+        ],
+      });
+    }
+
+    if (onlySingle === "true") {
+      filters.push({
+        repeatInterval: 0,
+      });
+    }
+
+    if (onlyRecurring === "true") {
+      filters.push({
+        NOT: {
+          repeatInterval: 0,
+        },
+      });
+    }
+    if (startDate || endDate) {
+      filters.push({
+        OR: [
+          {
+            // klasická kontrola na hlavný Event
+            AND: [
+              { startDate: { lte: endDate } }, // event.startDate <= hľadaný endDate
+              {
+                OR: [
+                  { repeatUntil: { gte: startDate } }, // event.repeatUntil >= hľadaný startDate
+                  { repeatUntil: null }, // alebo repeatUntil je null (nekonečno)
+                ],
+              },
+            ],
+          },
+          {
+            // navyše kontrola na EventOccurrence.eventChange.startDate
+            eventOccurrences: {
+              some: {
+                eventChange: {
+                  startDate: {
+                    ...(startDate && { gte: startDate }),
+                    ...(endDate && { lte: endDate }),
+                  },
+                },
+              },
+            },
+          },
+        ],
+      });
+    }
+
+    if (daysOfWeek) {
+      const parsedDays = Array.isArray(daysOfWeek)
+        ? daysOfWeek.map(Number)
+        : [Number(daysOfWeek)];
+
+      filters.push({
+        OR: [
+          {
+            eventDays: {
+              some: {
+                dayId: { in: parsedDays },
+              },
+            },
+          },
+          {
+            eventOccurrences: {
+              some: {
+                OR: [
+                  {
+                    date: {
+                      not: null,
+                      // Tu sa musíš neskôr na frontende pozerať na day (getUTCDay)
+                      // Prisma nemá priamo "dayOfWeek" pre DateTime, takže porovnáš neskôr v JS.
+                    },
+                  },
+                  {
+                    eventChange: {
+                      startDate: {
+                        not: null,
+                        // Tiež potom určíš deň v JavaScripte
+                      },
+                    },
+                  },
+                ],
+              },
+            },
+          },
+        ],
+      });
+    }
+
+    if (categories) {
+      const parsedCategories = Array.isArray(categories)
+        ? categories.map(Number)
+        : [Number(categories)];
+
+      if (parsedCategories.length > 0) {
+        if (allCategories === "true") {
+          // Musia sedieť všetky vybrané kategórie
+          filters.push({
+            AND: parsedCategories.map((catId) => ({
+              categories: {
+                some: {
+                  id: catId,
+                },
+              },
+            })),
+          });
+        } else {
+          // Stačí ak sedí aspoň jedna kategória
+          filters.push({
+            categories: {
+              some: {
+                id: { in: parsedCategories },
+              },
+            },
+          });
+        }
+      }
+    }
+
     const allEvents = await prisma.event.findMany({
+      where: {
+        AND: filters.length > 0 ? filters : undefined,
+      },
       include: {
         categories: true,
-        eventDays: { include: { day: true, eventChange: true } },
+        eventDays: { include: { day: true, eventChange: true, users: true } },
         organizer: {
           select: {
             id: true,
@@ -201,7 +693,6 @@ export const getAllEvents = async (req, res) => {
             email: true,
           },
         },
-
         moderators: {
           include: {
             user: {
@@ -224,7 +715,6 @@ export const getAllEvents = async (req, res) => {
       },
     });
 
-    const now = getCurrentUTCDate();
     const instances = [];
 
     for (const event of allEvents) {
@@ -233,22 +723,40 @@ export const getAllEvents = async (req, res) => {
 
       for (const occ of event.eventOccurrences) {
         const changedEvent = applyChangesData(
-          { ...event, startDate: mergeDateAndTime(event.startDate, occ.date) },
+          {
+            ...event,
+            participants: occ.participants,
+            startDate: mergeDateAndTime(event.startDate, occ.date),
+          },
           [occ?.eventChange, occ?.eventDay?.eventChange]
         );
+
+        if (!doesEventMatchFilters(changedEvent, { ...req.query, userId })) {
+          continue;
+        }
+
         instances.push({
           ...changedEvent,
           date: occ.date,
           virtual: false,
-          participants: occ.participants,
         });
       }
 
       if (isRecurring) {
-        const virtualEvents = getAllVirtualEvents(event, now);
+        const virtualEvents = getAllVirtualEvents(event, startDate, endDate);
 
-        for (const virtualEvent of virtualEvents) {
-          instances.push(virtualEvent);
+        for (const event of virtualEvents) {
+          const changedEvent = applyChangesData(
+            {
+              ...event,
+              startDate: mergeDateAndTime(event.startDate, event.date),
+            },
+            [event?.eventDay?.eventChange]
+          );
+          if (!doesEventMatchFilters(changedEvent, { ...req.query, userId })) {
+            continue;
+          }
+          instances.push(changedEvent);
         }
       }
 
@@ -286,6 +794,7 @@ export const applyChanges = async (
           day: true,
         },
       },
+      room: true,
     },
   });
 
@@ -354,6 +863,8 @@ export const joinEvent = async (req, res) => {
       "startDate",
     ]);
 
+    console.log(event);
+
     if (!event) {
       return res.status(404).json({ message: "Event neexistuje." });
     }
@@ -381,18 +892,12 @@ export const joinEvent = async (req, res) => {
           throw new Error("Event sa v daný deň nekoná.");
         }
 
-        occurrence = await tx.eventOccurrence.create({
-          data: {
-            event: { connect: { id: event.id } },
-            date: targetDate,
-            eventDay: eventDayId && { connect: { id: eventDayId } },
-          },
-          include: {
-            participants: {
-              select: { id: true },
-            },
-          },
-        });
+        occurrence = await createOccurrence(
+          tx,
+          event.id,
+          targetDate,
+          eventDayId || null
+        );
       }
 
       // 2.2. Skontroluj, či už je používateľ prihlásený
@@ -413,6 +918,7 @@ export const joinEvent = async (req, res) => {
       }
 
       // 2.4. Pridaj používateľa
+      console.log("userId", userId);
       await tx.eventOccurrence.update({
         where: { id: occurrence.id },
         data: {
@@ -421,6 +927,9 @@ export const joinEvent = async (req, res) => {
           },
         },
       });
+      if (event.room.id) {
+        await joinRoom(tx, event.room.id, userId);
+      }
     });
 
     return res.json({ message: "Úspešne prihlásený na event." });
@@ -441,10 +950,12 @@ export const getEventByDate = async (req, res) => {
       include: {
         categories: true,
         gallery: true,
+        room: true,
         eventDays: {
           include: {
             day: true,
-            users: true, // 👈 toto je `eventDayAttendancy`
+            users: true,
+            eventChange: true, // 👈 toto je `eventDayAttendancy`
           },
         },
         organizer: true,
@@ -506,6 +1017,8 @@ export const getEventByDate = async (req, res) => {
       attendants: eventDay?.users || [],
       date: targetDate,
       eventDayId: eventDayId,
+      startDate: mergeDateAndTime(event.startDate, targetDate),
+      participants: eventDay?.users || [],
     });
   } catch (err) {
     console.error("Chyba pri načítaní eventu:", err);
@@ -519,38 +1032,55 @@ export const leaveEvent = async (req, res) => {
     const userId = req.user.id;
     const targetDate = normalizeDate(req.query.date);
 
-    const event = await prisma.event.findUnique({
-      where: { id: parseInt(id) },
-      include: {
-        eventOccurrences: {
-          where: { date: targetDate },
+    await prisma.$transaction(async (tx) => {
+      const event = await tx.event.findUnique({
+        where: { id: parseInt(id) },
+        include: {
+          eventOccurrences: {
+            where: { date: targetDate },
+          },
+          eventDays: true,
         },
-      },
-    });
+      });
 
-    if (!event) {
-      return res.status(404).json({ message: "Event neexistuje." });
-    }
+      if (!event) {
+        throw new Error("Event neexistuje.");
+      }
 
-    const occurrence = event.eventOccurrences[0];
+      let occurrence = event.eventOccurrences[0];
 
-    if (!occurrence) {
-      return res.status(404).json({ message: "Výskyt eventu sa nenašiel." });
-    }
+      if (!occurrence) {
+        // Neexistuje occurrence -> vytvoríme novú, ale exclude usera
 
-    const wasJoined = await prisma.eventOccurrence.update({
-      where: { id: occurrence.id },
-      data: {
-        participants: {
-          disconnect: { id: userId },
-        },
-      },
+        const eventDayId = getEventDayId(event, targetDate); // ak potrebuješ eventDayId (neviem ci máš funkciu getEventDayId)
+        occurrence = await createOccurrence(
+          tx,
+          event.id,
+          targetDate,
+          eventDayId || null,
+          userId // exclude tento userId
+        );
+      } else {
+        if (!canJoinEventToday(event.startDate, event.joinDaysBeforeStart)) {
+          throw new Error("Neda sa este odhlasit");
+        }
+        // Existuje occurrence -> odhlas usera
+        await tx.eventOccurrence.update({
+          where: { id: occurrence.id },
+          data: {
+            participants: {
+              disconnect: { id: userId },
+            },
+          },
+        });
+      }
     });
 
     return res.status(200).json({ message: "Úspešne odhlásený z eventu." });
   } catch (err) {
-    console.error("Chyba pri odhlasovaní z eventu:", err);
-    res.status(500).json({ message: "Chyba servera." });
+    console.error("Chyba pri odhlasovanií z eventu:", err);
+    const msg = err?.message || "Chyba servera.";
+    return res.status(400).json({ message: msg });
   }
 };
 
@@ -564,18 +1094,17 @@ export const attendEventDays = async (req, res) => {
       return res.status(400).json({ message: "Neplatný formát požiadavky." });
     }
 
-    // Získaj event s kapacitou
     const event = await prisma.event.findUnique({
       where: { id: eventId },
+      include: {
+        room: true, // ak máš napríklad `room` ako `@relation` v Event modeli
+      },
     });
-
     if (!event) {
       return res.status(404).json({ message: "Event neexistuje." });
     }
 
-    // Všetko v transakcii, aby sme sa vyhli race condition
     await prisma.$transaction(async (tx) => {
-      // Získaj všetky dni eventu, kde môže byť používateľ prihlásený
       const allEventDays = await tx.eventDay.findMany({
         where: { eventId },
         include: {
@@ -593,7 +1122,7 @@ export const attendEventDays = async (req, res) => {
         )
         .map((ed) => ed.id);
 
-      // Over kapacitu pre každý deň, na ktorý sa používateľ chce prihlásiť
+      // Skontroluj kapacity pre dni na ktoré sa pripája
       for (const dayId of toConnect) {
         const day = allEventDays.find((d) => d.id === dayId);
 
@@ -613,11 +1142,11 @@ export const attendEventDays = async (req, res) => {
         }
       }
 
-      // Odpojiť z dní, kde už nemá byť
+      // 1. Odpojiť z dní, kde už nemá byť
       await Promise.all(
-        toDisconnect.map((id) =>
+        toDisconnect.map((dayId) =>
           tx.eventDay.update({
-            where: { id },
+            where: { id: dayId },
             data: {
               users: {
                 disconnect: { id: userId },
@@ -627,11 +1156,11 @@ export const attendEventDays = async (req, res) => {
         )
       );
 
-      // Pripojiť k novým dňom
+      // 2. Pripojiť k novým dňom
       await Promise.all(
-        toConnect.map((id) =>
+        toConnect.map((dayId) =>
           tx.eventDay.update({
-            where: { id },
+            where: { id: dayId },
             data: {
               users: {
                 connect: { id: userId },
@@ -640,9 +1169,100 @@ export const attendEventDays = async (req, res) => {
           })
         )
       );
+
+      // 3. Pripojiť používateľa ku všetkým budúcim occurrences na vybrané dni
+      const futureOccurrencesToConnect = await tx.eventOccurrence.findMany({
+        where: {
+          eventDayId: { in: toConnect },
+          date: { gte: normalizeDate(getCurrentUTCDate()) },
+        },
+        select: {
+          id: true,
+          participants: { select: { id: true } },
+          eventDay: {
+            select: {
+              eventChange: {
+                select: {
+                  capacity: true,
+                },
+              },
+            },
+          },
+          eventChange: {
+            select: {
+              capacity: true,
+            },
+          },
+        },
+      });
+
+      await Promise.all(
+        futureOccurrencesToConnect.map(async (occ) => {
+          const isAlreadyParticipant = occ.participants.some(
+            (p) => p.id === userId
+          );
+
+          if (isAlreadyParticipant) {
+            return; // Už je prihlásený, nič nerob
+          }
+
+          // Zisti aká kapacita platí
+          const occurrenceCapacity = occ.eventChange?.capacity;
+          const eventDayCapacity = occ.eventDay?.eventChange?.capacity;
+          const finalCapacity =
+            occurrenceCapacity ?? eventDayCapacity ?? event.capacity;
+
+          // Ak máme kapacitu, skontroluj počet
+          if (finalCapacity && occ.participants.length >= finalCapacity) {
+            // Kapacita je plná, nemôžeme pripojiť
+            console.log(`Skipping occurrence ${occ.id} - capacity full`);
+            return;
+          }
+
+          // Ak je miesto, pripoj usera
+          return tx.eventOccurrence.update({
+            where: { id: occ.id },
+            data: {
+              participants: {
+                connect: { id: userId },
+              },
+            },
+          });
+        })
+      );
+
+      // 4. ODPOJIŤ používateľa zo všetkých budúcich occurrences na dni, z ktorých sa odpojil
+      const futureOccurrencesToDisconnect = await tx.eventOccurrence.findMany({
+        where: {
+          eventDayId: { in: toDisconnect },
+          date: { gte: normalizeDate(getCurrentUTCDate()) },
+        },
+        select: { id: true },
+      });
+
+      await Promise.all(
+        futureOccurrencesToDisconnect.map((occ) =>
+          tx.eventOccurrence.update({
+            where: { id: occ.id },
+            data: {
+              participants: {
+                disconnect: { id: userId },
+              },
+            },
+          })
+        )
+      );
+
+      if (event.room.id) {
+        await joinRoom(tx, event.room.id, userId);
+      }
+
+      console.log(event);
     });
 
-    res.json({ message: "Prihlásenie na dni aktualizované." });
+    res.json({
+      message: "Účasť na dňoch a budúcich eventoch bola aktualizovaná.",
+    });
   } catch (err) {
     console.error("Chyba pri aktualizácii účasti na dňoch:", err);
     res.status(400).json({ message: err.message || "Chyba servera." });
@@ -653,90 +1273,65 @@ function buildEventChangePayload(
   newDataRaw,
   original,
   computedStartDate,
-  computedEndDate,
-  targetBaseDate
+  computedEndDate
 ) {
   const newData = {};
 
-  const nullIfSame = (key, newValue, originalValue) => {
-    newData[key] =
-      newValue === undefined
-        ? null
-        : newValue === originalValue
-        ? null
-        : newValue;
+  // Kľúče, ktoré musia byť čísla
+  const numericKeys = [
+    "capacity",
+    "joinDaysBeforeStart",
+    "allowRecurringAttendance",
+  ];
+
+  const setSmart = (key, newValueRaw, originalValue) => {
+    if (newValueRaw === undefined) {
+      return; // nič nenastavíme
+    }
+
+    let newValue = newValueRaw;
+
+    if (numericKeys.includes(key)) {
+      if (newValueRaw === "") {
+        newValue = 0; // prázdny string na 0 pre čísla
+      } else {
+        newValue = parseInt(newValueRaw);
+      }
+    } else if (typeof newValueRaw === "string") {
+      newValue = newValueRaw; // ak je normálny string, necháme ako je
+    }
+    newData[key] = newValue;
   };
 
-  newData.hasEndTime =
-    newDataRaw?.endTime !== "null" && newDataRaw?.endTime !== "undefined";
-  newData.hasStartDate =
-    newDataRaw?.startDate !== "null" && newDataRaw?.startDate !== "undefined";
-  newData.hasStartTime =
-    newDataRaw?.startTime !== "null" && newDataRaw?.startTime !== "undefined";
+  // Spracovanie dátumu
+  newData.startDate = computedStartDate;
 
-  // Spracovanie dátumu s kombináciou času
-  // if (targetBaseDate && original.startDate) {
-  //   const originalStart = new Date(original.startDate);
-  //   const base = new Date(targetBaseDate);
-  //   base.setUTCHours(
-  //     originalStart.getUTCHours(),
-  //     originalStart.getUTCMinutes(),
-  //     0,
-  //     0
-  //   );
-  //   computedStartDate = base;
-  // }
-
-  // if (targetBaseDate && original.endDate) {
-  //   const originalEnd = new Date(original.endDate);
-  //   const base = new Date(targetBaseDate);
-  //   base.setUTCHours(
-  //     originalEnd.getUTCHours(),
-  //     originalEnd.getUTCMinutes(),
-  //     0,
-  //     0
-  //   );
-  //   computedEndDate = base;
-  // }
-
-  // StartDate
-  newData.startDate =
-    computedStartDate &&
-    (!original.startDate ||
-      new Date(original.startDate).getTime() !==
-        new Date(computedStartDate).getTime())
-      ? computedStartDate
-      : null;
-
-  // EndDate
-  newData.endDate =
-    computedEndDate &&
-    (!original.endDate ||
-      new Date(original.endDate).getTime() !==
-        new Date(computedEndDate).getTime())
-      ? computedEndDate
-      : null;
+  if (newDataRaw.endTime) {
+    newData.endDate = computedEndDate;
+  }
 
   // Ostatné polia
-  nullIfSame("title", newDataRaw.title, original.title);
-  nullIfSame("description", newDataRaw.description, original.description);
-  nullIfSame("location", newDataRaw.location, original.location);
+  setSmart("title", newDataRaw.title, original.title);
+  setSmart("description", newDataRaw.description, original.description);
+  setSmart("location", newDataRaw.location, original.location);
 
-  nullIfSame(
+  setSmart(
     "capacity",
-    newDataRaw.capacity ? parseInt(newDataRaw.capacity) : undefined,
+    newDataRaw.capacity !== undefined
+      ? parseInt(newDataRaw.capacity)
+      : undefined,
     original.capacity
   );
 
-  nullIfSame(
+  setSmart(
     "joinDaysBeforeStart",
-    newDataRaw.joinDaysBeforeStart
+    newDataRaw.joinDaysBeforeStart !== undefined
       ? parseInt(newDataRaw.joinDaysBeforeStart)
       : undefined,
     original.joinDaysBeforeStart
   );
 
-  nullIfSame(
+  setSmart(
     "allowRecurringAttendance",
     typeof newDataRaw.allowRecurringAttendance === "boolean"
       ? newDataRaw.allowRecurringAttendance
@@ -748,14 +1343,17 @@ function buildEventChangePayload(
 }
 
 async function updateEventImages({
+  tx = prisma,
   files,
   mainImageChanged,
   deletedGallery,
   previousMainImage,
   eventId,
 }) {
+  console.log("kontrolujem stary ");
   // 1. Vymaž starý hlavný obrázok ak bol zmenený a nový nie je prítomný
   if (mainImageChanged && !files?.mainImage?.[0] && previousMainImage) {
+    console.log("mazem stary ");
     const oldPath = path.join(".", previousMainImage);
     try {
       if (fs.existsSync(oldPath) && fs.statSync(oldPath).isFile()) {
@@ -765,7 +1363,7 @@ async function updateEventImages({
       console.warn("⚠️ Chyba pri mazaní hlavného obrázka:", err.message);
     }
 
-    await prisma.event.update({
+    await tx.event.update({
       where: { id: eventId },
       data: { mainImage: null },
     });
@@ -774,7 +1372,7 @@ async function updateEventImages({
   // 2. Nastavenie nového hlavného obrázka (ak je)
   if (mainImageChanged && files?.mainImage?.[0]) {
     const mainImageUrl = `/uploads/events/${files.mainImage[0].filename}`;
-    await prisma.event.update({
+    await tx.event.update({
       where: { id: eventId },
       data: { mainImage: mainImageUrl },
     });
@@ -818,7 +1416,7 @@ async function updateEventImages({
     }
 
     // 🧹 Vymazanie z databázy
-    await prisma.eventImage.deleteMany({
+    await tx.eventImage.deleteMany({
       where: {
         eventId,
         url: { in: strippedUrls },
@@ -832,7 +1430,7 @@ async function updateEventImages({
       (file) => `/uploads/events/${file.filename}`
     );
 
-    await prisma.event.update({
+    await tx.event.update({
       where: { id: eventId },
       data: {
         gallery: {
@@ -843,11 +1441,26 @@ async function updateEventImages({
   }
 }
 
+const resolveInt = (value) => {
+  if (value === "") {
+    return 0;
+  }
+  if (value === undefined) {
+    return value;
+  }
+  return parseInt(value);
+};
+
 export const editEvent = async (req, res) => {
   try {
-    const { scope, eventDayId, occurrenceId } = req.body;
+    console.log(req.body);
+    // validateEventData(req.body, true);
+    const { scope, occurrenceId } = req.body;
     const userId = req.user.id;
     const eventId = parseInt(req.body.id);
+    const targetDate = normalizeDate(req.body.date);
+
+    const eventDayId = parseInt(req.body.eventDayId);
 
     if (!eventId || !scope) {
       return res.status(400).json({ message: "Chýbajúce parametre." });
@@ -858,20 +1471,26 @@ export const editEvent = async (req, res) => {
       description,
       startDate,
       location,
-      capacity,
-      attendancyLimit,
       allowRecurringAttendance,
-      joinDaysBeforeStart,
       repeatUntil,
-      repeatInterval,
       repeatDays,
       startTime,
       endTime,
+      repeatInterval,
     } = req.body;
 
-    const categoryIds = toArray(req.body.categoryIds);
+    const capacity = resolveInt(req.body.capacity);
+    const attendancyLimit = resolveInt(req.body.attendancyLimit);
 
-    const rawGallery = req.body.deletedGallery;
+    console.log(capacity);
+
+    const joinDaysBeforeStart = resolveInt(req.body.joinDaysBeforeStart);
+
+    const categoryIds = toArray(req.body?.categoryIds);
+
+    const rawGallery = req.body?.deletedGallery;
+    console.log("rawGallery");
+    console.log(rawGallery);
 
     const deletedGallery =
       typeof rawGallery === "string"
@@ -885,23 +1504,17 @@ export const editEvent = async (req, res) => {
           })
         : [];
 
-    let computedStartDate = null;
-    let computedEndDate = null;
-    let hasStartDate = false;
-    let hasStartTime = false;
-    let hasEndTime = false;
-
-    if (startDate && startDate !== "undefined" && startDate !== "") {
-      hasStartDate = true;
+    function checkValue(value) {
+      if (value === undefined) return undefined;
+      return value === "" ? false : true;
     }
 
-    if (startTime && startTime !== "undefined" && startTime !== "") {
-      hasStartTime = true;
-    }
-
-    if (endTime && endTime !== "undefined" && endTime !== "") {
-      hasEndTime = true;
-    }
+    let computedStartDate;
+    let computedEndDate;
+    let hasStartDate = checkValue(startDate);
+    let hasStartTime = checkValue(startTime);
+    let hasEndTime = checkValue(endTime);
+    console.log(targetDate, "targetDate");
 
     // Manuálna konštrukcia dátumu v lokálnom čase bez UTC posunu
     if (hasStartDate || hasStartTime) {
@@ -916,151 +1529,26 @@ export const editEvent = async (req, res) => {
     } else {
       console.log("3");
 
-      computedStartDate = getCurrentUTCDate();
+      computedStartDate = targetDate;
     }
 
-    if (hasEndTime) {
+    if (hasEndTime && hasStartDate) {
       computedEndDate = createUTCDate(startDate, endTime);
-    }
-
-    if (scope === "event") {
-      await updateEventImages({
-        files: req.files,
-        mainImageChanged: req.body.mainImageChanged === "true",
-        deletedGallery: deletedGallery,
-        eventId,
-        previousMainImage: req.body.previousMainImage || null,
-      });
-
-      const updated = await prisma.event.update({
-        where: { id: eventId },
-        data: {
-          title,
-          description,
-          startDate: computedStartDate,
-          endDate: computedEndDate,
-          hasStartDate,
-          hasStartTime,
-          hasEndTime,
-          location,
-          capacity: parseInt(capacity),
-          attendancyLimit: parseInt(attendancyLimit),
-          allowRecurringAttendance: allowRecurringAttendance === "true",
-          joinDaysBeforeStart: parseInt(joinDaysBeforeStart),
-          repeatUntil:
-            repeatUntil !== "null" ? createUTCDate(repeatUntil) : null,
-          categories: {
-            set: categoryIds.map((id) => ({ id: parseInt(id) })),
-          },
-        },
-      });
-
-      // Spracovanie repeatDays
-      const parsedRepeatDays = JSON.parse(repeatDays || "{}");
-
-      const existingDays = await prisma.eventDay.findMany({
-        where: { eventId },
-        include: { day: true },
-      });
-
-      const newWeekDayPairs = Object.entries(parsedRepeatDays).flatMap(
-        ([week, days]) =>
-          days.map((day) => ({ week: parseInt(week), dayId: parseInt(day) }))
+    } else if (hasEndTime) {
+      computedEndDate = mergeDateAndTime(
+        createUTCDate(null, endTime),
+        targetDate
       );
-
-      // Vymaž staré dni + occurrences, ktoré sa na ne viažu
-      for (const oldDay of existingDays) {
-        const stillExists = newWeekDayPairs.some(
-          (pair) => pair.week === oldDay.week && pair.dayId === oldDay.day.id
-        );
-
-        if (!stillExists) {
-          // Vymaž occurrences naviazané na tento deň
-          await prisma.eventOccurrence.deleteMany({
-            where: { eventDayId: oldDay.id },
-          });
-
-          // Vymaž samotný eventDay
-          await prisma.eventDay.delete({ where: { id: oldDay.id } });
-        }
-      }
-
-      // Pridaj nové dni, ktoré ešte neexistujú
-      for (const pair of newWeekDayPairs) {
-        const alreadyExists = existingDays.some(
-          (ed) => ed.week === pair.week && ed.day.id === pair.dayId
-        );
-
-        if (!alreadyExists) {
-          await prisma.eventDay.create({
-            data: {
-              event: { connect: { id: eventId } },
-              week: pair.week,
-              day: { connect: { id: pair.dayId } },
-            },
-          });
-        }
-      }
-
-      // Vytvor nové occurrences podľa aktuálneho stavu
-      await createOccurrenceIfNeeded(eventId);
-
-      return res.json(updated);
     }
+    console.log(targetDate);
+    console.log(createUTCDate(null, endTime));
+    console.log(computedEndDate);
+    console.log(computedStartDate);
 
-    if (scope === "eventDay") {
-      if (!eventDayId) {
-        return res.status(400).json({ message: "Chýba eventDayId." });
-      }
-
-      const eventDay = await prisma.eventDay.findUnique({
-        where: { id: parseInt(eventDayId) },
-        include: {
-          event: true,
-        },
-      });
-
-      if (!eventDay) {
-        return res.status(404).json({ message: "EventDay neexistuje." });
-      }
-
-      const original = eventDay.event;
-      const newData = buildEventChangePayload(
-        req.body,
-        original,
-        computedStartDate,
-        computedEndDate // použijeme startDate eventDay ako základ pre nový dátum
-      );
-
-      let change = await prisma.eventChange.findFirst({
-        where: {
-          eventDay: {
-            id: parseInt(eventDayId),
-          },
-        },
-      });
-
-      if (change) {
-        change = await prisma.eventChange.update({
-          where: { id: change.id },
-          data: { ...newData, updatedByUser: { connect: { id: userId } } },
-        });
-      } else {
-        change = await prisma.eventChange.create({
-          data: {
-            ...newData,
-            eventDay: { connect: { id: parseInt(eventDayId) } },
-            createdByUser: { connect: { id: userId } },
-          },
-        });
-      }
-
-      return res.json(change);
-    }
-
-    if (scope === "occurrence") {
-      if (parseInt(req.body.repeatInterval) === 0) {
+    await prisma.$transaction(async (tx) => {
+      if (scope === "event") {
         await updateEventImages({
+          tx,
           files: req.files,
           mainImageChanged: req.body.mainImageChanged === "true",
           deletedGallery: deletedGallery,
@@ -1068,100 +1556,250 @@ export const editEvent = async (req, res) => {
           previousMainImage: req.body.previousMainImage || null,
         });
 
-        await prisma.event.update({
+        const updated = await tx.event.update({
           where: { id: eventId },
           data: {
+            title,
+            description,
+            startDate: computedStartDate,
+            endDate: computedEndDate,
+            hasStartDate: undefined,
+            hasStartTime,
+            hasEndTime,
+            location,
+            capacity: parseInt(capacity),
+            attendancyLimit: parseInt(attendancyLimit),
+            allowRecurringAttendance: allowRecurringAttendance === "true",
+            joinDaysBeforeStart: parseInt(joinDaysBeforeStart),
+            repeatUntil: !isEmpty(repeatUntil)
+              ? createUTCDate(repeatUntil)
+              : null,
             categories: {
               set: categoryIds.map((id) => ({ id: parseInt(id) })),
             },
           },
         });
+        console.log(repeatDays);
+        if (repeatDays) {
+          // Spracovanie repeatDaysif
+          const parsedRepeatDays = JSON.parse(repeatDays || "{}");
+
+          const existingDays = await tx.eventDay.findMany({
+            where: { eventId },
+            include: { day: true },
+          });
+
+          const newWeekDayPairs = Object.entries(parsedRepeatDays).flatMap(
+            ([week, days]) =>
+              days.map((day) => ({
+                week: parseInt(week),
+                dayId: parseInt(day),
+              }))
+          );
+
+          // Vymaž staré dni + occurrences, ktoré sa na ne viažu
+          for (const oldDay of existingDays) {
+            const stillExists = newWeekDayPairs.some(
+              (pair) =>
+                pair.week === oldDay.week && pair.dayId === oldDay.day.id
+            );
+
+            if (!stillExists) {
+              // Vymaž occurrences naviazané na tento deň
+              await tx.eventOccurrence.deleteMany({
+                where: { eventDayId: oldDay.id },
+              });
+
+              // Vymaž samotný eventDay
+              await tx.eventDay.delete({ where: { id: oldDay.id } });
+            }
+          }
+
+          // Pridaj nové dni, ktoré ešte neexistujú
+          for (const pair of newWeekDayPairs) {
+            const alreadyExists = existingDays.some(
+              (ed) => ed.week === pair.week && ed.day.id === pair.dayId
+            );
+
+            if (!alreadyExists) {
+              await tx.eventDay.create({
+                data: {
+                  event: { connect: { id: eventId } },
+                  week: pair.week,
+                  day: { connect: { id: pair.dayId } },
+                },
+              });
+            }
+          }
+        }
+
+        // Vytvor nové occurrences podľa aktuálneho stavu
+        await createOccurrenceIfNeeded(eventId);
+
+        return res.json({ message: "Úspešne editované" });
       }
 
-      if (!eventId || !computedStartDate) {
-        return res.status(400).json({ message: "Chýba eventId alebo dátum." });
-      }
-      console.log("req.date");
-      console.log(req.body.date);
-      // Skús nájsť existujúcu occurrence pre daný event a dátum
-      let occurrence = await prisma.eventOccurrence.findFirst({
-        where: {
-          eventId: parseInt(eventId),
-          date: req.body.date,
-        },
-        include: {
-          event: true,
-          eventChange: true,
-        },
-      });
+      if (scope === "eventDay") {
+        if (!eventDayId) {
+          return res.status(400).json({ message: "Chýba eventDayId." });
+        }
 
-      // Ak neexistuje, vytvor ju
-      if (!occurrence) {
-        const event = await prisma.event.findUnique({
-          where: { id: parseInt(eventId) },
-          include: { eventDays: { include: { day: true } } },
+        const eventDay = await tx.eventDay.findUnique({
+          where: { id: eventDayId },
+          include: {
+            event: true,
+          },
         });
 
-        if (!event) {
-          return res.status(404).json({ message: "Event neexistuje." });
+        if (!eventDay) {
+          return res.status(404).json({ message: "EventDay neexistuje." });
         }
 
-        // Validácia dátumu (napr. či patrí do cyklu)
-        const validDate = getNextEventDate(event, req.body.date);
-        if (!validDate) {
+        const original = eventDay.event;
+        const newData = {
+          ...buildEventChangePayload(
+            req.body,
+            original,
+            computedStartDate,
+            computedEndDate
+          ),
+          hasStartDate,
+          hasStartTime,
+          hasEndTime,
+        };
+
+        let change = await tx.eventChange.findFirst({
+          where: {
+            eventDay: {
+              id: eventDayId,
+            },
+          },
+        });
+
+        if (change) {
+          change = await tx.eventChange.update({
+            where: { id: change.id },
+            data: { ...newData, updatedByUser: { connect: { id: userId } } },
+          });
+        } else {
+          change = await tx.eventChange.create({
+            data: {
+              ...newData,
+              eventDay: { connect: { id: eventDayId } },
+              createdByUser: { connect: { id: userId } },
+            },
+          });
+        }
+
+        return res.json({ message: "Úspešne editované" });
+      }
+
+      if (scope === "occurrence") {
+        if (parseInt(repeatInterval) === 0) {
+          await updateEventImages({
+            tx,
+            files: req.files,
+            mainImageChanged: req.body.mainImageChanged === "true",
+            deletedGallery: deletedGallery,
+            eventId,
+            previousMainImage: req.body.previousMainImage || null,
+          });
+
+          await tx.event.update({
+            where: { id: eventId },
+            data: {
+              categories: {
+                set: categoryIds.map((id) => ({ id: parseInt(id) })),
+              },
+            },
+          });
+        }
+
+        if (!eventId || !computedStartDate) {
           return res
             .status(400)
-            .json({ message: "Neplatný dátum pre tento event." });
+            .json({ message: "Chýba eventId alebo dátum." });
         }
-
-        occurrence = await prisma.eventOccurrence.create({
-          data: {
-            event: { connect: { id: event.id } },
-            date: validDate,
+        // Skús nájsť existujúcu occurrence pre daný event a dátum
+        let occurrence = await tx.eventOccurrence.findFirst({
+          where: {
+            eventId: parseInt(eventId),
+            date: req.body.date,
           },
           include: {
             event: true,
             eventChange: true,
           },
         });
+
+        // Ak neexistuje, vytvor ju
+        if (!occurrence) {
+          const event = await tx.event.findUnique({
+            where: { id: parseInt(eventId) },
+            include: { eventDays: { include: { day: true } } },
+          });
+
+          if (!event) {
+            return res.status(404).json({ message: "Event neexistuje." });
+          }
+
+          // Validácia dátumu (napr. či patrí do cyklu)
+          const validDate = getNextEventDate(event, req.body.date);
+          if (!validDate) {
+            return res
+              .status(400)
+              .json({ message: "Neplatný dátum pre tento event." });
+          }
+
+          occurrence = await createOccurrence(
+            tx,
+            event.id,
+            targetDate,
+            eventDayId || null
+          );
+        }
+
+        const original = occurrence.event;
+        const newData = {
+          ...buildEventChangePayload(
+            req.body,
+            original,
+            computedStartDate,
+            computedEndDate,
+            req.body.date
+          ),
+          hasStartDate,
+          hasStartTime,
+          hasEndTime,
+        };
+
+        if (Object.keys(newData).length === 0) {
+          return res
+            .status(200)
+            .json({ message: "Žiadne zmeny neboli zistené." });
+        }
+
+        if (occurrence.eventChangeId) {
+          const updatedChange = await tx.eventChange.update({
+            where: { id: occurrence.eventChangeId },
+            data: { ...newData, updatedByUser: { connect: { id: userId } } },
+          });
+          return res.json({ message: "Úspešne editované" });
+        } else {
+          const newChange = await tx.eventChange.create({
+            data: { ...newData, createdByUser: { connect: { id: userId } } },
+          });
+
+          await tx.eventOccurrence.update({
+            where: { id: occurrence.id },
+            data: { eventChangeId: newChange.id },
+          });
+
+          return res.json({ message: "Úspešne editované" });
+        }
       }
-
-      const original = occurrence.event;
-      const newData = buildEventChangePayload(
-        req.body,
-        original,
-        computedStartDate,
-        computedEndDate,
-        req.body.date
-      );
-
-      if (Object.keys(newData).length === 0) {
-        return res
-          .status(200)
-          .json({ message: "Žiadne zmeny neboli zistené." });
-      }
-
-      if (occurrence.eventChangeId) {
-        const updatedChange = await prisma.eventChange.update({
-          where: { id: occurrence.eventChangeId },
-          data: { ...newData, updatedByUser: { connect: { id: userId } } },
-        });
-        return res.json(updatedChange);
-      } else {
-        const newChange = await prisma.eventChange.create({
-          data: { ...newData, createdByUser: { connect: { id: userId } } },
-        });
-
-        await prisma.eventOccurrence.update({
-          where: { id: occurrence.id },
-          data: { eventChangeId: newChange.id },
-        });
-
-        return res.json(newChange);
-      }
-    }
-
-    return res.status(400).json({ message: "Neznámy scope." });
+      return res.status(400).json({ message: "Neznámy scope." });
+    });
   } catch (err) {
     console.error("Chyba pri editácii eventu:", err);
     res.status(500).json({ message: "Chyba servera." });
@@ -1180,60 +1818,62 @@ export const updateEventModerators = async (req, res) => {
   }
 
   try {
-    // 1. Získaj všetkých aktuálnych moderátorov eventu
-    const existing = await prisma.eventModerator.findMany({
-      where: { eventId },
-    });
+    await prisma.$transaction(async (tx) => {
+      // 1. Získaj všetkých aktuálnych moderátorov eventu
+      const existing = await tx.eventModerator.findMany({
+        where: { eventId },
+      });
 
-    const existingIds = existing.map((m) => m.id);
+      const existingIds = existing.map((m) => m.id);
 
-    // 2. Priprav nové updaty/vytvárania
+      // 2. Priprav nové updaty/vytvárania
 
-    await Promise.all(
-      moderators.map(async (mod) => {
-        const {
-          moderatorId,
-          id: userId,
-          canEditEvent = false,
-          canManageParticipants = false,
-          canManageAttendees = false,
-          canManageModerators = false,
-          canRepostEvent = false,
-        } = mod;
+      await Promise.all(
+        moderators.map(async (mod) => {
+          const {
+            moderatorId,
+            id: userId,
+            canEditEvent = false,
+            canManageParticipants = false,
+            canManageAttendees = false,
+            canManageModerators = false,
+            canRepostEvent = false,
+          } = mod;
 
-        if (moderatorId) {
-          return prisma.eventModerator.update({
-            where: { id: moderatorId },
-            data: {
-              canEditEvent,
-              canManageParticipants,
-              canManageAttendees,
-              canManageModerators,
-              canRepostEvent,
-            },
-          });
-        } else {
-          return prisma.eventModerator.create({
-            data: {
-              userId,
-              eventId,
-              canEditEvent,
-              canManageParticipants,
-              canManageAttendees,
-              canManageModerators,
-              canRepostEvent,
-            },
-          });
-        }
-      })
-    );
+          if (moderatorId) {
+            return tx.eventModerator.update({
+              where: { id: moderatorId },
+              data: {
+                canEditEvent,
+                canManageParticipants,
+                canManageAttendees,
+                canManageModerators,
+                canRepostEvent,
+              },
+            });
+          } else {
+            return tx.eventModerator.create({
+              data: {
+                userId,
+                eventId,
+                canEditEvent,
+                canManageParticipants,
+                canManageAttendees,
+                canManageModerators,
+                canRepostEvent,
+              },
+            });
+          }
+        })
+      );
 
-    // 3. (Nepovinné) Vymaž moderátorov, ktorí boli odstránení z formulára
-    const receivedIds = moderators.map((m) => m.moderatorId).filter(Boolean);
-    const toDelete = existingIds.filter((id) => !receivedIds.includes(id));
+      // 3. (Nepovinné) Vymaž moderátorov, ktorí boli odstránení z formulára
+      const receivedIds = moderators.map((m) => m.moderatorId).filter(Boolean);
+      const toDelete = existingIds.filter((id) => !receivedIds.includes(id));
 
-    await prisma.eventModerator.deleteMany({
-      where: { id: { in: toDelete } },
+      await tx.eventModerator.deleteMany({
+        where: { id: { in: toDelete } },
+      });
     });
 
     res.status(200).json("Updated");
@@ -1290,5 +1930,31 @@ export const deleteSingleAttendance = async (req, res) => {
   } catch (error) {
     console.error("Error removing single attendance:", error);
     res.status(500).json({ error: "Internal server error" });
+  }
+};
+
+export const deleteEvent = async (req, res) => {
+  console.log("mazem");
+  const { id } = req.params;
+
+  try {
+    // 1. Skontrolujeme, či Event existuje
+    const event = await prisma.event.findUnique({
+      where: { id: parseInt(id) },
+    });
+
+    if (!event) {
+      return res.status(404).json({ message: "Event nebol nájdený." });
+    }
+
+    // 2. Vymažeme Event
+    await prisma.event.delete({
+      where: { id: parseInt(id) },
+    });
+
+    return res.status(200).json({ message: "Event bol úspešne vymazaný." });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ message: "Chyba pri mazaní eventu." });
   }
 };

@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useParams, Navigate, Outlet } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import Spinner from "react-bootstrap/Spinner";
+import { Container } from "react-bootstrap";
 
 const EditableEventRoute = () => {
   const { id } = useParams(); // /events/:id/edit
@@ -36,7 +37,15 @@ const EditableEventRoute = () => {
     else setLoading(false);
   }, [id, user]);
 
-  if (loading) return <Spinner animation="border" />;
+  if (loading)
+    return (
+      <Container
+        className="d-flex justify-content-center align-items-center"
+        style={{ minHeight: "50vh" }}
+      >
+        <Spinner animation="border" />
+      </Container>
+    );
   if (!canEdit) return <Navigate to="/" replace />;
 
   return <Outlet />;

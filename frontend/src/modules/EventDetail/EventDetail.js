@@ -7,6 +7,7 @@ import {
   Tooltip,
   Dropdown,
   DropdownButton,
+  Container,
 } from "react-bootstrap";
 import UserAvatar from "../../components/UserAvatar/UserAvatar";
 import UserAvatarList from "../../components/UserAvatarList/UserAvatarList";
@@ -20,10 +21,16 @@ import Popup from "../../components/Popup/Popup";
 import { resolveEventData } from "../../utils/eventUtils";
 import ModeratorSelector from "../../components/ModeratorSelector/ModeratorSelector";
 import UserList from "../../components/UserList/UserList";
-import { formatDateSlovak } from "../../utils/dateUtils";
+import {
+  formatDateSlovak,
+  getCurrentUTCDate,
+  normalizeDate,
+  toUTCZeroTime,
+} from "../../utils/dateUtils";
 import CategoryList from "../../components/CategoryList/CategoryList";
+import JoinRoomButton from "../../components/JoinRoomButton/JoinRoomButton";
 
-const EventDetail = ({ eventId: parEventId, date: parDate }) => {
+const EventDetail = ({ eventId: parEventId, date: parDate, refetch }) => {
   let { eventId, date } = useParams();
   const { user } = useAuth();
   const [event, setEvent] = useState(null);
@@ -36,9 +43,37 @@ const EventDetail = ({ eventId: parEventId, date: parDate }) => {
   const [editModeratorsValue, setEditModeratorsValue] = useState({});
   const [editUsers, setEditUsers] = useState(false);
   const [editAttendees, setEditAttendees] = useState(false);
+  const [eventCapacity, setEventCapacity] = useState(null);
 
   eventId = parEventId || eventId;
   date = parDate || date;
+
+  const handleDelete = async () => {
+    try {
+      const confirmDelete = window.confirm("Naozaj chceš vymazať tento event?");
+      if (!confirmDelete) return;
+
+      const token = localStorage.getItem("token");
+
+      const res = await fetch(`/api/events/${eventId}`, {
+        method: "DELETE",
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+
+      if (!res.ok) {
+        const errorData = await res.json();
+        throw new Error(errorData.message || "Chyba pri mazaní eventu.");
+      }
+
+      setMessage("Event bol úspešne vymazaný.");
+      refetch();
+      // napríklad refreshneš zoznam eventov alebo redirect
+    } catch (error) {
+      setError(error.message || "Chyba pri mazaní eventu.");
+    }
+  };
 
   const onSubmitModerators = async (moderators) => {
     try {
@@ -75,19 +110,19 @@ const EventDetail = ({ eventId: parEventId, date: parDate }) => {
       const data = await res.json();
       if (!res.ok) throw new Error(data.message || "Chyba pri načítaní eventu");
       const newData = { ...data, ...resolveEventData(data) };
+      setEventCapacity(data?.capacity);
 
       setEvent({
         ...newData,
-        startDate: newData.hasStartDate
-          ? newData.startDate.split("T")[0]
-          : undefined,
-        startTime: newData.hasStartTime
-          ? newData.startDate.split("T")[1]?.substring(0, 5)
-          : undefined,
-        endTime:
-          newData.hasEndTime && newData.endDate
-            ? newData.endDate.split("T")[1]?.substring(0, 5)
-            : undefined,
+
+        capacity: newData.capacity === 0 ? null : newData.capacity,
+        attendancyLimit:
+          newData.attendancyLimit === 0 ? null : newData.attendancyLimit,
+
+        joinDaysBeforeStart:
+          newData.joinDaysBeforeStart === 0
+            ? null
+            : newData.joinDaysBeforeStart,
       });
 
       setEditModeratorsValue(
@@ -107,6 +142,8 @@ const EventDetail = ({ eventId: parEventId, date: parDate }) => {
       setLoading(false);
     }
   };
+
+  console.log(event);
 
   useEffect(() => {
     fetchEvent();
@@ -136,7 +173,15 @@ const EventDetail = ({ eventId: parEventId, date: parDate }) => {
   };
 
   if (error) return <Alert variant="danger">{error}</Alert>;
-  if (loading || !event) return <Spinner animation="border" />;
+  if (loading || !event)
+    return (
+      <Container
+        className="d-flex justify-content-center align-items-center"
+        style={{ minHeight: "50vh" }}
+      >
+        <Spinner animation="border" />
+      </Container>
+    );
 
   const {
     title,
@@ -158,6 +203,7 @@ const EventDetail = ({ eventId: parEventId, date: parDate }) => {
     eventDayId,
     occurrenceId,
     repeatInterval,
+    room,
   } = event;
 
   const onUserDelete = async ({ userId, type }) => {
@@ -188,13 +234,35 @@ const EventDetail = ({ eventId: parEventId, date: parDate }) => {
     }
   };
 
-  console.log(subscribers.length);
-
   const occupied = participants.length;
   const available = capacity ? capacity - occupied : null;
   const isParticipant = participants.some((p) => p.id === user?.id);
-  const isOrganizer = event.organizer?.id === user?.id;
+  const isOrganizer = event.organizer?.id === user?.id || user.role === "ADMIN";
   const moderator = event.moderators?.find((m) => m.userId === user?.id);
+
+  const currentDate = normalizeDate(getCurrentUTCDate()); // Dnešný dátum na 00:00 UTC
+  const eventStartUTC = toUTCZeroTime(event.startDate); // Event dátum na 00:00 UTC
+
+  const joinAvailableFrom = new Date(
+    eventStartUTC.getTime() - event.joinDaysBeforeStart * 24 * 60 * 60 * 1000
+  );
+
+  const canJoin = event.startDate
+    ? event.joinDaysBeforeStart == null || currentDate >= joinAvailableFrom
+    : false;
+
+  const daysUntilJoin =
+    event.startDate && event.joinDaysBeforeStart != null
+      ? Math.ceil(
+          (joinAvailableFrom.getTime() - currentDate.getTime()) /
+            (24 * 60 * 60 * 1000)
+        )
+      : null;
+
+  console.log(canJoin);
+
+  console.log(daysUntilJoin);
+
   return (
     <div className={styles.eventDetails}>
       <Popup isOpen={editUsers} onClose={() => setEditUsers(false)}>
@@ -224,7 +292,12 @@ const EventDetail = ({ eventId: parEventId, date: parDate }) => {
           fetchEvent();
         }}
       >
-        <EventDaySelector eventDays={event.eventDays} eventId={event.id} />
+        <EventDaySelector
+          eventDays={event.eventDays}
+          eventId={event.id}
+          capacity={eventCapacity}
+          fetchEvent={fetchEvent}
+        />
       </Popup>
       <Popup isOpen={editModerators} onClose={() => setEditModerators(false)}>
         <ModeratorSelector
@@ -297,6 +370,14 @@ const EventDetail = ({ eventId: parEventId, date: parDate }) => {
             {(isOrganizer || moderator?.canManageAttendees) && (
               <Dropdown.Item onClick={() => setEditAttendees((prev) => !prev)}>
                 ✏️ Upraviť pravidelných
+              </Dropdown.Item>
+            )}
+            {isOrganizer && (
+              <Dropdown.Item
+                onClick={() => handleDelete()}
+                className={styles.redItem}
+              >
+                ❌ Vymazat
               </Dropdown.Item>
             )}
           </DropdownButton>
@@ -382,21 +463,29 @@ const EventDetail = ({ eventId: parEventId, date: parDate }) => {
             </>
           )}
         </div>
-        <div className="d-flex flex-row justify-content-end align-items-center gap-3  w-100">
+
+        <div className="d-flex flex-row justify-content-end align-items-center gap-3 w-100">
           <div className={styles.spotsLeft}>
-            {capacity ? `Voľných miest: ${available}` : ""}
+            {capacity ? `Ostáva: ${available}` : ""}
           </div>
-          {isParticipant ? (
-            <Button variant="danger" onClick={() => postAction("leave")}>
-              Odhlásiť sa
-            </Button>
-          ) : available > 0 || !capacity ? (
-            <Button variant="primary" onClick={() => postAction("join")}>
-              Prihlásiť sa
-            </Button>
+
+          {canJoin ? (
+            isParticipant ? (
+              <Button variant="danger" onClick={() => postAction("leave")}>
+                Odhlásiť sa
+              </Button>
+            ) : available > 0 || !capacity ? (
+              <Button variant="primary" onClick={() => postAction("join")}>
+                Prihlásiť sa
+              </Button>
+            ) : (
+              <Button variant="secondary" disabled>
+                Už nie sú voľné miesta
+              </Button>
+            )
           ) : (
             <Button variant="secondary" disabled>
-              Už nie sú voľné miesta
+              Za {daysUntilJoin} dní
             </Button>
           )}
         </div>
@@ -421,24 +510,27 @@ const EventDetail = ({ eventId: parEventId, date: parDate }) => {
           <div className="d-flex flex-row justify-content-end align-items-center gap-3 w-100">
             <div className={styles.spotsLeft}>
               {capacity
-                ? `Zostáva miest na odber: ${Math.max(
-                    capacity - event.attendants.length,
-                    0
-                  )}`
+                ? `Ostáva: ${Math.max(capacity - event.attendants.length, 0)}`
                 : ""}
             </div>
             {console.log(subscribers.length, capacity)}
 
-            {subscribers.length < capacity || !capacity ? (
-              <Button variant="secondary" onClick={() => setShowPopup(true)}>
-                Manažovať pravidelné
-              </Button>
-            ) : (
-              <Button variant="secondary" disabled>
-                Plný počet odberateľov
-              </Button>
-            )}
+            <div className="d-flex gap-1">
+              {subscribers.length < capacity || !capacity ? (
+                <Button variant="secondary" onClick={() => setShowPopup(true)}>
+                  Manažovať pravidelné
+                </Button>
+              ) : (
+                <Button variant="secondary" disabled>
+                  Plný počet odberateľov
+                </Button>
+              )}
+              {room && <JoinRoomButton room={{ ...room, title }} />}
+            </div>
           </div>
+        )}
+        {room && !allowRecurringAttendance && (
+          <JoinRoomButton room={{ ...room, title }} />
         )}
       </div>
     </div>

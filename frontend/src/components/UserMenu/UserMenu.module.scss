@@ -1,17 +1,21 @@
-@import "../../styles/variables";
-
 .userMenu {
-  // nastavujeme iba obal komponentu, ak treba
+  position: relative;
 }
 
-.dropdownToggle {
-  border: none;
-  background: transparent;
-  font-size: 1.2rem;
-  padding: 0.2rem 0.5rem;
+.avatarWrapper {
+  width: 40px;
+  height: 40px;
+  background-color: #f8f9fa;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
 
-  &:focus {
-    box-shadow: none;
+  &:hover {
+    background-color: #e9ecef;
   }
 }
 
@@ -20,8 +24,9 @@
   font-size: 0.95rem;
 }
 
-.dropdown-item.text-danger {
+.logoutItem {
   font-weight: 500;
+  color: #dc3545;
 
   &:hover {
     background-color: #f8d7da;

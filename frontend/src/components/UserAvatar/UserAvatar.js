@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Spinner } from "react-bootstrap";
+import { Container, Spinner } from "react-bootstrap";
 import styles from "./UserAvatar.module.scss";
 import ClickMenuWrapper from "../ClickMenuWrapper/ClickMenuWrapper";
 
@@ -37,7 +37,14 @@ const UserAvatar = ({
   const sizeClass = size === "mini" ? styles.mini : styles.normal;
 
   if (loading) {
-    return <Spinner size="sm" />;
+    return (
+      <Container
+        className="d-flex justify-content-center align-items-center"
+        style={{ minHeight: "50vh" }}
+      >
+        <Spinner animation="border" />
+      </Container>
+    );
   }
 
   if (!user) {

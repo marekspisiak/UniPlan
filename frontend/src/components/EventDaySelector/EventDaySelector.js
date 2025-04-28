@@ -1,16 +1,23 @@
 import React, { useState, useEffect } from "react";
 import styles from "./EventDaySelector.module.scss";
 import { useAuth } from "../../context/AuthContext";
-import { Button, Alert, Spinner } from "react-bootstrap";
+import { Button, Alert, Spinner, Container } from "react-bootstrap";
+import Toast from "../Toast/Toast";
+import { Users } from "lucide-react";
 
-const EventDaySelector = ({ eventId, eventDays }) => {
+const EventDaySelector = ({
+  eventId,
+  eventDays,
+  capacity: eventCapacity,
+  fetchEvent,
+}) => {
   const { user } = useAuth();
   const [selected, setSelected] = useState([]);
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState(null);
   const [error, setError] = useState(null);
 
-  console.log(selected);
+  console.log(eventDays);
 
   useEffect(() => {
     if (!user) return;
@@ -48,6 +55,7 @@ const EventDaySelector = ({ eventId, eventDays }) => {
       if (!res.ok) throw new Error(data.message || "Chyba pri prihlasovaní.");
 
       setMessage("Úspešne prihlásený na vybrané dni.");
+      fetchEvent();
     } catch (err) {
       setError(err.message);
     } finally {
@@ -58,30 +66,65 @@ const EventDaySelector = ({ eventId, eventDays }) => {
   return (
     <div className={styles.container}>
       <h5>Vyber dni, na ktoré sa chceš prihlásiť:</h5>
-      {eventDays.map((ed) => (
-        <label key={ed.id} className={styles.checkbox}>
-          <input
-            type="checkbox"
-            checked={selected.includes(ed.id)}
-            onChange={() => toggle(ed.id)}
-          />
-          {`${ed.day.name} (Týždeň ${ed.week + 1})`}
-        </label>
-      ))}
 
-      {message && (
-        <Alert variant="success" className="mt-2">
-          {message}
-        </Alert>
-      )}
-      {error && (
-        <Alert variant="danger" className="mt-2">
-          {error}
-        </Alert>
-      )}
+      <div className={styles.tableWrapper}>
+        <table className={styles.table}>
+          <thead>
+            <tr>
+              <th>Deň</th>
+              <th>Kapacita</th>
+              <th>Výber</th>
+            </tr>
+          </thead>
+          <tbody>
+            {eventDays
+              .slice() // urobíme kopiu, aby sme nemenili pôvodné pole
+              .sort((a, b) => {
+                if (a.week !== b.week) {
+                  return a.week - b.week;
+                }
+                return a.day.id - b.day.id;
+              })
+              .map((ed) => {
+                const currentCount = ed.users.length;
+                const maxCapacity =
+                  ed.eventChange?.capacity ?? eventCapacity ?? null;
+                const isFull =
+                  maxCapacity !== null && currentCount >= maxCapacity;
+
+                return (
+                  <tr key={ed.id}>
+                    <td>{`${ed.day.name} (Týždeň ${ed.week + 1})`}</td>
+                    <td>
+                      {maxCapacity !== null ? (
+                        <span className={styles.capacity}>
+                          <Users size={16} className={styles.icon} />{" "}
+                          {currentCount}/{maxCapacity}
+                        </span>
+                      ) : (
+                        ""
+                      )}
+                    </td>
+                    <td>
+                      <input
+                        type="checkbox"
+                        checked={selected.includes(ed.id)}
+                        onChange={() => toggle(ed.id)}
+                        disabled={isFull}
+                      />
+                    </td>
+                  </tr>
+                );
+              })}
+          </tbody>
+        </table>
+      </div>
+
+      {error && <Toast error={error} onClose={() => setError("")} />}
+      {message && <Toast success={message} onClose={() => setMessage("")} />}
 
       <Button onClick={handleSubmit} disabled={loading} className="mt-3">
-        {loading ? <Spinner animation="border" size="sm" /> : "Potvrdiť výber"}
+        {loading ? <Spinner animation="border" /> : "Potvrdiť výber"}
       </Button>
     </div>
   );

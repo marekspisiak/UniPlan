@@ -1,8 +1,6 @@
 export const createUTCDate = (dateString, timeString) => {
   let year, month, day;
 
-  console.log(dateString, timeString);
-
   if (dateString) {
     [year, month, day] = dateString.split("-").map(Number);
   } else {

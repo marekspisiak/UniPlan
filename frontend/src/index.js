@@ -3,11 +3,17 @@ import ReactDOM from "react-dom/client";
 import App from "./App";
 import reportWebVitals from "./reportWebVitals";
 import { AuthProvider } from "./context/AuthContext";
+import { ChatModalProvider } from "./context/ChatModalContext";
+import { RoomProvider } from "./context/RoomContext";
 
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <AuthProvider>
-    <App />
+    <ChatModalProvider>
+      <RoomProvider>
+        <App />
+      </RoomProvider>
+    </ChatModalProvider>
   </AuthProvider>
 );
 

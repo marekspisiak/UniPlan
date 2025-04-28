@@ -1,11 +1,43 @@
-@import "../styles/variables";
+.layout {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
 
-.mobileLayout {
-  padding: 1rem;
-  padding-top: 56px;
-  padding-bottom: 60px;
+.mainContent {
+  flex-grow: 1;
+  padding-top: 56px; // výška headeru na desktop
+  padding-bottom: 0; // predvolené - na desktope žiadny mobile navbar
 
-  @media (min-width: 768px) {
-    padding: 2rem;
+  @media (max-width: 768px) {
+    padding-top: 48px; // výška headeru na mobile (ak je iná)
+    padding-bottom: 56px; // výška mobile navbaru
+  }
+}
+
+.mainLayout {
+  padding-top: 2rem;
+}
+
+.leftPanel,
+.centerPanel,
+.rightPanel {
+}
+
+.centered {
+  margin: 0 auto;
+}
+
+.mobileNav {
+  display: none;
+
+  @media (max-width: 768px) {
+    display: flex;
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    background: white;
+    border-top: 1px solid #ddd;
+    z-index: 1000;
   }
 }

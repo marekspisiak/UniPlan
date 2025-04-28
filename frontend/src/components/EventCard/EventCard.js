@@ -1,5 +1,5 @@
 import { Card, Badge, Row, Col, Button } from "react-bootstrap";
-import { useState } from "react";
+import { useState, memo } from "react";
 import Popup from "../Popup/Popup";
 import EventDetail from "../../modules/EventDetail/EventDetail";
 import {
@@ -16,7 +16,7 @@ import {
 } from "react-icons/bs";
 import styles from "./EventCard.module.scss";
 
-const EventCard = ({ event }) => {
+const EventCard = ({ event, refetch }) => {
   const {
     title,
     location,
@@ -27,19 +27,27 @@ const EventCard = ({ event }) => {
     endDate,
     hasStartTime,
     hasEndTime,
-    capacity,
     participants,
   } = event;
+
+  const capacity = event.capacity === 0 ? null : event.capacity;
+
+  console.log("neviem");
 
   const [isOpen, setIsOpen] = useState(false);
 
   return (
     <>
       <Popup isOpen={isOpen} onClose={() => setIsOpen(false)}>
-        <EventDetail key={`${id}${date}`} eventId={id} date={date} />
+        <EventDetail
+          key={`${id}${date}`}
+          eventId={id}
+          date={date}
+          refetch={refetch}
+        />
       </Popup>
 
-      <Card className={`shadow-sm border-0 ${styles.card}`}>
+      <Card className={`shadow-sm border ${styles.card}`}>
         <Card.Body>
           <div className="d-flex justify-content-between align-items-start mb-2">
             <h5 className={`${styles.title}`}>{title}</h5>
@@ -93,4 +101,4 @@ const EventCard = ({ event }) => {
   );
 };
 
-export default EventCard;
+export default memo(EventCard);

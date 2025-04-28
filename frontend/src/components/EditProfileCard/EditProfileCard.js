@@ -1,8 +1,9 @@
-import { useState } from "react";
-import { Form, Button, Alert, Spinner } from "react-bootstrap";
+import { useEffect, useState } from "react";
+import { Form, Button, Alert, Spinner, Container } from "react-bootstrap";
 import { useAuth } from "../../context/AuthContext";
 import CategoryMultiSelect from "../CategoryMultiSelect/CategoryMultiSelect";
 import styles from "./EditProfileCard.module.scss";
+import Toast from "../Toast/Toast";
 
 const EditProfileCard = ({ setIsEditing }) => {
   const { user, logout, loadUser } = useAuth();
@@ -11,6 +12,7 @@ const EditProfileCard = ({ setIsEditing }) => {
     firstName: user?.firstName || "",
     lastName: user?.lastName || "",
     email: user?.email || "",
+    confirmEmail: "", // nové pole pre potvrdenie
     interests: user?.interests?.map((i) => i.id) || [],
   });
 
@@ -26,6 +28,11 @@ const EditProfileCard = ({ setIsEditing }) => {
     e.preventDefault();
     setMessage(null);
     setError(null);
+
+    if (form.email !== user.email && form.email !== form.confirmEmail) {
+      setError("Email a potvrdenie emailu sa nezhodujú.");
+      return;
+    }
 
     try {
       const formData = new FormData();
@@ -64,14 +71,22 @@ const EditProfileCard = ({ setIsEditing }) => {
     if (file) setForm((prev) => ({ ...prev, photo: file }));
   };
 
-  if (!user) return <Spinner animation="border" />;
+  if (!user)
+    return (
+      <Container
+        className="d-flex justify-content-center align-items-center"
+        style={{ minHeight: "50vh" }}
+      >
+        <Spinner animation="border" />
+      </Container>
+    );
 
   return (
     <div className={styles.editProfileCard}>
       <h5>Úprava profilu</h5>
 
-      {message && <Alert variant="success">{message}</Alert>}
-      {error && <Alert variant="danger">{error}</Alert>}
+      {error && <Toast error={error} onClose={() => setError("")} />}
+      {message && <Toast success={message} onClose={() => setMessage("")} />}
 
       <Form onSubmit={handleSubmit}>
         <Form.Group className="mb-3">
@@ -107,6 +122,27 @@ const EditProfileCard = ({ setIsEditing }) => {
           />
         </Form.Group>
 
+        {/* Ak zmenil email, zobraz potvrdenie */}
+        {form.email !== user.email && (
+          <>
+            <Form.Group className="mb-3">
+              <Form.Label>Potvrď nový email</Form.Label>
+              <Form.Control
+                type="email"
+                name="confirmEmail"
+                value={form.confirmEmail}
+                onChange={handleChange}
+                required
+              />
+            </Form.Group>
+            <Alert variant="warning">
+              Upozornenie: Po zmene emailu sa budete musieť prihlásiť cez nový
+              email. Ak stratíte prístup k novému emailu, nebudete sa môcť
+              prihlásiť.
+            </Alert>
+          </>
+        )}
+
         <Form.Group className="mb-3">
           <Form.Label>Záujmy</Form.Label>
           <CategoryMultiSelect
@@ -126,6 +162,14 @@ const EditProfileCard = ({ setIsEditing }) => {
 
         <Button type="submit" className="w-100" disabled={uploading}>
           {uploading ? "Ukladám..." : "Uložiť"}
+        </Button>
+        <Button
+          type="button"
+          variant="danger"
+          className="w-100 mt-2"
+          onClick={() => setIsEditing(false)}
+        >
+          Zrušiť
         </Button>
       </Form>
     </div>
