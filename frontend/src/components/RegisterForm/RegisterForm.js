@@ -4,6 +4,10 @@ import { useNavigate, Link } from "react-router-dom";
 import styles from "./RegisterForm.module.scss";
 import Toast from "../Toast/Toast";
 
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { registerSchema } from "../validation/registerSchema";
+
 const RegisterForm = () => {
   const [form, setForm] = useState({
     firstName: "",

@@ -9,16 +9,21 @@ import {
 import path from "path";
 import fs from "fs";
 
+import { RegisterSchema } from "../validation/authSchemas.js";
+
 export const registerUser = async (req, res) => {
-  const { firstName, lastName, email, password } = req.body;
+  const result = RegisterSchema.safeParse(req.body);
+
+  if (!result.success) {
+    return res.status(400).json({
+      message: "Neplatné údaje",
+      errors: result.error.errors,
+    });
+  }
+
+  const { firstName, lastName, email, password } = result.data;
 
   try {
-    if (!email.endsWith("uniza.sk")) {
-      return res
-        .status(400)
-        .json({ message: "Použi školský email končiaci na uniza.sk." });
-    }
-
     const existing = await prisma.user.findUnique({ where: { email } });
     if (existing) {
       return res.status(400).json({ message: "Email už existuje" });
@@ -34,11 +39,10 @@ export const registerUser = async (req, res) => {
       },
     });
 
-    const ext = ".png";
-    const filename = `user_${user.id}${ext}`;
+    // Pridelenie default avataru
+    const filename = `user_${user.id}.png`;
     const destinationPath = path.join("uploads", "profile", filename);
     const defaultImagePath = path.join("assets", "default-avatar.png");
-
     fs.copyFileSync(defaultImagePath, destinationPath);
 
     await createAndSendVerificationEmail(user.id, user.email);

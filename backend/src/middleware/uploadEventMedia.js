@@ -11,7 +11,7 @@ const storage = multer.diskStorage({
     cb(null, EVENT_UPLOAD_DIR);
   },
   filename: (req, file, cb) => {
-    const ext = ".png"; // vždy ukladáme ako .png (bezpečné default)
+    const ext = ".png";
     const timestamp = Date.now();
 
     if (file.fieldname === "mainImage") {
