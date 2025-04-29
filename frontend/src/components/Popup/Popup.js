@@ -1,25 +1,26 @@
-import { Modal } from "react-bootstrap";
+import { useEffect } from "react";
 import styles from "./Popup.module.scss";
 
 const Popup = ({ isOpen, onClose, children }) => {
+  useEffect(() => {
+    const handleEscape = (e) => {
+      if (e.key === "Escape") onClose();
+    };
+    document.addEventListener("keydown", handleEscape);
+    return () => document.removeEventListener("keydown", handleEscape);
+  }, [onClose]);
+
+  if (!isOpen) return null;
+
   return (
-    <Modal
-      show={isOpen}
-      onHide={onClose}
-      centered
-      backdrop="static"
-      keyboard={true}
-      contentClassName={styles.popup} // 👈 aplikuje tvoje štýly na Modal
-      dialogClassName={styles.popupDialog} // 👈 ak chceš extra štýly na obal
-    >
-      <Modal.Body className="position-relative">
-        <button type="button" className={styles.closeButton} onClick={onClose}>
+    <div className={styles.overlay} onClick={onClose}>
+      <div className={styles.popup} onClick={(e) => e.stopPropagation()}>
+        <button className={styles.closeButton} onClick={onClose}>
           &times;
         </button>
-
         {children}
-      </Modal.Body>
-    </Modal>
+      </div>
+    </div>
   );
 };
 
