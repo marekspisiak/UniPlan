@@ -5,7 +5,7 @@ import Spinner from "react-bootstrap/Spinner";
 import { Container } from "react-bootstrap";
 
 const EditableEventRoute = () => {
-  const { id } = useParams(); // /events/:id/edit
+  const { id, date } = useParams(); // /events/:id/edit
   const { user } = useAuth();
   const [loading, setLoading] = useState(true);
   const [canEdit, setCanEdit] = useState(false);
@@ -13,7 +13,7 @@ const EditableEventRoute = () => {
   useEffect(() => {
     const checkPermission = async () => {
       try {
-        const res = await fetch(`/api/events/${id}`, {
+        const res = await fetch(`/api/events/${id}?date=${date}`, {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
           },

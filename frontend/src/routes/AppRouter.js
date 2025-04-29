@@ -44,8 +44,9 @@ const AppRouter = () => {
           <Route path="/event/:id/:date" element={<Home />} />
           <Route path="/calendar" element={<CalendarPage />} />
           <Route path="/chat" element={<ChatPage />} />
-          <Route path="/edit-event/:id/:date" element={<EditEventPage />} />
-          <Route element={<EditableEventRoute />}></Route>
+          <Route element={<EditableEventRoute />}>
+            <Route path="/edit-event/:id/:date" element={<EditEventPage />} />
+          </Route>
           <Route path="/profile/:userId" element={<ProfilePage />} />
           <Route path="/create-event" element={<CreateEventPage />} />
         </Route>
