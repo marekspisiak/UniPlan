@@ -2,6 +2,7 @@
 import { generateVerificationToken } from "./generateToken.js";
 import { sendVerificationEmail } from "./sendEmail.js";
 import prisma from "../../prisma/client.js";
+import jwt from "jsonwebtoken";
 
 export const createAndSendVerificationEmail = async (
   userId,
@@ -26,9 +27,22 @@ export const createAndSendVerificationEmail = async (
   await sendVerificationEmail(userEmail, token, isReminder);
 };
 
+export const needsReverificationToken = (token) => {
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    if (needsReverification(decoded)) {
+      return false;
+    } else {
+      return decoded;
+    }
+  } catch {
+    return false;
+  }
+};
+
 // 📅 Kontrola, či je potrebné opätovné overenie
-export const needsReverification = (user) => {
-  if (!user.lastVerifiedAt) return true;
+export const needsReverification = ({ lastVerifiedAt }) => {
+  if (!lastVerifiedAt) return true;
 
   const now = new Date();
   const year = now.getFullYear();
@@ -45,5 +59,5 @@ export const needsReverification = (user) => {
     semesterStart = summerStart;
   }
 
-  return new Date(user.lastVerifiedAt) < semesterStart;
+  return new Date(lastVerifiedAt) < semesterStart;
 };

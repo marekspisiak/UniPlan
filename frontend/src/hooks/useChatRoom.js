@@ -1,10 +1,10 @@
 import { useState, useEffect } from "react";
-import { io } from "socket.io-client";
 
-import socket from "../socket/socket";
+import { useAuth } from "../context/AuthContext";
 
 export const useChatRoom = (userId) => {
   const [connectedRoomId, setConnectedRoomId] = useState(null);
+  const { socket } = useAuth();
 
   useEffect(() => {
     if (!socket.connected) {

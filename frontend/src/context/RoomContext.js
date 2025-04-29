@@ -1,5 +1,4 @@
 import { createContext, useContext, useState, useEffect } from "react";
-import socket from "../socket/socket";
 import { useAuth } from "./AuthContext";
 import { useChatModal } from "../hooks/useChatModal";
 
@@ -7,7 +6,7 @@ const RoomContext = createContext();
 
 export const RoomProvider = ({ children }) => {
   const [rooms, setRooms] = useState([]);
-  const { user } = useAuth();
+  const { user, socket } = useAuth();
 
   const fetchRooms = async () => {
     try {

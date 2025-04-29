@@ -1,10 +1,12 @@
 import { createContext, useContext, useState, useEffect } from "react";
+import { io } from "socket.io-client"; // socket budeme vytvárať dynamicky
 
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loaded, setLoaded] = useState(false);
+  const [socket, setSocket] = useState(null);
 
   const loadUser = async () => {
     const token = localStorage.getItem("token");
@@ -25,6 +27,17 @@ export const AuthProvider = ({ children }) => {
 
       console.log(data);
       setUser(data);
+
+      if (data && !data.requiresVerification) {
+        // 🔥 Používateľ je overený a verifikovaný, vytvoríme socket
+        const newSocket = io("http://localhost:5000", {
+          auth: { token },
+          autoConnect: true, // okamžite sa pripojí
+        });
+
+        setSocket(newSocket);
+      }
+
       setLoaded(true);
       return data;
     } catch (err) {
@@ -38,6 +51,10 @@ export const AuthProvider = ({ children }) => {
   const logout = () => {
     localStorage.removeItem("token");
     setUser(null);
+    if (socket) {
+      socket.disconnect(); // bezpečne ukonči socket
+      setSocket(null);
+    }
     window.location.href = "/login";
   };
 
@@ -47,12 +64,19 @@ export const AuthProvider = ({ children }) => {
 
   useEffect(() => {
     loadUser();
+    // Cleanup pri odchode zo stránky alebo zmene usera
+    return () => {
+      if (socket) {
+        socket.disconnect();
+      }
+    };
   }, []);
 
   return (
     <AuthContext.Provider
       value={{
         user,
+        socket, // ➡️ socket bude dostupný cez useAuth()
         isAuthenticated: !!user,
         logout,
         loadUser,

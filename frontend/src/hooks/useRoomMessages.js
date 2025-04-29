@@ -1,5 +1,4 @@
 import { useState, useEffect, useRef } from "react";
-import socket from "../socket/socket";
 import { useRoomContext } from "../context/RoomContext";
 import { useAuth } from "../context/AuthContext";
 import { debounce } from "lodash";
@@ -9,7 +8,7 @@ export function useRoomMessages(roomId, userId) {
   const [hasMore, setHasMore] = useState(true);
   const [loading, setLoading] = useState(false);
   const { markRoomAsOpened } = useRoomContext();
-  const { user } = useAuth();
+  const { user, socket } = useAuth();
   const earliestMessageRef = useRef(null); // 👈 uložíme si najstarší message
 
   useEffect(() => {

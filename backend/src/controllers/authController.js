@@ -105,7 +105,7 @@ export const loginUser = async (req, res) => {
       return res.status(400).json({ message: "Nesprávny email alebo heslo." });
     }
 
-    const token = generateJwt(user.id);
+    const token = generateJwt(user.id, user.lastVerifiedAt);
 
     return res.status(200).json({
       message: "Prihlásenie úspešné.",
@@ -146,6 +146,8 @@ export const resendVerificationEmail = async (req, res) => {
 };
 
 // 🔐 Pomocná funkcia na generovanie JWT
-const generateJwt = (userId) => {
-  return jwt.sign({ userId }, process.env.JWT_SECRET, { expiresIn: "7d" });
+const generateJwt = (userId, lastVerifiedAt) => {
+  return jwt.sign({ userId, lastVerifiedAt }, process.env.JWT_SECRET, {
+    expiresIn: "7d",
+  });
 };
