@@ -29,12 +29,10 @@ export const AuthProvider = ({ children }) => {
       setUser(data);
 
       if (data && !data.requiresVerification) {
-        // 🔥 Používateľ je overený a verifikovaný, vytvoríme socket
         const newSocket = io("http://localhost:5000", {
           auth: { token },
-          autoConnect: true, // okamžite sa pripojí
+          autoConnect: true,
         });
-
         setSocket(newSocket);
       }
 

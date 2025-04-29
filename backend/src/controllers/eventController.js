@@ -1441,7 +1441,7 @@ export const editEvent = async (req, res) => {
     // validateEventData(req.body, true);
     const { scope, occurrenceId } = req.body;
     const userId = req.user.id;
-    const eventId = parseInt(req.body.id);
+    const eventId = parseInt(req.params.id);
     const targetDate = normalizeDate(req.body.date);
 
     const eventDayId = parseInt(req.body.eventDayId);
@@ -1621,7 +1621,7 @@ export const editEvent = async (req, res) => {
           },
         });
 
-        if (!eventDay) {
+        if (!eventDay || eventDay.event.id !== eventId) {
           return res.status(404).json({ message: "EventDay neexistuje." });
         }
 
@@ -1711,6 +1711,15 @@ export const editEvent = async (req, res) => {
 
           if (!event) {
             return res.status(404).json({ message: "Event neexistuje." });
+          }
+          const dayExists = event.eventDays.some(
+            (eventDay) => eventDay.id === eventDayId
+          );
+
+          if (!dayExists) {
+            return res
+              .status(400)
+              .json({ message: "Event day nepatrí k tomuto eventu." });
           }
 
           // Validácia dátumu (napr. či patrí do cyklu)

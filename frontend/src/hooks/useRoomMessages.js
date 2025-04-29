@@ -49,7 +49,7 @@ export function useRoomMessages(roomId, userId) {
       if (message.roomId === roomId) {
         markRoomAsOpened(roomId);
         setMessages((prev) => [...prev, message]);
-        emitUserSeen();
+        // emitUserSeen();
       }
     };
 
