@@ -82,7 +82,6 @@ export const leaveRoom = async (req, res) => {
 
     res.json({ message: "Opustil si miestnosť." });
   } catch (err) {
-    console.error("Chyba pri odchode z miestnosti:", err);
     res.status(500).json({ message: "Nepodarilo sa opustiť miestnosť." });
   }
 };
@@ -114,7 +113,6 @@ export const getRoomMessages = async (req, res) => {
     // frontend čaká správy od najstaršej po najnovšiu, preto ich prevrátime späť
     res.json(messages.reverse());
   } catch (err) {
-    console.error(err);
     res.status(500).json({ message: "Chyba pri načítaní správ." });
   }
 };
@@ -136,7 +134,6 @@ export const updateLastSeen = async (req, res) => {
 
     res.status(200).json({ message: "Last seen updated" });
   } catch (error) {
-    console.error(error);
     res.status(500).json({ message: "Chyba pri aktualizácii lastSeen" });
   }
 };

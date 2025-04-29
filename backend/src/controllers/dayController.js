@@ -7,7 +7,6 @@ export const getAllDays = async (req, res) => {
     });
     res.status(200).json(days);
   } catch (err) {
-    console.error("Chyba pri načítaní dní:", err);
-    res.status(500).json({ message: "Server error" });
+    return res.status(400).json({ message: "Nepodarilo sa načítať dni" });
   }
 };

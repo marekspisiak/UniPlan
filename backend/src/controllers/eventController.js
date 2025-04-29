@@ -247,8 +247,9 @@ export const createEvent = async (req, res) => {
 
     res.status(201).json({ id: newEvent.id });
   } catch (err) {
-    console.error("Chyba pri vytváraní akcie:", err);
-    res.status(500).json({ message: err.message });
+    return res
+      .status(500)
+      .json({ message: "Nepodarilo sa updatovať vytvoriť event." });
   }
 };
 
@@ -260,7 +261,6 @@ export const getEventCategories = async (req, res) => {
 
     res.json(categories);
   } catch (err) {
-    console.error("Chyba pri načítaní kategórií:", err);
     res.status(500).json({ message: "Chyba servera." });
   }
 };
@@ -768,8 +768,7 @@ export const getAllEvents = async (req, res) => {
 
     res.json(instances);
   } catch (err) {
-    console.error("Chyba pri načítaní eventov:", err);
-    res.status(500).json({ message: "Chyba pri načítaní eventov." });
+    return res.status(500).json({ message: "Nepodarilo sa načítať eventy" });
   }
 };
 
@@ -925,9 +924,9 @@ export const joinEvent = async (req, res) => {
 
     return res.json({ message: "Úspešne prihlásený na event." });
   } catch (err) {
-    console.error("Chyba pri prihlasovaní na event:", err);
-    const msg = err?.message || "Chyba servera.";
-    return res.status(400).json({ message: msg });
+    return res
+      .status(500)
+      .json({ message: "Nepodarilo sa prihlásiť na event" });
   }
 };
 
@@ -1012,8 +1011,7 @@ export const getEventByDate = async (req, res) => {
       participants: eventDay?.users || [],
     });
   } catch (err) {
-    console.error("Chyba pri načítaní eventu:", err);
-    res.status(500).json({ message: "Chyba servera." });
+    return res.status(500).json({ message: "Nepodarilo sa načítať event" });
   }
 };
 
@@ -1069,9 +1067,9 @@ export const leaveEvent = async (req, res) => {
 
     return res.status(200).json({ message: "Úspešne odhlásený z eventu." });
   } catch (err) {
-    console.error("Chyba pri odhlasovanií z eventu:", err);
-    const msg = err?.message || "Chyba servera.";
-    return res.status(400).json({ message: msg });
+    return res
+      .status(500)
+      .json({ message: "Nepodarilo sa odhlásiť z eventu." });
   }
 };
 
@@ -1252,8 +1250,9 @@ export const attendEventDays = async (req, res) => {
       message: "Účasť na dňoch a budúcich eventoch bola aktualizovaná.",
     });
   } catch (err) {
-    console.error("Chyba pri aktualizácii účasti na dňoch:", err);
-    res.status(400).json({ message: err.message || "Chyba servera." });
+    return res
+      .status(500)
+      .json({ message: "Nepodarilo sa prihlásiť na event." });
   }
 };
 
@@ -1772,8 +1771,7 @@ export const editEvent = async (req, res) => {
       return res.status(400).json({ message: "Neznámy scope." });
     });
   } catch (err) {
-    console.error("Chyba pri editácii eventu:", err);
-    res.status(500).json({ message: "Chyba servera." });
+    return res.status(500).json({ message: "Nepodarilo sa editovať event." });
   }
 };
 
@@ -1849,8 +1847,9 @@ export const updateEventModerators = async (req, res) => {
 
     res.status(200).json("Updated");
   } catch (error) {
-    console.error("Failed to upsert moderators:", error);
-    res.status(500).json({ error: "Internal server error" });
+    return res
+      .status(500)
+      .json({ message: "Nepodarilo sa updatovať  moderatorov." });
   }
 };
 
@@ -1875,8 +1874,9 @@ export const deleteRecurringAttendance = async (req, res) => {
       .status(200)
       .json({ message: "User removed from recurring attendance." });
   } catch (error) {
-    console.error("Error removing recurring attendance:", error);
-    res.status(500).json({ error: "Internal server error" });
+    return res
+      .status(500)
+      .json({ message: "Nepodarilo sa updatovať vymazat opakovane" });
   }
 };
 
@@ -1899,8 +1899,9 @@ export const deleteSingleAttendance = async (req, res) => {
 
     res.status(200).json({ message: "User removed from single attendance." });
   } catch (error) {
-    console.error("Error removing single attendance:", error);
-    res.status(500).json({ error: "Internal server error" });
+    return res
+      .status(500)
+      .json({ message: "Nepodarilo sa updatovať vymazat." });
   }
 };
 
@@ -1924,7 +1925,6 @@ export const deleteEvent = async (req, res) => {
 
     return res.status(200).json({ message: "Event bol úspešne vymazaný." });
   } catch (error) {
-    console.error(error);
     return res.status(500).json({ message: "Chyba pri mazaní eventu." });
   }
 };

@@ -49,7 +49,6 @@ export const registerUser = async (req, res) => {
         "Registrácia prebehla úspešne. Skontroluj si email pre overenie účtu.",
     });
   } catch (err) {
-    console.error(err);
     res.status(500).json({ message: "Server error" });
   }
 };
@@ -86,7 +85,6 @@ export const verifyEmail = async (req, res) => {
       message: "Email bol úspešne overený. Teraz sa môžeš prihlásiť.",
     });
   } catch (err) {
-    console.error(err);
     res.status(500).json({ message: "Server error pri overovaní emailu" });
   }
 };
@@ -120,7 +118,6 @@ export const loginUser = async (req, res) => {
       },
     });
   } catch (err) {
-    console.error(err);
     return res.status(500).json({ message: "Server error pri prihlasovaní." });
   }
 };
@@ -142,8 +139,9 @@ export const resendVerificationEmail = async (req, res) => {
 
     res.json({ message: "Overovací email bol znovu odoslaný." });
   } catch (err) {
-    console.error("Chyba pri odosielaní overovacieho emailu:", err);
-    res.status(500).json({ message: "Chyba servera." });
+    return res
+      .status(500)
+      .json({ message: "Chyba pri odosielaní overovacieho emailu." });
   }
 };
 

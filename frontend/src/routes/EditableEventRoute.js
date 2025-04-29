@@ -19,8 +19,8 @@ const EditableEventRoute = () => {
           },
         });
         const data = await res.json();
-
         if (
+          user.role === "ADMIN" ||
           data.organizer?.id === user?.id ||
           data.moderators?.some((m) => m.id === user?.id)
         ) {
@@ -46,7 +46,7 @@ const EditableEventRoute = () => {
         <Spinner animation="border" />
       </Container>
     );
-  if (!canEdit) return <Navigate to="/" replace />;
+  if (!canEdit) return <Navigate to={`/event/${id}/${date}`} replace />;
 
   return <Outlet />;
 };

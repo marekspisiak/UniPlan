@@ -40,8 +40,7 @@ export const getUserProfile = async (req, res) => {
 
     res.json(userWithImage);
   } catch (err) {
-    console.error("Chyba pri načítaní profilu:", err);
-    res.status(500).json({ message: "Server error." });
+    res.status(500).json({ message: "Chyba pri načítaní profilu." });
   }
 };
 
@@ -62,8 +61,7 @@ export const updateUserInterests = async (req, res) => {
 
     return res.json({ message: "Úspešne editované" });
   } catch (err) {
-    console.error("Chyba pri aktualizácii záujmov:", err);
-    res.status(500).json({ message: "Server error." });
+    res.status(500).json({ message: "Chyba pri aktualizácii záujmov." });
   }
 };
 
@@ -78,7 +76,9 @@ export const updateProfilePhoto = async (req, res) => {
     res.json({ message: "Profilová fotka bola aktualizovaná.", imageUrl });
   } catch (err) {
     console.error("Chyba pri aktualizácii profilovej fotky:", err);
-    res.status(500).json({ message: "Chyba servera." });
+    res
+      .status(500)
+      .json({ message: "Chyba pri aktualizácii profilovej fotky" });
   }
 };
 
@@ -137,7 +137,6 @@ export const updateProfile = async (req, res) => {
 
     return res.json({ message: "Profil bol úspešne aktualizovaný." });
   } catch (err) {
-    console.error("Chyba pri úprave profilu:", err);
     return res
       .status(500)
       .json({ message: "Chyba servera pri úprave profilu." });
@@ -185,8 +184,7 @@ export const searchUsers = async (req, res) => {
 
     res.json(usersWithImage);
   } catch (err) {
-    console.error("Chyba pri vyhľadávaní používateľov:", err);
-    res.status(500).json({ message: "Chyba servera." });
+    res.status(500).json({ message: "Chyba pri vyhľadávaní používateľov" });
   }
 };
 
@@ -224,7 +222,6 @@ export const changePassword = async (req, res) => {
 
     return res.status(200).json({ message: "Heslo bolo úspešne zmenené." });
   } catch (err) {
-    console.error(err);
     return res.status(500).json({ message: "Nastala chyba pri zmene hesla." });
   }
 };
