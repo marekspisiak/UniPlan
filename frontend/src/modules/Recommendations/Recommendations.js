@@ -84,8 +84,6 @@ const Recommendations = () => {
     setShownEvents((prev) => [...prev, ...nextItems]);
   };
 
-  console.log(events);
-
   useEffect(() => {
     if (events.length > 0) {
       loadMoreEvents();
@@ -133,7 +131,6 @@ const Recommendations = () => {
         },
       });
       const data = await res.json();
-      console.log(data);
       if (!res.ok)
         throw new Error(data.message || "Nepodarilo sa načítať aktivity");
 

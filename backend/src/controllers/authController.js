@@ -9,7 +9,6 @@ import {
 import path from "path";
 import fs from "fs";
 
-// 🧑‍🎓 Registrácia používateľa
 export const registerUser = async (req, res) => {
   const { firstName, lastName, email, password } = req.body;
 
@@ -17,7 +16,7 @@ export const registerUser = async (req, res) => {
     if (!email.endsWith("uniza.sk")) {
       return res
         .status(400)
-        .json({ message: "Použi školský email končiaci na @uniza.sk." });
+        .json({ message: "Použi školský email končiaci na uniza.sk." });
     }
 
     const existing = await prisma.user.findUnique({ where: { email } });

@@ -8,15 +8,13 @@ export const protectPermission = (permissionKey) => {
       const userRole = req.user.role;
 
       if (!eventId) {
-        return res.status(400).json({ message: "Event ID is required" });
+        return res.status(400).json({ message: "Chýba event id" });
       }
 
-      // 👉 Ak je ADMIN, pustíme ho bez ďalšej kontroly
       if (userRole === "ADMIN") {
         return next();
       }
 
-      // Načítame event vrátane organizátora a moderátorov
       const event = await prisma.event.findUnique({
         where: { id: parseInt(eventId) },
         include: {
@@ -38,35 +36,27 @@ export const protectPermission = (permissionKey) => {
       });
 
       if (!event) {
-        return res.status(404).json({ message: "Event not found" });
+        return res.status(404).json({ message: "Event nebol nájdený" });
       }
 
-      // 1. Je organizátor?
       if (event.organizerId === userId) {
-        return next(); // Organizátor má všetky práva
+        return next();
       }
 
-      // 2. Je moderátor?
-      const moderator = event.moderators[0]; // Ak existuje moderátor pre tohto usera
+      const moderator = event.moderators[0];
 
       if (!moderator) {
-        return res
-          .status(403)
-          .json({ message: "You are not authorized to perform this action" });
+        return res.status(403).json({ message: "Nemáš oprávnenie" });
       }
 
-      // 3. Má požadované právo?
       if (!moderator[permissionKey]) {
-        return res
-          .status(403)
-          .json({ message: "You do not have permission for this action" });
+        return res.status(403).json({ message: "Nemáš oprávnenie" });
       }
 
-      // Všetko OK
       next();
     } catch (error) {
       console.error(error);
-      res.status(500).json({ message: "Internal server error" });
+      res.status(500).json({ message: "Chyba servera" });
     }
   };
 };

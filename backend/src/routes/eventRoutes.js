@@ -13,13 +13,13 @@ import {
   deleteSingleAttendance,
   deleteEvent,
 } from "../controllers/eventController.js";
-import { eventUpload } from "../middleware/uploadEventMedia.js";
+import { uploadEventMedia } from "../middleware/uploadEventMedia.js";
 import { authorizeEventEditor } from "../middleware/authorizeEventEditor.js";
 import { protectPermission } from "../middleware/permissions.js";
 
 const router = express.Router();
 
-router.post("/create", protectVerified, eventUpload, createEvent);
+router.post("/create", protectVerified, uploadEventMedia, createEvent);
 router.get("/categories", protectVerified, getEventCategories);
 router.get("/get", protectVerified, getAllEvents);
 router.post("/:id/join", protectVerified, joinEvent);
@@ -30,7 +30,7 @@ router.put(
   "/:id/edit-details",
   protectVerified,
   protectPermission("canEditEvent"),
-  eventUpload,
+  uploadEventMedia,
   editEvent
 );
 

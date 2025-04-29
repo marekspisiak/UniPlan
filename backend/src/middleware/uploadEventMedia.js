@@ -33,7 +33,7 @@ const fileFilter = (req, file, cb) => {
   }
 };
 
-export const eventUpload = multer({
+export const uploadEventMedia = multer({
   storage,
   fileFilter,
   limits: { fileSize: 5 * 1024 * 1024 }, // max 5MB na súbor

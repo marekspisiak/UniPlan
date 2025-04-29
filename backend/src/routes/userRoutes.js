@@ -8,7 +8,7 @@ import {
   searchUsers,
   changePassword,
 } from "../controllers/userController.js";
-import { upload } from "../middleware/uploadMiddleware.js";
+import { uploadUserPicture } from "../middleware/uploadUserPicture.js";
 
 const router = express.Router();
 
@@ -39,11 +39,16 @@ router.put("/me/interests", protectVerified, updateUserInterests);
 router.put(
   "/upload-photo",
   protectVerified,
-  upload.single("photo"),
+  uploadUserPicture.single("photo"),
   updateProfilePhoto
 );
 
-router.put("/profile", protectVerified, upload.single("photo"), updateProfile);
+router.put(
+  "/profile",
+  protectVerified,
+  uploadUserPicture.single("photo"),
+  updateProfile
+);
 router.get("/search", searchUsers);
 router.put("/change-password", protectVerified, changePassword);
 router.get("/:id", protectVerified, getUserProfile);

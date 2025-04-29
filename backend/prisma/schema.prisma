@@ -45,9 +45,9 @@ model User {
   moderatorIn          EventModerator[]         @relation("UserModerators")
   createdEventChanges  EventChange[]            @relation("CreatedBy")
   updatedEventChanges  EventChange[]            @relation("UpdatedBy")
-    roomMembers RoomMember[]
-  messages    Message[]
-  role      Role     @default(USER)
+  roomMembers          RoomMember[]
+  messages             Message[]
+  role                 Role     @default(USER)
 }
 
 enum Role {

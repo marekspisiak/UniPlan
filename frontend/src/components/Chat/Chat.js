@@ -11,7 +11,7 @@ import { Button } from "react-bootstrap";
 import { X } from "lucide-react";
 import { debounce } from "lodash";
 
-const ChatPage = ({ roomId }) => {
+const Chat = ({ roomId }) => {
   const { user } = useAuth();
   const { leaveRoom } = useChatRoom(user.id);
   const { closeChat, roomTitle } = useChatModal();
@@ -196,4 +196,4 @@ const ChatPage = ({ roomId }) => {
   );
 };
 
-export default ChatPage;
+export default Chat;

@@ -42,8 +42,6 @@ export function chatHandlers(io, socket) {
         user: true,
       },
     });
-
-    // 📢 Pošli správu všetkým v roomke
     io.to(`room-${roomId}`).emit("newMessage", {
       roomId: roomId,
       id: message.id,
@@ -53,14 +51,9 @@ export function chatHandlers(io, socket) {
       user: {
         id: message.user.id,
         email: message.user.email,
-        firstName: message.user.firstName, // ➡️ doplníme aj meno a priezvisko
+        firstName: message.user.firstName,
         lastName: message.user.lastName,
       },
-    });
-
-    // 📢 Ale NOTIFIKÁCIU pošleme všetkým ostatným (okrem odosielateľa)
-    socket.broadcast.to(`room-${roomId}`).emit("newMessageNotification", {
-      roomId,
     });
   });
 

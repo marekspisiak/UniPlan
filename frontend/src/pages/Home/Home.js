@@ -16,8 +16,8 @@ import styles from "./Home.module.scss";
 import MiniChatList from "../../components/MiniChatList/MiniChatList";
 import ChatModal from "../../components/ChatModal/ChatModal";
 import { useChatModal } from "../../context/ChatModalContext";
-import ChatPage from "../../components/Chat/Chat";
 import { useAuth } from "../../context/AuthContext";
+import Chat from "../../components/Chat/Chat";
 
 const Home = () => {
   const isMobile = useMediaQuery({ maxWidth: 767 });
@@ -73,9 +73,7 @@ const Home = () => {
             />
             {console.log(openedRoomId)}
             <ChatModal show={!!openedRoomId} onHide={closeChat}>
-              {openedRoomId && (
-                <ChatPage roomId={openedRoomId} userId={user.id} />
-              )}
+              {openedRoomId && <Chat roomId={openedRoomId} userId={user.id} />}
             </ChatModal>
           </>
         }
