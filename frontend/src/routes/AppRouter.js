@@ -20,10 +20,12 @@ import EmailReverifyPage from "../pages/EmailReverifyPage/EmailReverifyPage.js";
 
 import EditEventPage from "../pages/EditEventPage/EditEventPage.js";
 import EditableEventRoute from "./EditableEventRoute.js";
+import ScrollToTop from "../components/ScrollToTop.js";
 
 const AppRouter = () => {
   return (
     <Router>
+      <ScrollToTop />
       <Routes>
         <Route path="/verify-email" element={<VerifyEmailPage />} />
         <Route path="/email-info" element={<EmailInfoPage />} />

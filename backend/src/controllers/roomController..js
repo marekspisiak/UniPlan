@@ -33,7 +33,8 @@ export const getMyRooms = async (req, res) => {
       },
     });
 
-    const formattedRooms = rooms.map((member) => {
+    // Formátovanie výsledku
+    let formattedRooms = rooms.map((member) => {
       const lastMessage = member.room.messages[0]?.text || null;
       const lastMessageTime = member.room.messages[0]?.createdAt || null;
 
@@ -45,6 +46,17 @@ export const getMyRooms = async (req, res) => {
         lastMessage,
         lastMessageTime,
       };
+    });
+
+    // 🔥 Zoradenie podľa lastMessageTime (najnovšie prvé)
+    formattedRooms.sort((a, b) => {
+      const timeA = a.lastMessageTime
+        ? new Date(a.lastMessageTime).getTime()
+        : 0;
+      const timeB = b.lastMessageTime
+        ? new Date(b.lastMessageTime).getTime()
+        : 0;
+      return timeB - timeA; // Descending: najnovšie najskôr
     });
 
     res.json(formattedRooms);

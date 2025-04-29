@@ -44,7 +44,6 @@ function validateEventData(
   if (startTime && endTime && startTime > endTime) {
     throw new Error("Čas konca musí byť po Čas začiatku.");
   }
-  console.log(repeatUntil);
   if (
     repeatUntil &&
     !isEmpty(repeatUntil) &&
@@ -56,7 +55,6 @@ function validateEventData(
   if (!isEmpty(repeatInterval) && repeatInterval < 0) {
     throw new Error("Interval opakovania musí byť 0 alebo väčší.");
   }
-  console.log(maxAttendancesPerCycle);
 
   if (
     !isEmpty(maxAttendancesPerCycle) &&
@@ -322,9 +320,6 @@ const doesEventMatchFilters = (event, filters) => {
       return false; // ak event nemá startDate, nemá zmysel ho zobrazovať
     }
 
-    // console.log("searchStart", searchStart);
-    // console.log("eventDate", eventDate);
-
     if (searchStart && normalizeDate(eventDate) < searchStart) {
       return false;
     }
@@ -402,7 +397,6 @@ const doesEventMatchFilters = (event, filters) => {
   const categoriesArray = toArray(categories);
   if (categoriesArray?.length > 0) {
     const eventCategoryIds = event.categories?.map((cat) => cat.id) || [];
-    console.log(eventCategoryIds);
 
     if (allCategories) {
       const allIncluded = categoriesArray.every((id) =>
@@ -863,8 +857,6 @@ export const joinEvent = async (req, res) => {
       "startDate",
     ]);
 
-    console.log(event);
-
     if (!event) {
       return res.status(404).json({ message: "Event neexistuje." });
     }
@@ -918,7 +910,6 @@ export const joinEvent = async (req, res) => {
       }
 
       // 2.4. Pridaj používateľa
-      console.log("userId", userId);
       await tx.eventOccurrence.update({
         where: { id: occurrence.id },
         data: {
@@ -1215,7 +1206,6 @@ export const attendEventDays = async (req, res) => {
           // Ak máme kapacitu, skontroluj počet
           if (finalCapacity && occ.participants.length >= finalCapacity) {
             // Kapacita je plná, nemôžeme pripojiť
-            console.log(`Skipping occurrence ${occ.id} - capacity full`);
             return;
           }
 
@@ -1256,8 +1246,6 @@ export const attendEventDays = async (req, res) => {
       if (event.room.id) {
         await joinRoom(tx, event.room.id, userId);
       }
-
-      console.log(event);
     });
 
     res.json({
@@ -1350,10 +1338,8 @@ async function updateEventImages({
   previousMainImage,
   eventId,
 }) {
-  console.log("kontrolujem stary ");
   // 1. Vymaž starý hlavný obrázok ak bol zmenený a nový nie je prítomný
   if (mainImageChanged && !files?.mainImage?.[0] && previousMainImage) {
-    console.log("mazem stary ");
     const oldPath = path.join(".", previousMainImage);
     try {
       if (fs.existsSync(oldPath) && fs.statSync(oldPath).isFile()) {
@@ -1453,7 +1439,6 @@ const resolveInt = (value) => {
 
 export const editEvent = async (req, res) => {
   try {
-    console.log(req.body);
     // validateEventData(req.body, true);
     const { scope, occurrenceId } = req.body;
     const userId = req.user.id;
@@ -1482,15 +1467,11 @@ export const editEvent = async (req, res) => {
     const capacity = resolveInt(req.body.capacity);
     const attendancyLimit = resolveInt(req.body.attendancyLimit);
 
-    console.log(capacity);
-
     const joinDaysBeforeStart = resolveInt(req.body.joinDaysBeforeStart);
 
     const categoryIds = toArray(req.body?.categoryIds);
 
     const rawGallery = req.body?.deletedGallery;
-    console.log("rawGallery");
-    console.log(rawGallery);
 
     const deletedGallery =
       typeof rawGallery === "string"
@@ -1514,21 +1495,15 @@ export const editEvent = async (req, res) => {
     let hasStartDate = checkValue(startDate);
     let hasStartTime = checkValue(startTime);
     let hasEndTime = checkValue(endTime);
-    console.log(targetDate, "targetDate");
 
     // Manuálna konštrukcia dátumu v lokálnom čase bez UTC posunu
     if (hasStartDate || hasStartTime) {
       if (hasStartTime) {
-        console.log("1");
         computedStartDate = createUTCDate(startDate, startTime);
       } else {
-        console.log("2");
-
         computedStartDate = createUTCDate(startDate);
       }
     } else {
-      console.log("3");
-
       computedStartDate = targetDate;
     }
 
@@ -1540,10 +1515,6 @@ export const editEvent = async (req, res) => {
         targetDate
       );
     }
-    console.log(targetDate);
-    console.log(createUTCDate(null, endTime));
-    console.log(computedEndDate);
-    console.log(computedStartDate);
 
     await prisma.$transaction(async (tx) => {
       if (scope === "event") {
@@ -1579,7 +1550,7 @@ export const editEvent = async (req, res) => {
             },
           },
         });
-        console.log(repeatDays);
+
         if (repeatDays) {
           // Spracovanie repeatDaysif
           const parsedRepeatDays = JSON.parse(repeatDays || "{}");
@@ -1934,7 +1905,6 @@ export const deleteSingleAttendance = async (req, res) => {
 };
 
 export const deleteEvent = async (req, res) => {
-  console.log("mazem");
   const { id } = req.params;
 
   try {

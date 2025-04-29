@@ -439,7 +439,7 @@ const EventForm = ({
         </Button>
 
         <Link
-          to={`/event/${form.id}/${form.date}`}
+          to={form?.id && form?.date ? `/event/${form.id}/${form.date}` : "/"}
           className="text-decoration-none"
         >
           <Button type="button" variant="danger" className="w-100 mt-2">

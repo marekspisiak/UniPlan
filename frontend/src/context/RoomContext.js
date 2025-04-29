@@ -19,18 +19,16 @@ export const RoomProvider = ({ children }) => {
       setRooms(data);
 
       // 🔥 Po fetchnutí miestností sa hneď pripojím do všetkých roomiek
-      data.forEach((room) => {
-        socket.emit("joinRoom", {
-          roomId: room.id,
-          userId: user.id,
-        });
+      const roomIds = data.map((item) => item.id);
+
+      socket.emit("joinRooms", {
+        roomIds,
+        userId: user.id,
       });
     } catch (err) {
       console.error("Nepodarilo sa načítať miestnosti", err);
     }
   };
-
-  console.log(rooms);
 
   useEffect(() => {
     if (!user) return;
@@ -38,9 +36,11 @@ export const RoomProvider = ({ children }) => {
 
     const handleNewMessage = (message) => {
       const { roomId, text, createdAt } = message;
+      console.log("nova sprava");
 
-      setRooms((prevRooms) =>
-        prevRooms.map((room) =>
+      setRooms((prevRooms) => {
+        // Aktualizujeme miestnosť s novou správou
+        const updatedRooms = prevRooms.map((room) =>
           room.id === roomId
             ? {
                 ...room,
@@ -48,8 +48,17 @@ export const RoomProvider = ({ children }) => {
                 lastMessageTime: createdAt,
               }
             : room
-        )
-      );
+        );
+
+        // Najdeme miestnosť, ktorá sa má posunúť hore
+        const updatedRoom = updatedRooms.find((room) => room.id === roomId);
+
+        // Vytvoríme nový zoznam: miestnosť s novou správou ide navrch
+        return [
+          updatedRoom,
+          ...updatedRooms.filter((room) => room.id !== roomId),
+        ];
+      });
     };
 
     socket.on("newMessage", handleNewMessage);
@@ -77,12 +86,13 @@ export const RoomProvider = ({ children }) => {
     );
 
     console.log(new Date().toISOString());
-
-    // socket.emit("user-seen", {
-    //   roomId: roomId,
-    //   userId,
-    //   timestamp: new Date().toISOString(),
-    // });
+    if (user.id) {
+      socket.emit("user-seen", {
+        roomId: roomId,
+        userId: user.id,
+        timestamp: new Date().toISOString(),
+      });
+    }
   };
 
   return (

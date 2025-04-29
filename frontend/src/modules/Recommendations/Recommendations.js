@@ -160,6 +160,7 @@ const Recommendations = () => {
     if (window.innerWidth <= 768) {
       setShowFilters(false);
     }
+    window.scrollTo(0, 0);
   };
 
   const toggleDay = (day) => {

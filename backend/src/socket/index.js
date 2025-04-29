@@ -11,7 +11,6 @@ export function setupSocket(server) {
   });
 
   io.on("connection", (socket) => {
-    console.log(`New socket connected: ${socket.id}`);
     chatHandlers(io, socket);
   });
 }

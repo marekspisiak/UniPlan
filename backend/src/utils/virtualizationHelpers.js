@@ -181,7 +181,6 @@ export const getAllVirtualEvents = (
       });
     }
     if (end && isSameOrAfter(candidate, end)) {
-      console.log(candidate);
       return "break";
     }
   });

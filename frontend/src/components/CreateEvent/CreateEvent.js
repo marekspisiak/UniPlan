@@ -42,7 +42,7 @@ const CreateEvent = () => {
         }
       });
 
-      const res = await fetch("/api/events/create", {
+      const res = fetch("/api/events/create", {
         method: "POST",
         headers: {
           Authorization: `Bearer ${token}`,

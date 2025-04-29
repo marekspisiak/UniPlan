@@ -9,10 +9,15 @@ export function chatHandlers(io, socket) {
     socket.emit("joinedRoom", { roomId });
   });
 
-  socket.on("user-seen", async ({ roomId, userId, timestamp }) => {
-    console.log(`User ${userId} seen room ${roomId} at ${timestamp}`);
+  socket.on("joinRooms", async ({ roomIds, userId }) => {
+    roomIds.forEach((roomId) => {
+      socket.join(`room-${roomId}`);
+    });
+  });
 
+  socket.on("user-seen", async ({ roomId, userId, timestamp }) => {
     // Aktualizácia databázy cez Prisma (alebo čokoľvek iné)
+    console.log(timestamp);
     await prisma.roomMember.upsert({
       where: { roomId_userId: { roomId, userId } },
       update: { lastSeen: timestamp },
@@ -22,7 +27,6 @@ export function chatHandlers(io, socket) {
 
   socket.on("leaveRoom", async ({ roomId, userId }) => {
     socket.leave(`room-${roomId}`);
-    console.log(`User ${userId} left room-${roomId}`);
 
     socket.emit("leftRoom", { roomId });
   });
@@ -60,7 +64,5 @@ export function chatHandlers(io, socket) {
     });
   });
 
-  socket.on("disconnect", () => {
-    console.log(`Socket disconnected: ${socket.id}`);
-  });
+  socket.on("disconnect", () => {});
 }

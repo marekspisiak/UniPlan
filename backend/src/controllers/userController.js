@@ -48,7 +48,6 @@ export const getUserProfile = async (req, res) => {
 export const updateUserInterests = async (req, res) => {
   const userId = req.user.id;
   const categoryIds = toArray(req.body.categoryIds);
-  console.log(categoryIds);
 
   try {
     await prisma.user.update({

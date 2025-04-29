@@ -25,11 +25,11 @@
 }
 
 .logoutItem {
-  font-weight: 500;
-  color: #dc3545;
+  font-weight: 500 !important;
+  color: #dc3545 !important;
 
   &:hover {
-    background-color: #f8d7da;
-    color: #a71d2a;
+    background-color: #f8d7da !important;
+    color: #a71d2a !important;
   }
 }

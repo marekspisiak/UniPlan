@@ -17,7 +17,6 @@ const seed = async () => {
     });
   }
 
-  console.log("✅ Kategórie seeded");
   process.exit();
 };
 
