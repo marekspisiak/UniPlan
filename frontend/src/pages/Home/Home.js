@@ -16,7 +16,7 @@ import styles from "./Home.module.scss";
 import MiniChatList from "../../components/MiniChatList/MiniChatList";
 import ChatModal from "../../components/ChatModal/ChatModal";
 import { useChatModal } from "../../context/ChatModalContext";
-import ChatPage from "../../components/ChatPage/ChatPage";
+import ChatPage from "../../components/Chat/Chat";
 import { useAuth } from "../../context/AuthContext";
 
 const Home = () => {

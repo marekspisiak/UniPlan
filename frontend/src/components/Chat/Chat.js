@@ -6,7 +6,7 @@ import { useAuth } from "../../context/AuthContext";
 import { MessageList, Input } from "react-chat-elements";
 import { useEffect, useRef, useState } from "react";
 import "react-chat-elements/dist/main.css";
-import styles from "./ChatPage.module.scss"; // 👈
+import styles from "./Chat.module.scss"; // 👈
 import { Button } from "react-bootstrap";
 import { X } from "lucide-react";
 import { debounce } from "lodash";

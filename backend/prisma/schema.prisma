@@ -7,6 +7,7 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+
 model EmailVerificationToken {
   id        Int      @id @default(autoincrement())
   token     String   @unique
@@ -26,7 +27,6 @@ model Category {
   icon         String?
   events       Event[]          @relation("EventCategories")
   users        User[]           @relation("UserInterests")
-  eventChanges EventChange[] @relation("ChangeCategories")
 }
 
 model User {
@@ -110,9 +110,7 @@ model EventChange {
   hasEndTime              Boolean? 
   location                 String?
   capacity                 Int?
-  categories               Category[]                @relation("ChangeCategories")
   joinDaysBeforeStart      Int?
-  allowRecurringAttendance Boolean?
   createdBy                Int?
   updatedBy                Int?
   createdByUser            User?       @relation("CreatedBy", fields: [createdBy], references: [id])
@@ -131,7 +129,6 @@ model EventOccurrence {
   participants   User[]        @relation("OccurrenceParticipants")
   eventDayId     Int?
   eventDay       EventDay?     @relation("EventDayOccurrences", fields: [eventDayId], references: [id],  onDelete: Cascade)
-  isCancelled    Boolean @default(false)
 
   eventChangeId Int? @unique
 eventChange   EventChange? @relation("OccurrenceToChange", fields: [eventChangeId], references: [id], onDelete: Cascade)

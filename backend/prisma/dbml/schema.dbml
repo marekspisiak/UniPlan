@@ -1,0 +1,238 @@
+//// ------------------------------------------------------
+//// THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+//// ------------------------------------------------------
+
+Table EmailVerificationToken {
+  id Int [pk, increment]
+  token String [unique, not null]
+  userId Int [not null]
+  expiresAt DateTime [not null]
+  createdAt DateTime [default: `now()`, not null]
+  user User [not null]
+}
+
+Table Category {
+  id Int [pk, increment]
+  name String [unique, not null]
+  label String [not null]
+  icon String
+  events Event [not null]
+  users User [not null]
+}
+
+Table User {
+  id Int [pk, increment]
+  email String [unique, not null]
+  password String [not null]
+  createdAt DateTime [default: `now()`, not null]
+  firstName String [not null]
+  lastName String [not null]
+  lastVerifiedAt DateTime
+  verificationTokens EmailVerificationToken [not null]
+  events Event [not null]
+  interests Category [not null]
+  joinedEvents EventOccurrence [not null]
+  joinedAttendancies EventDay [not null]
+  moderatorIn EventModerator [not null]
+  createdEventChanges EventChange [not null]
+  updatedEventChanges EventChange [not null]
+  roomMembers RoomMember [not null]
+  messages Message [not null]
+  role Role [not null, default: 'USER']
+}
+
+Table Event {
+  id Int [pk, increment]
+  title String [not null]
+  description String
+  startDate DateTime
+  endDate DateTime
+  repeatUntil DateTime
+  repeatInterval Int
+  hasStartDate Boolean [not null, default: false]
+  hasStartTime Boolean [not null, default: false]
+  hasEndTime Boolean [not null, default: false]
+  location String
+  capacity Int
+  mainImage String
+  createdAt DateTime [default: `now()`, not null]
+  attendancyLimit Int
+  allowRecurringAttendance Boolean [not null, default: false]
+  joinDaysBeforeStart Int
+  organizerId Int [not null]
+  organizer User [not null]
+  gallery EventImage [not null]
+  moderators EventModerator [not null]
+  eventDays EventDay [not null]
+  eventOccurrences EventOccurrence [not null]
+  categories Category [not null]
+  room Room
+}
+
+Table EventDay {
+  id Int [pk, increment]
+  eventId Int [not null]
+  week Int [not null]
+  dayId Int [not null]
+  event Event [not null]
+  day Day [not null]
+  eventChange EventChange
+  eventChangeId Int [unique]
+  users User [not null]
+  eventOccurrences EventOccurrence [not null]
+}
+
+Table EventChange {
+  id Int [pk, increment]
+  eventDay EventDay
+  title String
+  description String
+  startDate DateTime
+  endDate DateTime
+  hasStartDate Boolean
+  hasStartTime Boolean
+  hasEndTime Boolean
+  location String
+  capacity Int
+  joinDaysBeforeStart Int
+  allowRecurringAttendance Boolean
+  createdBy Int
+  updatedBy Int
+  createdByUser User
+  updatedByUser User
+  eventOccurrence EventOccurrence
+}
+
+Table EventOccurrence {
+  id Int [pk, increment]
+  eventId Int [not null]
+  date DateTime
+  event Event [not null]
+  participants User [not null]
+  eventDayId Int
+  eventDay EventDay
+  eventChangeId Int [unique]
+  eventChange EventChange
+
+  indexes {
+    (eventId, date) [unique]
+  }
+}
+
+Table Day {
+  id Int [pk, increment]
+  name String [unique, not null]
+  eventDays EventDay [not null]
+}
+
+Table EventImage {
+  id Int [pk, increment]
+  url String [not null]
+  eventId Int [not null]
+  event Event [not null]
+}
+
+Table EventModerator {
+  id Int [pk, increment]
+  userId Int [not null]
+  user User [not null]
+  eventId Int [not null]
+  event Event [not null]
+  canEditEvent Boolean [not null, default: false]
+  canManageParticipants Boolean [not null, default: false]
+  canManageAttendees Boolean [not null, default: false]
+  canManageModerators Boolean [not null, default: false]
+  canRepostEvent Boolean [not null, default: false]
+}
+
+Table Room {
+  id Int [pk, increment]
+  eventId Int [unique, not null]
+  event Event [not null]
+  members RoomMember [not null]
+  messages Message [not null]
+}
+
+Table RoomMember {
+  id Int [pk, increment]
+  userId Int [not null]
+  roomId Int [not null]
+  user User [not null]
+  room Room [not null]
+  lastSeen DateTime [default: `now()`, not null]
+
+  indexes {
+    (roomId, userId) [unique]
+  }
+}
+
+Table Message {
+  id Int [pk, increment]
+  roomId Int [not null]
+  userId Int [not null]
+  text String [not null]
+  createdAt DateTime [default: `now()`, not null]
+  user User [not null]
+  room Room [not null]
+}
+
+Table EventCategories {
+  eventsId Int [ref: > Event.id]
+  categoriesId Int [ref: > Category.id]
+}
+
+Table UserInterests {
+  usersId Int [ref: > User.id]
+  interestsId Int [ref: > Category.id]
+}
+
+Table OccurrenceParticipants {
+  joinedeventsId Int [ref: > EventOccurrence.id]
+  participantsId Int [ref: > User.id]
+}
+
+Table EventDayAttendancy {
+  joinedattendanciesId Int [ref: > EventDay.id]
+  usersId Int [ref: > User.id]
+}
+
+Enum Role {
+  USER
+  ADMIN
+}
+
+Ref: EmailVerificationToken.userId > User.id [delete: Cascade]
+
+Ref: Event.organizerId > User.id [delete: Cascade]
+
+Ref: EventDay.eventId > Event.id [delete: Cascade]
+
+Ref: EventDay.dayId > Day.id
+
+Ref: EventDay.eventChangeId - EventChange.id [delete: Cascade]
+
+Ref: EventChange.createdBy > User.id
+
+Ref: EventChange.updatedBy > User.id
+
+Ref: EventOccurrence.eventId > Event.id [delete: Cascade]
+
+Ref: EventOccurrence.eventDayId > EventDay.id [delete: Cascade]
+
+Ref: EventOccurrence.eventChangeId - EventChange.id [delete: Cascade]
+
+Ref: EventImage.eventId > Event.id [delete: Cascade]
+
+Ref: EventModerator.userId > User.id [delete: Cascade]
+
+Ref: EventModerator.eventId > Event.id [delete: Cascade]
+
+Ref: Room.eventId - Event.id [delete: Cascade]
+
+Ref: RoomMember.userId > User.id [delete: Cascade]
+
+Ref: RoomMember.roomId > Room.id [delete: Cascade]
+
+Ref: Message.userId > User.id [delete: Cascade]
+
+Ref: Message.roomId > Room.id [delete: Cascade]

@@ -11,7 +11,6 @@ export const applyChangesData = (
     "location",
     "capacity",
     "joinDaysBeforeStart",
-    "allowRecurringAttendance",
     "hasEndTime",
     "hasStartDate",
     "hasStartTime",
