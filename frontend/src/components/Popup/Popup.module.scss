@@ -1,3 +1,14 @@
+@keyframes popupFadeIn {
+  0% {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
 .overlay {
   position: fixed;
   top: 0;
@@ -18,9 +29,11 @@
   position: relative;
   max-width: 95vw;
   min-width: 45vw;
-
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
   z-index: 1000;
+
+  // >>> Pridávame animáciu tu
+  animation: popupFadeIn 0.3s ease-out;
 }
 
 .closeButton {
