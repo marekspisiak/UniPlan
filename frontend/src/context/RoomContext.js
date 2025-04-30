@@ -30,7 +30,7 @@ export const RoomProvider = ({ children }) => {
   };
 
   useEffect(() => {
-    if (!user) return;
+    if (!user || !socket) return;
     fetchRooms();
 
     const handleNewMessage = (message) => {
@@ -65,7 +65,7 @@ export const RoomProvider = ({ children }) => {
     return () => {
       socket.off("newMessage", handleNewMessage);
     };
-  }, [user]);
+  }, [user, socket]);
 
   const reloadRooms = () => {
     fetchRooms();

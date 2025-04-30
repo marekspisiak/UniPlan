@@ -9,3 +9,11 @@ export const RegisterSchema = z.object({
     .endsWith("uniza.sk", "Použi školský email"),
   password: z.string().min(8, "Heslo musí mať aspoň 8 znakov"),
 });
+
+export const loginSchema = z.object({
+  email: z
+    .string()
+    .email("Neplatný email")
+    .endsWith("uniza.sk", "Použi školský email"),
+  password: z.string().min(8, "Heslo musí mať aspoň 8 znakov"),
+});

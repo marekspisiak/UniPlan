@@ -3,6 +3,7 @@
   overflow-y: auto; // 👈 LEN zvislý scroll
   overflow-x: hidden; // 👈 žiadny horizontálny scroll
   overflow: auto;
+  min-width: 50vw;
 }
 
 .header {

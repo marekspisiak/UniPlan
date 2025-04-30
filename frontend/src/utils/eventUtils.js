@@ -80,3 +80,18 @@ export function isEmpty(value) {
     value === ""
   );
 }
+
+export function fixNumbers(value) {
+  if (
+    value === null ||
+    value === "null" ||
+    value === undefined ||
+    value === "undefined" ||
+    value === "" ||
+    value === 0 ||
+    value === "0"
+  ) {
+    return "";
+  }
+  return value;
+}

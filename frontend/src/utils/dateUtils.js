@@ -92,3 +92,10 @@ export const normalizeDate = (date) => {
   // Iné typy
   return null;
 };
+
+export const getTodayLocalDate = () => {
+  const today = new Date();
+  const offset = today.getTimezoneOffset(); // v minútach
+  const localDate = new Date(today.getTime() - offset * 60 * 1000);
+  return localDate.toISOString().split("T")[0];
+};

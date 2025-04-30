@@ -1,31 +1,55 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Form, Button, Alert, Spinner, Container } from "react-bootstrap";
 import { useAuth } from "../../context/AuthContext";
 import CategoryMultiSelect from "../CategoryMultiSelect/CategoryMultiSelect";
 import styles from "./EditProfileCard.module.scss";
 import Toast from "../Toast/Toast";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import ImageUploader from "../ImageUploader/ImageUploader";
+import { getEditProfileSchema } from "../../validation/schemas";
+import { ValidatedControl } from "../ValidateComponents/ValidateComponents";
 
 const EditProfileCard = ({ setIsEditing }) => {
   const { user, logout, loadUser } = useAuth();
-
-  const [form, setForm] = useState({
-    firstName: user?.firstName || "",
-    lastName: user?.lastName || "",
-    email: user?.email || "",
-    confirmEmail: "", // nové pole pre potvrdenie
-    interests: user?.interests?.map((i) => i.id) || [],
-  });
+  const mainImageRef = useRef();
 
   const [message, setMessage] = useState(null);
   const [error, setError] = useState(null);
   const [uploading, setUploading] = useState(false);
 
-  const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
+  const {
+    register,
+    handleSubmit,
+    setValue,
+    getValues,
+    watch,
+    formState: { errors },
+  } = useForm({
+    resolver: zodResolver(getEditProfileSchema(user?.email || "")),
+    defaultValues: {
+      firstName: user?.firstName || "",
+      lastName: user?.lastName || "",
+      email: user?.email || "",
+      confirmEmail: "",
+      interests: user?.interests?.map((i) => i.id) || [],
+    },
+  });
+
+  const onError = (errors) => {
+    console.warn("CHYBY VO FORMULÁRI:", errors);
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const email = watch("email");
+  const confirmEmail = watch("confirmEmail");
+  const mainImage = watch("mainImage");
+  const interests = watch("interests");
+
+  useEffect(() => {
+    setValue("mainImage", user?.photo ? [user.photo] : []);
+  }, [user, setValue]);
+
+  const onSubmit = async (form) => {
     setMessage(null);
     setError(null);
 
@@ -38,9 +62,13 @@ const EditProfileCard = ({ setIsEditing }) => {
       const formData = new FormData();
       formData.append("firstName", form.firstName);
       formData.append("lastName", form.lastName);
-      formData.append("email", form.email);
+      if (form.email !== user.email) {
+        formData.append("email", form.email);
+      }
       form.interests.forEach((id) => formData.append("interests[]", id));
-      if (form.photo) formData.append("photo", form.photo);
+      if (mainImage?.[0] instanceof File) {
+        formData.append("photo", mainImage[0]);
+      }
 
       const res = await fetch("/api/user/profile", {
         method: "PUT",
@@ -66,11 +94,6 @@ const EditProfileCard = ({ setIsEditing }) => {
     }
   };
 
-  const handlePhotoUpload = (e) => {
-    const file = e.target.files[0];
-    if (file) setForm((prev) => ({ ...prev, photo: file }));
-  };
-
   if (!user)
     return (
       <Container
@@ -88,53 +111,40 @@ const EditProfileCard = ({ setIsEditing }) => {
       {error && <Toast error={error} onClose={() => setError("")} />}
       {message && <Toast success={message} onClose={() => setMessage("")} />}
 
-      <Form onSubmit={handleSubmit}>
-        <Form.Group className="mb-3">
-          <Form.Label>Meno</Form.Label>
-          <Form.Control
-            type="text"
-            name="firstName"
-            value={form.firstName}
-            onChange={handleChange}
-            required
-          />
-        </Form.Group>
+      <Form onSubmit={handleSubmit(onSubmit)} noValidate>
+        <ValidatedControl
+          type="text"
+          name="firstName"
+          label="Meno"
+          register={register}
+          errors={errors}
+        />
 
-        <Form.Group className="mb-3">
-          <Form.Label>Priezvisko</Form.Label>
-          <Form.Control
-            type="text"
-            name="lastName"
-            value={form.lastName}
-            onChange={handleChange}
-            required
-          />
-        </Form.Group>
+        <ValidatedControl
+          type="text"
+          name="lastName"
+          label="Priezvisko"
+          register={register}
+          errors={errors}
+        />
 
-        <Form.Group className="mb-3">
-          <Form.Label>Email</Form.Label>
-          <Form.Control
-            type="email"
-            name="email"
-            value={form.email}
-            onChange={handleChange}
-            required
-          />
-        </Form.Group>
+        <ValidatedControl
+          type="email"
+          name="email"
+          label="Email"
+          register={register}
+          errors={errors}
+        />
 
-        {/* Ak zmenil email, zobraz potvrdenie */}
-        {form.email !== user.email && (
+        {email !== user.email && (
           <>
-            <Form.Group className="mb-3">
-              <Form.Label>Potvrď nový email</Form.Label>
-              <Form.Control
-                type="email"
-                name="confirmEmail"
-                value={form.confirmEmail}
-                onChange={handleChange}
-                required
-              />
-            </Form.Group>
+            <ValidatedControl
+              type="email"
+              name="confirmEmail"
+              label="Potvrď nový email"
+              register={register}
+              errors={errors}
+            />
             <Alert variant="warning">
               Upozornenie: Po zmene emailu sa budete musieť prihlásiť cez nový
               email. Ak stratíte prístup k novému emailu, nebudete sa môcť
@@ -146,19 +156,21 @@ const EditProfileCard = ({ setIsEditing }) => {
         <Form.Group className="mb-3">
           <Form.Label>Záujmy</Form.Label>
           <CategoryMultiSelect
-            selectedIds={form.interests}
-            onChange={(ids) => setForm({ ...form, interests: ids })}
+            selectedIds={interests}
+            onChange={(ids) => setValue("interests", ids)}
           />
         </Form.Group>
 
-        <Form.Group className="mb-3">
-          <Form.Label>Profilová fotka</Form.Label>
-          <Form.Control
-            type="file"
-            accept="image/*"
-            onChange={handlePhotoUpload}
-          />
-        </Form.Group>
+        <ImageUploader
+          ref={mainImageRef}
+          label="Profilová fotka (nepovinná)"
+          onChange={({ files }) => {
+            setValue("mainImage", files);
+            setValue("mainImageChanged", true);
+          }}
+          multiple={false}
+          existing={mainImage?.length > 0 ? [`${mainImage}`] : []}
+        />
 
         <Button type="submit" className="w-100" disabled={uploading}>
           {uploading ? "Ukladám..." : "Uložiť"}

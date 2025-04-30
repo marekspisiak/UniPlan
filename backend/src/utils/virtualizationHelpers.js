@@ -76,6 +76,8 @@ export const getVirtualDates = (
   //wweekoffset je offset od zaciatku cyklu do danej udalosti
   const weekOffset = getStartCycleOffset(event, targetDate);
 
+  console.log(weekOffset);
+
   //ziska maximalný počet týždňov do konca opakovania
   const repeatUntil = event.repeatUntil ? new Date(event.repeatUntil) : null;
   const now = getCurrentUTCDate();
@@ -86,6 +88,7 @@ export const getVirtualDates = (
     : weekOffset + 52;
 
   const baseDate = getCustomStartOfWeek(event.startDate);
+  console.log(baseDate);
 
   for (let i = weekOffset; i < maxWeeks; i += event.repeatInterval || 1) {
     for (const day of event.eventDays || []) {
@@ -134,12 +137,19 @@ export const getEventDayId = (event, targetDate = getCurrentUTCDate()) => {
 };
 
 export const validateEventDate = (event, targetDate) => {
+  console.log(targetDate);
+  console.log(event.startDate);
   if (isEqual(normalizeDate(event.startDate), normalizeDate(targetDate)))
     return true;
   if (!event.startDate) return null;
   const target = normalizeDate(targetDate);
   let result = false;
   getVirtualDates(event, target, (date) => {
+    console.log("---");
+    console.log(date);
+    console.log(targetDate);
+    console.log("---");
+
     if (isEqual(date, target)) {
       result = true;
       return "break"; // Stop the loop when the first valid date is found

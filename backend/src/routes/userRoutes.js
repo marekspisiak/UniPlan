@@ -49,7 +49,7 @@ router.put(
   uploadUserPicture.single("photo"),
   updateProfile
 );
-router.get("/search", searchUsers);
+router.get("/search", protectVerified, searchUsers);
 router.put("/change-password", protectVerified, changePassword);
 router.get("/:id", protectVerified, getUserProfile);
 

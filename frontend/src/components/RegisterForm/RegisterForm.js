@@ -1,50 +1,45 @@
-import { useState } from "react";
-import { Form, Button, Alert } from "react-bootstrap";
+import { Form, Button } from "react-bootstrap";
 import { useNavigate, Link } from "react-router-dom";
-import styles from "./RegisterForm.module.scss";
-import Toast from "../Toast/Toast";
-
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { registerSchema } from "../validation/registerSchema";
+import { registerSchema } from "../../validation/schemas";
+import styles from "./RegisterForm.module.scss";
+import Toast from "../Toast/Toast";
+import { useState } from "react";
 
 const RegisterForm = () => {
-  const [form, setForm] = useState({
-    firstName: "",
-    lastName: "",
-    email: "",
-    password: "",
-  });
-
   const navigate = useNavigate();
-
   const [message, setMessage] = useState(null);
   const [error, setError] = useState(null);
 
-  const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
-  };
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm({
+    resolver: zodResolver(registerSchema),
+  });
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const onSubmit = async (data) => {
     setMessage(null);
     setError(null);
+
+    console.log("fetchujem");
 
     try {
       const res = await fetch("/api/auth/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(form),
+        body: JSON.stringify(data),
       });
 
-      const data = await res.json();
+      const responseData = await res.json();
 
       if (!res.ok) {
-        throw new Error(data.message || "Chyba pri registrácii.");
+        throw new Error(responseData.message || "Chyba pri registrácii.");
       }
 
-      setMessage(data.message);
-      setForm({ firstName: "", lastName: "", email: "", password: "" });
+      setMessage(responseData.message);
       navigate("/email-info");
     } catch (err) {
       setError(err.message);
@@ -53,68 +48,62 @@ const RegisterForm = () => {
 
   return (
     <>
-      {error && (
-        <Toast
-          error={error}
-          onClose={() => setError("")} // <<< Parent ovláda, kedy zmizne
-        />
-      )}
-      {message && (
-        <Toast
-          success={message}
-          onClose={() => setError("")} // <<< Parent ovláda, kedy zmizne
-        />
-      )}
+      {error && <Toast error={error} onClose={() => setError(null)} />}
+      {message && <Toast success={message} onClose={() => setMessage(null)} />}
 
-      <Form onSubmit={handleSubmit}>
+      <Form onSubmit={handleSubmit(onSubmit)} noValidate>
         <Form.Group className="mb-3" controlId="formFirstName">
           <Form.Label>Meno</Form.Label>
           <Form.Control
             type="text"
-            name="firstName"
-            value={form.firstName}
-            onChange={handleChange}
-            required
+            {...register("firstName")}
+            isInvalid={!!errors.firstName}
           />
+          <Form.Control.Feedback type="invalid">
+            {errors.firstName?.message}
+          </Form.Control.Feedback>
         </Form.Group>
 
         <Form.Group className="mb-3" controlId="formLastName">
           <Form.Label>Priezvisko</Form.Label>
           <Form.Control
             type="text"
-            name="lastName"
-            value={form.lastName}
-            onChange={handleChange}
-            required
+            {...register("lastName")}
+            isInvalid={!!errors.lastName}
           />
+          <Form.Control.Feedback type="invalid">
+            {errors.lastName?.message}
+          </Form.Control.Feedback>
         </Form.Group>
 
         <Form.Group className="mb-3" controlId="formEmail">
           <Form.Label>Školský email</Form.Label>
           <Form.Control
             type="email"
-            name="email"
-            value={form.email}
-            onChange={handleChange}
-            required
+            {...register("email")}
+            isInvalid={!!errors.email}
           />
+          <Form.Control.Feedback type="invalid">
+            {errors.email?.message}
+          </Form.Control.Feedback>
         </Form.Group>
 
         <Form.Group className="mb-4" controlId="formPassword">
           <Form.Label>Heslo</Form.Label>
           <Form.Control
             type="password"
-            name="password"
-            value={form.password}
-            onChange={handleChange}
-            required
-            minLength={6}
+            {...register("password")}
+            isInvalid={!!errors.password}
           />
+          <Form.Control.Feedback type="invalid">
+            {errors.password?.message}
+          </Form.Control.Feedback>
         </Form.Group>
 
         <Button variant="primary" type="submit" className="w-100">
           Registrovať sa
         </Button>
+
         <div className="text-center mt-3">
           <span>Už máte účet? </span>
           <Link to="/login">Prihláste sa</Link>

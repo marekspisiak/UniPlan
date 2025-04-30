@@ -12,6 +12,8 @@ import { setupSocket } from "./socket/index.js"; // <- máme setupSocket správn
 import path from "path";
 import { fileURLToPath } from "url";
 import http from "http"; // <- pridáš toto (core Node modul)
+import { getCurrentUTCDate } from "./utils/dateHelpers.js";
+import "./cron/dailyTasks.js";
 
 dotenv.config();
 const app = express();

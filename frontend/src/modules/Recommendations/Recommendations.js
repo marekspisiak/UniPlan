@@ -133,9 +133,9 @@ const Recommendations = () => {
       const data = await res.json();
       if (!res.ok)
         throw new Error(data.message || "Nepodarilo sa načítať aktivity");
-
-      setEvents(data);
-      setShownEvents([]);
+      console.log(data);
+      setEvents(data); // nastav nový celý zoznam
+      setShownEvents(data.slice(0, 10));
     } catch (err) {
       setError(err.message);
     } finally {
@@ -286,6 +286,65 @@ const Recommendations = () => {
               <div className={styles.filterSection}>
                 <Form.Check
                   type="checkbox"
+                  label="Filtrovať podľa záľub alebo vlastného výberu"
+                  checked={filters.onlyRecommended}
+                  onChange={(e) =>
+                    setFilters((prev) => ({
+                      ...prev,
+                      onlyRecommended: e.target.checked,
+                      useMyInterests: e.target.checked
+                        ? prev.useMyInterests
+                        : true,
+                      selectedCategories: e.target.checked
+                        ? prev.selectedCategories
+                        : [],
+                    }))
+                  }
+                />
+                {filters.onlyRecommended && (
+                  <div ref={onlyRecommendedRef}>
+                    <Form.Check
+                      type="checkbox"
+                      label="Použiť moje záujmy"
+                      checked={filters.useMyInterests}
+                      onChange={(e) =>
+                        setFilters((prev) => ({
+                          ...prev,
+                          useMyInterests: e.target.checked,
+                          selectedCategories: e.target.checked
+                            ? prev.selectedCategories
+                            : [],
+                        }))
+                      }
+                    />
+
+                    {!filters.useMyInterests && (
+                      <CategoryMultiSelect
+                        selectedIds={filters.selectedCategories}
+                        onChange={(newSelected) =>
+                          setFilters({
+                            ...filters,
+                            selectedCategories: newSelected,
+                          })
+                        }
+                      />
+                    )}
+
+                    <Form.Check
+                      type="checkbox"
+                      label="Všetky kategórie musia sedieť"
+                      checked={filters.allCategories}
+                      onChange={(e) =>
+                        setFilters({
+                          ...filters,
+                          allCategories: e.target.checked,
+                        })
+                      }
+                    />
+                  </div>
+                )}
+                <Form.Check
+                  type="checkbox"
                   label="Moje eventy"
                   checked={filters.myEvents}
                   onChange={(e) =>
@@ -327,66 +386,6 @@ const Recommendations = () => {
               </div>
 
               {/* Sekcia: Filtre podľa záujmov */}
-              <Form.Check
-                type="checkbox"
-                label="Filtrovať podľa záľub alebo vlastného výberu"
-                checked={filters.onlyRecommended}
-                onChange={(e) =>
-                  setFilters((prev) => ({
-                    ...prev,
-                    onlyRecommended: e.target.checked,
-                    useMyInterests: e.target.checked
-                      ? prev.useMyInterests
-                      : true,
-                    selectedCategories: e.target.checked
-                      ? prev.selectedCategories
-                      : [],
-                  }))
-                }
-              />
-
-              {filters.onlyRecommended && (
-                <div ref={onlyRecommendedRef}>
-                  <Form.Check
-                    type="checkbox"
-                    label="Použiť moje záujmy"
-                    checked={filters.useMyInterests}
-                    onChange={(e) =>
-                      setFilters((prev) => ({
-                        ...prev,
-                        useMyInterests: e.target.checked,
-                        selectedCategories: e.target.checked
-                          ? prev.selectedCategories
-                          : [],
-                      }))
-                    }
-                  />
-
-                  {!filters.useMyInterests && (
-                    <CategoryMultiSelect
-                      selectedIds={filters.selectedCategories}
-                      onChange={(newSelected) =>
-                        setFilters({
-                          ...filters,
-                          selectedCategories: newSelected,
-                        })
-                      }
-                    />
-                  )}
-
-                  <Form.Check
-                    type="checkbox"
-                    label="Všetky kategórie musia sedieť"
-                    checked={filters.allCategories}
-                    onChange={(e) =>
-                      setFilters({
-                        ...filters,
-                        allCategories: e.target.checked,
-                      })
-                    }
-                  />
-                </div>
-              )}
 
               <div className={styles.submitWrapper}>
                 <Button

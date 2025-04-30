@@ -9,7 +9,7 @@ import {
 import path from "path";
 import fs from "fs";
 
-import { RegisterSchema } from "../validation/authSchemas.js";
+import { loginSchema, RegisterSchema } from "../validation/authSchemas.js";
 
 export const registerUser = async (req, res) => {
   const result = RegisterSchema.safeParse(req.body);
@@ -94,6 +94,14 @@ export const verifyEmail = async (req, res) => {
 
 // 🔐 Login
 export const loginUser = async (req, res) => {
+  const result = loginSchema.safeParse(req.body);
+
+  if (!result.success) {
+    return res.status(400).json({
+      message: "Neplatné údaje",
+      errors: result.error.errors,
+    });
+  }
   const { email, password } = req.body;
 
   try {

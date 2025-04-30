@@ -1,6 +1,16 @@
 import nodemailer from "nodemailer";
 
 export const sendVerificationEmail = async (to, token, isReminder = false) => {
+  const transporter = nodemailer.createTransport({
+    service: "gmail",
+    auth: {
+      user: process.env.EMAIL_FROM,
+      pass: process.env.EMAIL_PASSWORD,
+    },
+  });
+
+  const url = `http://localhost:3000/verify-email?token=${token}`;
+
   const title = isReminder
     ? "Znovu over svoj školský email"
     : "Overenie emailovej adresy";
@@ -20,5 +30,6 @@ export const sendVerificationEmail = async (to, token, isReminder = false) => {
       <p>Ak si si o to nežiadal, môžeš tento email ignorovať.</p>
     `,
   };
+
   await transporter.sendMail(mailOptions);
 };

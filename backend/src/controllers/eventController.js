@@ -21,67 +21,22 @@ import {
   getAllVirtualEvents,
 } from "../utils/virtualizationHelpers.js";
 import { createRoom, joinRoom } from "../services/roomService.js";
-
-function validateEventData(
-  {
-    startDate,
-    startTime,
-    endTime,
-    repeatUntil,
-    repeatInterval,
-    maxAttendancesPerCycle,
-    capacity,
-    joinDaysBeforeStart,
-  },
-  editing
-) {
-  if (!editing && isEmpty(startDate)) {
-    throw new Error("startDate je povinný pri vytváraní.");
-  }
-
-  const startDateObj = createUTCDate(startDate);
-
-  if (startTime && endTime && startTime > endTime) {
-    throw new Error("Čas konca musí byť po Čas začiatku.");
-  }
-  if (
-    repeatUntil &&
-    !isEmpty(repeatUntil) &&
-    new Date(repeatUntil) < startDateObj
-  ) {
-    throw new Error("Opakovať do nemôže byť pred startDate.");
-  }
-
-  if (!isEmpty(repeatInterval) && repeatInterval < 0) {
-    throw new Error("Interval opakovania musí byť 0 alebo väčší.");
-  }
-
-  if (
-    !isEmpty(maxAttendancesPerCycle) &&
-    (isNaN(maxAttendancesPerCycle) || Number(maxAttendancesPerCycle) < 1)
-  ) {
-    throw new Error(
-      "Max počet dní pre pravidelné prihlásenie na jeden cyklus musí byť prázdne alebo aspoň 1."
-    );
-  }
-
-  if (!isEmpty(capacity) && (isNaN(capacity) || Number(capacity) < 1)) {
-    throw new Error("Kapacita musí byť prázdne alebo aspoň 1.");
-  }
-
-  if (
-    !isEmpty(joinDaysBeforeStart) &&
-    (isNaN(joinDaysBeforeStart) || Number(joinDaysBeforeStart) < 1)
-  ) {
-    throw new Error(
-      "Koľko dní pred začiatkom sa možno prihlásiť musí byť prázdne alebo aspoň 1."
-    );
-  }
-}
+import { eventFormSchema } from "../validation/eventSchemas.js";
+import { preprocessFormData } from "../validation/preprocessing.js";
+import { Schema } from "zod";
 
 export const createEvent = async (req, res) => {
   try {
-    validateEventData(req.body);
+    // console.log(req.body);
+    // const parsedBody = preprocessFormData(req.body);
+    // const result = eventFormSchema.parse(parsedBody);
+    // if (!result.success) {
+    //   // console.log(result.error);
+    //   return res.status(400).json({
+    //     message: "Neplatné údaje",
+    //     errors: result.error.errors,
+    //   });
+    // }
     const {
       title,
       description,
@@ -102,10 +57,6 @@ export const createEvent = async (req, res) => {
     const categoryIds = toArray(req.body.categoryIds);
     const moderatorsRaw = toArray(req.body.moderators);
     const moderators = moderatorsRaw.map((mod) => JSON.parse(mod));
-
-    if (!title) {
-      return res.status(400).json({ message: "Vyplň všetky povinné polia." });
-    }
 
     let mainImageUrl = null;
     let galleryUrls = [];
@@ -247,9 +198,8 @@ export const createEvent = async (req, res) => {
 
     res.status(201).json({ id: newEvent.id });
   } catch (err) {
-    return res
-      .status(500)
-      .json({ message: "Nepodarilo sa updatovať vytvoriť event." });
+    console.log(err);
+    return res.status(500).json({ message: "Nepodarilo sa vytvoriť event." });
   }
 };
 
@@ -264,7 +214,7 @@ export const getEventCategories = async (req, res) => {
     res.status(500).json({ message: "Chyba servera." });
   }
 };
-
+let neviem = 0;
 const doesEventMatchFilters = (event, filters) => {
   const {
     search,
@@ -735,7 +685,9 @@ export const getAllEvents = async (req, res) => {
           virtual: false,
         });
       }
+      console.log(startDate);
 
+      console.log(endDate);
       if (isRecurring) {
         const virtualEvents = getAllVirtualEvents(event, startDate, endDate);
 
@@ -1265,11 +1217,7 @@ function buildEventChangePayload(
   const newData = {};
 
   // Kľúče, ktoré musia byť čísla
-  const numericKeys = [
-    "capacity",
-    "joinDaysBeforeStart",
-    "allowRecurringAttendance",
-  ];
+  const numericKeys = ["capacity", "joinDaysBeforeStart", "attendancyLimit"];
 
   const setSmart = (key, newValueRaw, originalValue) => {
     if (newValueRaw === undefined) {
@@ -1301,29 +1249,17 @@ function buildEventChangePayload(
   setSmart("title", newDataRaw.title, original.title);
   setSmart("description", newDataRaw.description, original.description);
   setSmart("location", newDataRaw.location, original.location);
-
-  setSmart(
-    "capacity",
-    newDataRaw.capacity !== undefined
-      ? parseInt(newDataRaw.capacity)
-      : undefined,
-    original.capacity
-  );
+  setSmart("capacity", newDataRaw.capacity, original.capacity);
 
   setSmart(
     "joinDaysBeforeStart",
-    newDataRaw.joinDaysBeforeStart !== undefined
-      ? parseInt(newDataRaw.joinDaysBeforeStart)
-      : undefined,
+    newDataRaw.joinDaysBeforeStart,
     original.joinDaysBeforeStart
   );
-
   setSmart(
-    "allowRecurringAttendance",
-    typeof newDataRaw.allowRecurringAttendance === "boolean"
-      ? newDataRaw.allowRecurringAttendance
-      : undefined,
-    original.allowRecurringAttendance
+    "attendancyLimit",
+    newDataRaw.attendancyLimit,
+    original.attendancyLimit
   );
 
   return newData;
@@ -1464,6 +1400,7 @@ export const editEvent = async (req, res) => {
     } = req.body;
 
     const capacity = resolveInt(req.body.capacity);
+    console.log(capacity);
     const attendancyLimit = resolveInt(req.body.attendancyLimit);
 
     const joinDaysBeforeStart = resolveInt(req.body.joinDaysBeforeStart);
@@ -1514,7 +1451,7 @@ export const editEvent = async (req, res) => {
         targetDate
       );
     }
-
+    console.log(scope);
     await prisma.$transaction(async (tx) => {
       if (scope === "event") {
         await updateEventImages({
@@ -1539,7 +1476,6 @@ export const editEvent = async (req, res) => {
             location,
             capacity: parseInt(capacity),
             attendancyLimit: parseInt(attendancyLimit),
-            allowRecurringAttendance: allowRecurringAttendance === "true",
             joinDaysBeforeStart: parseInt(joinDaysBeforeStart),
             repeatUntil: !isEmpty(repeatUntil)
               ? createUTCDate(repeatUntil)
@@ -1751,6 +1687,7 @@ export const editEvent = async (req, res) => {
           hasStartTime,
           hasEndTime,
         };
+        console.log(newData);
 
         if (Object.keys(newData).length === 0) {
           return res

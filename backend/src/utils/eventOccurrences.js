@@ -25,6 +25,7 @@ export const shouldCreateOccurrence = (event, nextDate) => {
 };
 
 export const createOccurrenceIfNeeded = async (eventId) => {
+  return null;
   const event = await prisma.event.findUnique({
     where: { id: eventId },
     include: {
@@ -36,30 +37,29 @@ export const createOccurrenceIfNeeded = async (eventId) => {
 
   if (!event) return null;
 
-  const existing = await prisma.eventOccurrence.findFirst({
-    where: {
-      eventId: event.id,
-      date: {
-        gte: normalizeDate(getCurrentUTCDate()), // len ak je dátum v budúcnosti
-      },
-    },
-    orderBy: {
-      date: "asc", // nájde najbližší budúci výskyt
-    },
-  });
+  return await createOccurrenceIfNeededFromEvent(event);
+};
 
+export const createOccurrenceIfNeededFromEvent = async (event) => {
   const nextDate = getNextEventDate(event);
   const eventDayId = getEventDayId(event);
 
-  if (!existing && shouldCreateOccurrence(event, nextDate)) {
+  const occurrence = await prisma.eventOccurrence.findFirst({
+    where: {
+      eventId: event.id,
+      date: nextDate,
+    },
+  });
+
+  if (!occurrence) {
     return await createOccurrence(
       prisma,
-      event.id, // eventId
-      normalizeDate(nextDate || event.startDate), // dátum
-      eventDayId || null // eventDayId (ak nie je, pošle sa null)
-      // excludeUserId môžeš zatiaľ nechať nedefinované alebo pridať ak potrebuješ
+      event.id,
+      normalizeDate(nextDate || event.startDate),
+      eventDayId || null
     );
   }
+
   return null;
 };
 

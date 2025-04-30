@@ -3,7 +3,8 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import EventForm from "../../components/EventForm/EventForm";
 import { Form } from "react-bootstrap";
-import { isEmpty, resolveEventData } from "../../utils/eventUtils";
+import { fixNumbers, isEmpty, resolveEventData } from "../../utils/eventUtils";
+import { Watch } from "lucide-react";
 
 function groupEventDaysByWeek(eventDays) {
   const grouped = {};
@@ -49,12 +50,13 @@ const EditEvent = ({ eventId, date }) => {
 
         const cleanedData = {};
 
+        console.log(data);
+
         for (const key in newData) {
           if (Object.prototype.hasOwnProperty.call(newData, key)) {
             cleanedData[key] = isEmpty(newData[key]) ? "" : newData[key];
           }
         }
-
         setInitialData({
           ...cleanedData,
 
@@ -66,17 +68,14 @@ const EditEvent = ({ eventId, date }) => {
             ? ""
             : newData.repeatUntil.split("T")[0],
           previousMainImage: newData.mainImage,
-          capacity: newData.capacity === 0 ? "" : newData.capacity,
-          attendancyLimit:
-            newData.attendancyLimit === 0 ? "" : newData.attendancyLimit,
+          capacity: fixNumbers(newData.capacity),
+          attendancyLimit: fixNumbers(newData.attendancyLimit),
 
-          joinDaysBeforeStart:
-            newData.joinDaysBeforeStart === 0
-              ? ""
-              : newData.joinDaysBeforeStart,
+          joinDaysBeforeStart: fixNumbers(newData.joinDaysBeforeStart),
+          repeatInterval: fixNumbers(newData.repeatInterval),
         });
 
-        if (newData.repeatInterval === 0) {
+        if (fixNumbers(newData.repeatInterval) === "") {
           setScope("occurrence");
         }
       } catch (err) {
@@ -92,6 +91,8 @@ const EditEvent = ({ eventId, date }) => {
     try {
       setError(null);
       setSuccess(null);
+
+      console.log(console.log(initialData));
 
       const token = localStorage.getItem("token");
       const formData = new FormData();
@@ -112,6 +113,7 @@ const EditEvent = ({ eventId, date }) => {
         "previousMainImage",
         "deletedGallery",
         "gallery",
+        "attendancyLimit",
       ];
 
       const eventDayChange = [
@@ -158,7 +160,7 @@ const EditEvent = ({ eventId, date }) => {
         keysToUse = eventChange;
       } else if (scope === "eventDay") {
         keysToUse = eventDayChange;
-      } else if (scope === "occurrence" && form.repeatInterval === 0) {
+      } else if (scope === "occurrence" && initialData.repeatInterval === "") {
         keysToUse = eventSingleChange;
       } else if (scope === "occurrence") {
         keysToUse = eventOccurrenceChange;
@@ -166,23 +168,31 @@ const EditEvent = ({ eventId, date }) => {
 
       const filtered = {};
 
+      console.log(form);
+
       for (const key of keysToUse) {
         console.log(key);
         console.log(form[key]);
         console.log(initialData[key]);
+        console.log(form[key] !== initialData[key]);
+        console.log(key in form);
 
         if (key in form && form[key] !== initialData[key]) {
+          console.log("pridavam", key);
           filtered[key] = form[key];
         }
       }
 
+      console.log(filtered);
+
       const entries = {
         ...filtered,
-        id: form.id,
-        date: form.date,
+        id: initialData.id,
+        date: initialData.date,
         previousMainImage: initialData.previousMainImage,
-        repeatInterval: initialData.repeatInterval,
         eventDayId: initialData.eventDayId,
+        repeatInterval:
+          initialData.repeatInterval === "" ? 0 : initialData.repeatInterval,
       };
       console.log(entries);
       console.log(form);
@@ -223,7 +233,7 @@ const EditEvent = ({ eventId, date }) => {
       if (!res.ok) throw new Error(data.message || "Chyba pri editovaní");
 
       setSuccess("Akcia bola úspešne upravená.");
-      navigate(`/event/${eventId}/${form.date}`);
+      navigate(`/event/${eventId}/${initialData.date}`);
     } catch (err) {
       setError(err.message);
       throw err; // Rethrow the error to be caught by the parent component
@@ -236,7 +246,7 @@ const EditEvent = ({ eventId, date }) => {
         <EventForm
           initialData={initialData}
           onSubmit={handleEdit}
-          heading="Upraviť akciu"
+          heading="Upraviť event"
           submitLabel="Uložiť zmeny"
           successMessage={success}
           scope={scope}

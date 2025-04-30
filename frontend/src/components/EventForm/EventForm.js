@@ -1,12 +1,21 @@
-import { useState, useRef, useEffect } from "react";
-import { Form, Button, Alert } from "react-bootstrap";
+// POZOR: Tento refaktor predpokladá, že komponenty ako CategoryMultiSelect, ModeratorSelector atď. podporujú props `value` a `onChange`.
+
+import { useEffect, useRef, useState } from "react";
+import { Form, Button } from "react-bootstrap";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { eventFormSchema } from "../../validation/schemas";
 import CategoryMultiSelect from "../CategoryMultiSelect/CategoryMultiSelect";
 import ImageUploader from "../ImageUploader/ImageUploader";
 import ModeratorSelector from "../ModeratorSelector/ModeratorSelector";
+import Toast from "../Toast/Toast";
 import styles from "./EventForm.module.scss";
 import { Link } from "react-router-dom";
-import Toast from "../Toast/Toast";
-import { isEmpty } from "../../utils/eventUtils";
+import {
+  ValidateCheck,
+  ValidatedControl,
+} from "../ValidateComponents/ValidateComponents";
+import { getTodayLocalDate } from "../../utils/dateUtils";
 
 const EventForm = ({
   initialData = null,
@@ -17,54 +26,51 @@ const EventForm = ({
   children,
   scope = null,
 }) => {
-  const defaultDataForm = {
-    title: "",
-    description: "",
-    startDate: "",
-    startTime: "",
-    endTime: "",
-    repeatUntil: "",
-    repeatInterval: 0,
-    repeatDays: {},
-    repeat: false,
-    allowRecurringAttendance: false,
-    maxAttendancesPerCycle: "",
-    location: "",
-    capacity: "",
-    joinDaysBeforeStart: "",
-    categoryIds: [],
-    moderators: [],
-    mainImage: null,
-    gallery: [],
-    deletedGallery: [],
-    mainImageChanged: false,
-  };
+  const mainImageRef = useRef();
+  const galleryRef = useRef();
+  const [daysFromAPI, setDaysFromAPI] = useState([]);
+  const [success, setSuccess] = useState(null);
+  const [error, setError] = useState(null);
 
-  const [form, setForm] = useState(defaultDataForm);
+  const {
+    register,
+    handleSubmit,
+    setValue,
+    getValues,
+    watch,
+    formState: { errors },
+    reset,
+  } = useForm({
+    resolver: zodResolver(eventFormSchema),
+    defaultValues: {
+      title: "",
+      description: "",
+      startDate: "",
+      startTime: "",
+      endTime: "",
+      repeat: false,
+      repeatUntil: "",
+      repeatInterval: "",
+      repeatDays: {},
+      allowRecurringAttendance: false,
+      attendancyLimit: "",
+      location: "",
+      capacity: "",
+      joinDaysBeforeStart: "",
+      categoryIds: [],
+      moderators: [],
+      mainImage: null,
+      gallery: [],
+      deletedGallery: [],
+      date: "",
+    },
+  });
 
   useEffect(() => {
     if (initialData) {
-      const cleanedData = {};
-
-      for (const key in initialData) {
-        if (Object.prototype.hasOwnProperty.call(initialData, key)) {
-          cleanedData[key] = isEmpty(initialData[key]) ? "" : initialData[key];
-        }
-      }
-
-      console.log(cleanedData);
-
-      setForm(cleanedData);
+      reset(initialData);
     }
-  }, [initialData]);
-
-  console.log(form);
-
-  const [daysFromAPI, setDaysFromAPI] = useState([]);
-  const [error, setError] = useState(null);
-  const [success, setSuccess] = useState(null);
-  const mainImageRef = useRef();
-  const galleryRef = useRef();
+  }, [initialData, reset]);
 
   useEffect(() => {
     fetch("/api/days")
@@ -73,90 +79,53 @@ const EventForm = ({
       .catch((err) => console.error("Chyba pri načítaní dní", err));
   }, []);
 
-  const handleChange = (e) => {
-    const { name, value, type, checked } = e.target;
-    if (type === "checkbox" && name === "repeat" && !checked) {
-      setForm((prev) => ({
-        ...prev,
-        repeat: checked,
-        repeatDays: {},
-        repeatInterval: 0,
-        repeatUntil: "",
-        allowRecurringAttendance: false,
-        maxAttendancesPerCycle: "",
-      }));
-      return;
-    }
-    setForm((prev) => ({
-      ...prev,
-      [name]: type === "checkbox" ? checked : value,
-    }));
-  };
+  const repeat = watch("repeat");
+  const allowRecurringAttendance = watch("allowRecurringAttendance");
+  const repeatInterval = watch("repeatInterval") || "";
+  const repeatDays = watch("repeatDays") || {};
+  const categoryIds = watch("categoryIds");
+  const moderators = watch("moderators");
+  const mainImage = watch("mainImage");
+  const gallery = watch("gallery");
+  const startDate = watch("startDate");
+  const { id, date } = getValues(); // alebo const values = getValues()
+  console.log(date);
+  console.log(id);
 
-  const handleCheckboxChange = (week, dayId) => {
-    setForm((prev) => {
-      const current = prev.repeatDays[week] || [];
-      const updated = current.includes(dayId)
-        ? current.filter((d) => d !== dayId)
-        : [...current, dayId];
-      return {
-        ...prev,
-        repeatDays: {
-          ...prev.repeatDays,
-          [week]: updated,
-        },
-      };
+  const today = getTodayLocalDate();
+  const minDate = startDate && startDate > today ? startDate : today;
+
+  const handleRepeatDayToggle = (week, dayId) => {
+    const currentWeekDays = repeatDays[week] || [];
+    const updatedDays = currentWeekDays.includes(dayId)
+      ? currentWeekDays.filter((id) => id !== dayId)
+      : [...currentWeekDays, dayId];
+
+    setValue("repeatDays", {
+      ...repeatDays,
+      [week]: updatedDays,
     });
   };
 
-  const validateForm = () => {
-    if (!form.startDate) return "Dátum je povinný.";
+  // const all = watch();
+  // console.log(all);
 
-    console.log(form.startTime, form.endTime);
-
-    if (form.endTime && form.startTime && form.startTime >= form.endTime) {
-      return "Čas začiatku musí byť pred časom konca.";
-    }
-
-    if (form.repeat) {
-      if (!form.startTime)
-        return "Pri opakovaní eventu je potrebné zadať aj čas začiatku aj konca.";
-
-      if (form.repeatUntil && form.repeatUntil < form.startDate)
-        return "Opakovanie nemôže končiť pred začiatkom eventu.";
-    }
-
-    return null;
-  };
-
-  console.log(form.repeatUntil);
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setError(null);
-    setSuccess(null);
-
-    const validationError = validateForm();
-    if (validationError) {
-      setError(validationError);
-      return;
-    }
-
+  const onInternalSubmit = async (data) => {
     try {
-      const cleanedForm = {
-        ...form,
-        moderators: form.moderators.map((mod) => ({ ...mod, id: mod.id })),
+      console.log(data);
+      const payload = {
+        ...data,
+        moderators: data.moderators.map((mod) => ({ ...mod, id: mod.id })),
         startDateTime:
-          form.startDate && form.startTime
-            ? `${form.startDate}T${form.startTime}`
+          data.startDate && data.startTime
+            ? `${data.startDate}T${data.startTime}`
             : null,
         endDateTime:
-          form.startDate && form.endTime
-            ? `${form.startDate}T${form.endTime}`
+          data.startDate && data.endTime
+            ? `${data.startDate}T${data.endTime}`
             : null,
       };
-
-      await onSubmit(cleanedForm);
+      await onSubmit(payload);
       setSuccess(successMessage);
       mainImageRef.current?.clear();
       galleryRef.current?.clear();
@@ -165,84 +134,70 @@ const EventForm = ({
     }
   };
 
+  const onError = (errors) => {
+    console.warn("CHYBY VO FORMULÁRI:", errors);
+  };
+
+  const all = watch();
+  console.log(all);
+
   return (
     <div className={styles.eventForm}>
       <h4 className={styles.heading}>{heading}</h4>
+      {error && <Toast error={error} onClose={() => setError(null)} />}
+      {success && <Toast success={success} onClose={() => setSuccess(null)} />}
 
-      {error && (
-        <Toast
-          error={error}
-          onClose={() => setError("")} // <<< Parent ovláda, kedy zmizne
-        />
-      )}
-
-      {children}
-
-      <Form onSubmit={handleSubmit}>
+      <Form onSubmit={handleSubmit(onInternalSubmit, onError)} noValidate>
         {/* Názov */}
-        <Form.Group className="mb-3">
-          <Form.Label>Názov</Form.Label>
-          <Form.Control
-            type="text"
-            name="title"
-            value={form.title}
-            onChange={handleChange}
-            required
-          />
-        </Form.Group>
+        {children}
+        <ValidatedControl
+          type="text"
+          name="title"
+          label="Názov"
+          register={register}
+          errors={errors}
+        />
 
         {/* Popis */}
-        <Form.Group className="mb-3">
-          <Form.Label>Popis</Form.Label>
-          <Form.Control
-            as="textarea"
-            name="description"
-            rows={3}
-            value={form.description}
-            onChange={handleChange}
-          />
-        </Form.Group>
+        <ValidatedControl
+          rows={3}
+          as="textarea"
+          name="description"
+          label="Popis"
+          register={register}
+          errors={errors}
+        />
 
         {/* Dátum */}
-        {console.log(form.startDate)}
         {(!scope || scope === "occurrence") && (
-          <Form.Group className="mb-3">
-            <Form.Label>
-              {!form.repeat || scope === "occurrence"
+          <ValidatedControl
+            type="date"
+            name="startDate"
+            label={
+              !repeat || scope === "occurrence"
                 ? "Dátum"
-                : "V ktorom týždni začať interval"}
-            </Form.Label>
-            <Form.Control
-              type="date"
-              name="startDate"
-              value={form.startDate}
-              onChange={handleChange}
-              required
-            />
-          </Form.Group>
+                : "V ktorom týždni začať interval"
+            }
+            register={register}
+            errors={errors}
+          />
         )}
 
         {/* Časy */}
-        <Form.Group className="mb-3">
-          <Form.Label>Čas začiatku</Form.Label>
-          <Form.Control
-            type="time"
-            name="startTime"
-            value={form.startTime}
-            onChange={handleChange}
-          />
-        </Form.Group>
-
-        <Form.Group className="mb-3">
-          <Form.Label>Čas konca</Form.Label>
-          <Form.Control
-            type="time"
-            name="endTime"
-            min={form.startTime}
-            value={form.endTime}
-            onChange={handleChange}
-          />
-        </Form.Group>
+        <ValidatedControl
+          type="time"
+          name="startTime"
+          label="Čas začiatku"
+          register={register}
+          errors={errors}
+        />
+        <ValidatedControl
+          type="time"
+          name="endTime"
+          label="Čas konca"
+          register={register}
+          errors={errors}
+        />
 
         {/* Opakovanie */}
         {(scope === "event" || !scope) && scope !== "occurrence" && (
@@ -251,40 +206,45 @@ const EventForm = ({
               <Form.Check
                 type="checkbox"
                 label="Opakovať event"
-                name="repeat"
-                checked={form.repeat}
-                onChange={handleChange}
                 disabled={scope === "event"}
+                {...register("repeat", {
+                  onChange: (e) => {
+                    const checked = e.target.checked;
+
+                    if (!checked) {
+                      setValue("repeatDays", {});
+                      setValue("repeatInterval", "");
+                      setValue("repeatUntil", "");
+                      setValue("allowRecurringAttendance", false);
+                      setValue("attendancyLimit", "");
+                    }
+                  },
+                })}
               />
             </Form.Group>
 
-            {form.repeat && (
+            {repeat && (
               <>
-                <Form.Group className="mb-3">
-                  <Form.Label>Opakovať do</Form.Label>
-                  <Form.Control
-                    type="date"
-                    name="repeatUntil"
-                    min={form.startDate}
-                    value={form.repeatUntil}
-                    onChange={handleChange}
-                  />
-                </Form.Group>
+                <ValidatedControl
+                  type="date"
+                  name="repeatUntil"
+                  label="Opakovať do"
+                  register={register}
+                  errors={errors}
+                  min={minDate}
+                />
 
-                <Form.Group className="mb-3">
-                  <Form.Label>Interval opakovania (v týždňoch)</Form.Label>
-                  <Form.Control
-                    type="number"
-                    name="repeatInterval"
-                    min={1}
-                    value={form.repeatInterval}
-                    onChange={handleChange}
-                    required
-                    disabled={scope === "event"}
-                  />
-                </Form.Group>
+                <ValidatedControl
+                  type="number"
+                  name="repeatInterval"
+                  label="Interval opakovania (v týždňoch)"
+                  register={register}
+                  errors={errors}
+                  disabled={scope === "event"}
+                  min={1}
+                />
 
-                {Array.from({ length: form.repeatInterval }, (_, week) => (
+                {Array.from({ length: repeatInterval }, (_, week) => (
                   <Form.Group key={week} className="mb-3">
                     <Form.Label>Dni v týždni – Týždeň {week + 1}</Form.Label>
                     <div className={styles.weekdayCheckboxes}>
@@ -294,92 +254,70 @@ const EventForm = ({
                           inline
                           label={day.name}
                           type="checkbox"
-                          checked={
-                            form.repeatDays[week]?.includes(day.id) || false
-                          }
-                          onChange={() => handleCheckboxChange(week, day.id)}
+                          checked={repeatDays[week]?.includes(day.id) || false}
+                          onChange={() => handleRepeatDayToggle(week, day.id)}
                         />
                       ))}
                     </div>
                   </Form.Group>
                 ))}
 
-                <Form.Group className="mb-3">
-                  <Form.Check
-                    type="checkbox"
-                    label="Povoliť pravidelnú účasť"
-                    name="allowRecurringAttendance"
-                    checked={form.allowRecurringAttendance}
-                    onChange={handleChange}
-                    disabled={scope != null}
-                  />
-                </Form.Group>
+                <ValidateCheck
+                  type="checkbox"
+                  name="allowRecurringAttendance"
+                  label="Povoliť pravidelnú účasť"
+                  register={register}
+                  errors={errors}
+                  disabled={scope != null}
+                />
 
-                {form.allowRecurringAttendance && (
-                  <Form.Group className="mb-3">
-                    <Form.Label>
-                      Max počet dní pre pravidelné prihlásenie na jeden cyklus
-                    </Form.Label>
-                    <Form.Control
-                      type="number"
-                      name="maxAttendancesPerCycle"
-                      value={form.maxAttendancesPerCycle}
-                      onChange={handleChange}
-                    />
-                  </Form.Group>
+                {allowRecurringAttendance && (
+                  <ValidatedControl
+                    type="number"
+                    name="attendancyLimit"
+                    label="Max počet dní pre pravidelné prihlásenie na jeden cyklus"
+                    register={register}
+                    errors={errors}
+                  />
                 )}
               </>
             )}
           </>
         )}
 
-        {/* Miesto */}
-        <Form.Group className="mb-3">
-          <Form.Label>Miesto</Form.Label>
-          <Form.Control
-            type="text"
-            name="location"
-            value={form.location}
-            onChange={handleChange}
-          />
-        </Form.Group>
+        <ValidatedControl
+          type="text"
+          name="location"
+          label="Miesto"
+          register={register}
+          errors={errors}
+        />
+        <ValidatedControl
+          type="number"
+          name="capacity"
+          label="Kapacita"
+          register={register}
+          errors={errors}
+        />
 
         {/* Kapacita */}
-        <Form.Group className="mb-3">
-          <Form.Label>Kapacita</Form.Label>
-          <Form.Control
-            type="number"
-            name="capacity"
-            value={form.capacity}
-            onChange={handleChange}
-            min="1"
-            step="1"
-          />
-        </Form.Group>
-
-        {/* Dni pred začiatkom */}
-        <Form.Group className="mb-3">
-          <Form.Label>Koľko dní pred začiatkom sa možno prihlásiť</Form.Label>
-          <Form.Control
-            type="number"
-            name="joinDaysBeforeStart"
-            min="1"
-            value={form.joinDaysBeforeStart}
-            onChange={handleChange}
-          />
-        </Form.Group>
+        <ValidatedControl
+          type="number"
+          name="joinDaysBeforeStart"
+          label="Koľko dní pred začiatkom sa možno prihlásiť"
+          register={register}
+          errors={errors}
+        />
 
         {/* Kategórie */}
         {(scope === "event" ||
           !scope ||
-          (scope === "occurrence" && form.repeatInterval === 0)) && (
+          (scope === "occurrence" && repeatInterval === 0)) && (
           <Form.Group className="mb-4">
             <Form.Label>Kategórie</Form.Label>
             <CategoryMultiSelect
-              selectedIds={form.categoryIds}
-              onChange={(ids) =>
-                setForm((prev) => ({ ...prev, categoryIds: ids }))
-              }
+              selectedIds={categoryIds}
+              onChange={(ids) => setValue("categoryIds", ids)}
             />
           </Form.Group>
         )}
@@ -389,47 +327,39 @@ const EventForm = ({
           <Form.Group className="mb-3">
             <Form.Label>Moderátori</Form.Label>
             <ModeratorSelector
-              selected={form.moderators}
-              onChange={(ids) =>
-                setForm((prev) => ({ ...prev, moderators: ids }))
-              }
+              selected={moderators}
+              onChange={(ids) => setValue("moderators", ids)}
             />
           </Form.Group>
         )}
 
         {/* Obrázky */}
         {(scope === "event" ||
-          (scope === "occurrence" && form.repeatInterval === 0) ||
+          (scope === "occurrence" && repeatInterval === 0) ||
           !scope) && (
           <>
-            {console.log(form.mainImage?.length)}
+            {console.log(mainImage?.length)}
             <ImageUploader
               ref={mainImageRef}
               label="Profilová fotka (nepovinná)"
               onChange={({ files }) => {
-                setForm((prev) => ({
-                  ...prev,
-                  mainImage: files,
-                  mainImageChanged: true,
-                }));
+                setValue("mainImage", files);
+                setValue("mainImageChanged", true);
               }}
               multiple={false}
-              existing={form.mainImage?.length > 0 ? [`${form.mainImage}`] : []}
+              existing={mainImage?.length > 0 ? [`${mainImage}`] : []}
             />
 
             <ImageUploader
               ref={galleryRef}
               label="Galéria (max 5 fotiek)"
-              onChange={({ files, deleted }) =>
-                setForm((prev) => ({
-                  ...prev,
-                  gallery: files,
-                  deletedGallery: deleted,
-                }))
-              }
+              onChange={({ files, deleted }) => {
+                setValue("gallery", files);
+                setValue("deletedGallery", deleted);
+              }}
               multiple
               max={5}
-              existing={form.gallery?.map((g) => `${g.url}`) || []}
+              existing={gallery?.map((g) => `${g.url}`) || []}
             />
           </>
         )}
@@ -439,7 +369,7 @@ const EventForm = ({
         </Button>
 
         <Link
-          to={form?.id && form?.date ? `/event/${form.id}/${form.date}` : "/"}
+          to={id && date ? `/event/${id}/${date}` : "/"}
           className="text-decoration-none"
         >
           <Button type="button" variant="danger" className="w-100 mt-2">

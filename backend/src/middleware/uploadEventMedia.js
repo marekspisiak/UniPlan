@@ -24,7 +24,6 @@ const storage = multer.diskStorage({
     }
   },
 });
-
 const fileFilter = (req, file, cb) => {
   if (file.mimetype.startsWith("image/")) {
     cb(null, true);
@@ -32,11 +31,10 @@ const fileFilter = (req, file, cb) => {
     cb(new Error("Iba obrazky su povolene."), false);
   }
 };
-
 export const uploadEventMedia = multer({
   storage,
   fileFilter,
-  limits: { fileSize: 5 * 1024 * 1024 }, // max 5MB na súbor
+  limits: { fileSize: 5 * 1024 * 1024 },
 }).fields([
   { name: "mainImage", maxCount: 1 },
   { name: "gallery", maxCount: 5 },

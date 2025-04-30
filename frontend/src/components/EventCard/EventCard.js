@@ -54,7 +54,12 @@ const EventCard = ({ event, refetch }) => {
             {capacity && (
               <div className={styles.capacity}>
                 <b className="me-1">👥</b>
-                {participants?.length}/{capacity}
+                {participants?.length
+                  ? participants?.length
+                  : capacity
+                  ? 0
+                  : null}
+                /{capacity}
               </div>
             )}
           </div>

@@ -1,38 +1,43 @@
-import { useState } from "react";
-import { Form, Button, Alert } from "react-bootstrap";
+import { Form, Button } from "react-bootstrap";
 import { useNavigate, Link } from "react-router-dom";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { loginSchema } from "../../validation/schemas";
 import { useAuth } from "../../context/AuthContext";
 import styles from "./LoginForm.module.scss";
 import Toast from "../Toast/Toast";
+import { useState } from "react";
 
 const LoginForm = () => {
-  const [form, setForm] = useState({ email: "", password: "" });
-  const [error, setError] = useState(null);
   const { loadUser } = useAuth();
   const navigate = useNavigate();
+  const [error, setError] = useState(null);
 
-  const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
-  };
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm({
+    resolver: zodResolver(loginSchema),
+  });
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const onSubmit = async (data) => {
     setError(null);
 
     try {
       const res = await fetch("/api/auth/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(form),
+        body: JSON.stringify(data),
       });
 
-      const data = await res.json();
+      const result = await res.json();
 
       if (!res.ok) {
-        throw new Error(data.message || "Prihlásenie zlyhalo");
+        throw new Error(result.message || "Prihlásenie zlyhalo");
       }
 
-      localStorage.setItem("token", data.token);
+      localStorage.setItem("token", result.token);
       const userData = await loadUser();
 
       if (!userData?.emailVerified) {
@@ -46,34 +51,31 @@ const LoginForm = () => {
   };
 
   return (
-    <Form onSubmit={handleSubmit}>
-      {error && (
-        <Toast
-          error={error}
-          onClose={() => setError("")} // <<< Parent ovláda, kedy zmizne
-        />
-      )}
+    <Form onSubmit={handleSubmit(onSubmit)} noValidate>
+      {error && <Toast error={error} onClose={() => setError(null)} />}
 
       <Form.Group className="mb-3" controlId="formEmail">
         <Form.Label>Email</Form.Label>
         <Form.Control
           type="email"
-          name="email"
-          value={form.email}
-          onChange={handleChange}
-          required
+          {...register("email")}
+          isInvalid={!!errors.email}
         />
+        <Form.Control.Feedback type="invalid">
+          {errors.email?.message}
+        </Form.Control.Feedback>
       </Form.Group>
 
       <Form.Group className="mb-4" controlId="formPassword">
         <Form.Label>Heslo</Form.Label>
         <Form.Control
           type="password"
-          name="password"
-          value={form.password}
-          onChange={handleChange}
-          required
+          {...register("password")}
+          isInvalid={!!errors.password}
         />
+        <Form.Control.Feedback type="invalid">
+          {errors.password?.message}
+        </Form.Control.Feedback>
       </Form.Group>
 
       <Button variant="primary" type="submit" className="w-100">

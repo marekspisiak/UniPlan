@@ -68,7 +68,7 @@ const EventDetail = ({ eventId: parEventId, date: parDate, refetch }) => {
       }
 
       setMessage("Event bol úspešne vymazaný.");
-      refetch();
+      fetchEvent();
       // napríklad refreshneš zoznam eventov alebo redirect
     } catch (error) {
       setError(error.message || "Chyba pri mazaní eventu.");
@@ -104,6 +104,7 @@ const EventDetail = ({ eventId: parEventId, date: parDate, refetch }) => {
   const fetchEvent = async () => {
     try {
       setLoading(true);
+      console.log(date);
       const res = await fetch(`/api/events/${eventId}?date=${date}`, {
         headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
       });
@@ -176,7 +177,7 @@ const EventDetail = ({ eventId: parEventId, date: parDate, refetch }) => {
   if (loading || !event)
     return (
       <Container
-        className="d-flex justify-content-center align-items-center"
+        className="d-flex justify-content-center align-items-center w-100"
         style={{ minHeight: "50vh" }}
       >
         <Spinner animation="border" />
