@@ -284,6 +284,7 @@ const EventForm = ({
             )}
           </>
         )}
+        {console.log(scope)}
 
         <ValidatedControl
           type="text"
@@ -312,7 +313,7 @@ const EventForm = ({
         {/* Kategórie */}
         {(scope === "event" ||
           !scope ||
-          (scope === "occurrence" && repeatInterval === 0)) && (
+          (scope === "occurrence" && repeatInterval === "")) && (
           <Form.Group className="mb-4">
             <Form.Label>Kategórie</Form.Label>
             <CategoryMultiSelect
@@ -335,7 +336,7 @@ const EventForm = ({
 
         {/* Obrázky */}
         {(scope === "event" ||
-          (scope === "occurrence" && repeatInterval === 0) ||
+          (scope === "occurrence" && repeatInterval === "") ||
           !scope) && (
           <>
             {console.log(mainImage?.length)}

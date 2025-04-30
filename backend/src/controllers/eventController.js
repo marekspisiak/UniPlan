@@ -214,7 +214,7 @@ export const getEventCategories = async (req, res) => {
     res.status(500).json({ message: "Chyba servera." });
   }
 };
-let neviem = 0;
+
 const doesEventMatchFilters = (event, filters) => {
   const {
     search,
@@ -653,7 +653,14 @@ export const getAllEvents = async (req, res) => {
           include: {
             eventChange: true,
             eventDay: { include: { eventChange: true } },
-            participants: true,
+            participants: {
+              select: {
+                id: true,
+                firstName: true,
+                lastName: true,
+                email: true,
+              },
+            },
           },
         },
       },
@@ -903,14 +910,28 @@ export const getEventByDate = async (req, res) => {
         organizer: true,
         moderators: {
           include: {
-            user: true,
+            user: {
+              select: {
+                id: true,
+                firstName: true,
+                lastName: true,
+                email: true,
+              },
+            },
           },
         },
         eventOccurrences: {
           where: { date: targetDate },
           include: {
             eventChange: true,
-            participants: true, // 👈 toto je `occurrenceParticipants`
+            participants: {
+              select: {
+                id: true,
+                firstName: true,
+                lastName: true,
+                email: true,
+              },
+            }, // 👈 toto je `occurrenceParticipants`
           },
         },
       },
@@ -963,6 +984,8 @@ export const getEventByDate = async (req, res) => {
       participants: eventDay?.users || [],
     });
   } catch (err) {
+    console.log(err.message);
+
     return res.status(500).json({ message: "Nepodarilo sa načítať event" });
   }
 };

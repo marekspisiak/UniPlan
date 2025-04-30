@@ -25,7 +25,6 @@ export const shouldCreateOccurrence = (event, nextDate) => {
 };
 
 export const createOccurrenceIfNeeded = async (eventId) => {
-  return null;
   const event = await prisma.event.findUnique({
     where: { id: eventId },
     include: {
@@ -118,10 +117,11 @@ export async function createOccurrence(
             event: true,
           },
         });
+        console.log(newOccurrence.event);
+
         return updatedOccurrence;
       }
     }
-
     return newOccurrence;
   } catch (error) {
     console.error("Failed to create occurrence:", error);

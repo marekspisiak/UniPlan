@@ -104,7 +104,7 @@ export const getRoomMessages = async (req, res) => {
     const messages = await prisma.message.findMany({
       where: whereClause,
       include: {
-        user: true, // aj údaje o používateľovi
+        user: { select: { id: true, firstName: true, lastName: true } }, // aj údaje o používateľovi
       },
       orderBy: { createdAt: "desc" }, // najnovšie prvé
       take: parseInt(limit) || 20, // štandardne 20

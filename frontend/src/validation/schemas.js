@@ -6,7 +6,15 @@ export const registerSchema = z.object({
   email: z
     .string()
     .email("Neplatný email")
-    .endsWith("uniza.sk", "Použi školský email"),
+    .refine(
+      (email) => {
+        const domain = email.split("@")[1]?.toLowerCase();
+        return domain === "uniza.sk" || domain?.endsWith(".uniza.sk");
+      },
+      {
+        message: "Použi školský email (uniza.sk)",
+      }
+    ),
   password: z.string().min(8, "Heslo musí mať aspoň 8 znakov"),
 });
 
@@ -14,7 +22,15 @@ export const loginSchema = z.object({
   email: z
     .string()
     .email("Neplatný email")
-    .endsWith("uniza.sk", "Použi školský email"),
+    .refine(
+      (email) => {
+        const domain = email.split("@")[1]?.toLowerCase();
+        return domain === "uniza.sk" || domain?.endsWith(".uniza.sk");
+      },
+      {
+        message: "Použi školský email (uniza.sk)",
+      }
+    ),
   password: z.string().min(8, "Heslo musí mať aspoň 8 znakov"),
 });
 
@@ -147,7 +163,15 @@ export const getEditProfileSchema = (originalEmail) =>
       email: z
         .string()
         .email("Neplatný email")
-        .endsWith("uniza.sk", "Použi školský email"),
+        .refine(
+          (email) => {
+            const domain = email.split("@")[1]?.toLowerCase();
+            return domain === "uniza.sk" || domain?.endsWith(".uniza.sk");
+          },
+          {
+            message: "Použi školský email (uniza.sk)",
+          }
+        ),
       confirmEmail: z.string().optional(),
       interests: z.array(z.number()),
       mainImage: z.any().optional(),

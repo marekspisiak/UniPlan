@@ -179,7 +179,7 @@ export const searchUsers = async (req, res) => {
       firstName: user.firstName,
       lastName: user.lastName,
       email: user.email,
-      profileImageUrl: `http://localhost:5000/uploads/profile/user_${user.id}.png`,
+      profileImageUrl: `/uploads/profile/user_${user.id}.png`,
     }));
 
     res.json(usersWithImage);
