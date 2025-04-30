@@ -1,7 +1,7 @@
 import e from "express";
 import prisma from "../../prisma/client.js";
 import path from "path";
-import fs from "fs"; // a ak ešte nemáš, aj fs budeš potrebovať
+import { promises as fs } from "fs";
 import { toArray, applyChangesData, isEmpty } from "../utils/helpers.js"; // importuj túto funkciu z utils
 import {
   createOccurrenceIfNeeded,
@@ -1296,76 +1296,63 @@ async function updateEventImages({
   previousMainImage,
   eventId,
 }) {
-  // 1. Vymaž starý hlavný obrázok ak bol zmenený a nový nie je prítomný
-  if (mainImageChanged && !files?.mainImage?.[0] && previousMainImage) {
-    const oldPath = path.join(".", previousMainImage);
-    try {
-      if (fs.existsSync(oldPath) && fs.statSync(oldPath).isFile()) {
-        fs.unlinkSync(oldPath);
-      }
-    } catch (err) {
-      console.warn("⚠️ Chyba pri mazaní hlavného obrázka:", err.message);
-    }
+  const deletedImageUrls = [];
 
+  // 1. Ak bol hlavný obrázok zmenený a nový nie je prítomný, nastav null
+  if (mainImageChanged && !files?.mainImage?.[0] && previousMainImage) {
     await tx.event.update({
       where: { id: eventId },
       data: { mainImage: null },
     });
+
+    deletedImageUrls.push(previousMainImage);
   }
 
   // 2. Nastavenie nového hlavného obrázka (ak je)
   if (mainImageChanged && files?.mainImage?.[0]) {
     const mainImageUrl = `/uploads/events/${files.mainImage[0].filename}`;
+
     await tx.event.update({
       where: { id: eventId },
       data: { mainImage: mainImageUrl },
     });
 
-    // Zmaž predchádzajúci obrázok, ak existuje a je iný
-    if (
-      previousMainImage &&
-      previousMainImage !== mainImageUrl &&
-      fs.existsSync(path.join(".", previousMainImage)) &&
-      fs.statSync(path.join(".", previousMainImage)).isFile()
-    ) {
-      fs.unlinkSync(path.join(".", previousMainImage));
+    if (previousMainImage && previousMainImage !== mainImageUrl) {
+      deletedImageUrls.push(previousMainImage);
     }
   }
 
-  // 2.5 Vymazanie označených galérií (DB aj súbory)
+  // 2.5 Vymazanie galérie – iba tie, ktoré reálne patria eventu
   if (Array.isArray(deletedGallery) && deletedGallery.length > 0) {
     const strippedUrls = deletedGallery.map((fullUrl) => {
       try {
         const url = new URL(fullUrl);
-        return url.pathname; // napr. "/uploads/events/obrazok.png"
+        return url.pathname;
       } catch {
-        return fullUrl; // fallback
+        return fullUrl;
       }
     });
 
-    // 🧹 Vymazanie súborov
-    for (const filePath of strippedUrls) {
-      const absolute = path.join(".", filePath);
-      try {
-        if (fs.existsSync(absolute) && fs.statSync(absolute).isFile()) {
-          fs.unlinkSync(absolute);
-        }
-      } catch (err) {
-        console.warn(
-          "⚠️ Nepodarilo sa zmazať galérijný súbor:",
-          filePath,
-          err.message
-        );
-      }
-    }
-
-    // 🧹 Vymazanie z databázy
-    await tx.eventImage.deleteMany({
+    const existingImages = await tx.eventImage.findMany({
       where: {
         eventId,
         url: { in: strippedUrls },
       },
+      select: { url: true },
     });
+
+    const confirmedUrls = existingImages.map((img) => img.url);
+
+    if (confirmedUrls.length > 0) {
+      await tx.eventImage.deleteMany({
+        where: {
+          eventId,
+          url: { in: confirmedUrls },
+        },
+      });
+
+      deletedImageUrls.push(...confirmedUrls);
+    }
   }
 
   // 3. Pridanie novej galérie
@@ -1383,6 +1370,9 @@ async function updateEventImages({
       },
     });
   }
+
+  // 4. Návrat: všetky cesty obrázkov, ktoré môžeš bezpečne zmazať zo súborového systému
+  return deletedImageUrls;
 }
 
 const resolveInt = (value) => {
@@ -1394,6 +1384,13 @@ const resolveInt = (value) => {
   }
   return parseInt(value);
 };
+
+class AppError extends Error {
+  constructor(message, statusCode = 400) {
+    super(message);
+    this.statusCode = statusCode;
+  }
+}
 
 export const editEvent = async (req, res) => {
   try {
@@ -1431,6 +1428,7 @@ export const editEvent = async (req, res) => {
     const categoryIds = toArray(req.body?.categoryIds);
 
     const rawGallery = req.body?.deletedGallery;
+    let deletedImageUrls = [];
 
     const deletedGallery =
       typeof rawGallery === "string"
@@ -1474,10 +1472,9 @@ export const editEvent = async (req, res) => {
         targetDate
       );
     }
-    console.log(scope);
     await prisma.$transaction(async (tx) => {
       if (scope === "event") {
-        await updateEventImages({
+        deletedImageUrls = await updateEventImages({
           tx,
           files: req.files,
           mainImageChanged: req.body.mainImageChanged === "true",
@@ -1625,7 +1622,7 @@ export const editEvent = async (req, res) => {
 
       if (scope === "occurrence") {
         if (parseInt(repeatInterval) === 0) {
-          await updateEventImages({
+          deletedImageUrls = await updateEventImages({
             tx,
             files: req.files,
             mainImageChanged: req.body.mainImageChanged === "true",
@@ -1669,24 +1666,20 @@ export const editEvent = async (req, res) => {
           });
 
           if (!event) {
-            return res.status(404).json({ message: "Event neexistuje." });
+            throw new AppError("Event neexistuje.", 400);
           }
           const dayExists = event.eventDays.some(
             (eventDay) => eventDay.id === eventDayId
           );
 
           if (!dayExists) {
-            return res
-              .status(400)
-              .json({ message: "Event day nepatrí k tomuto eventu." });
+            throw new AppError("NEvent day nepatrí k tomuto eventu.", 400);
           }
 
           // Validácia dátumu (napr. či patrí do cyklu)
           const validDate = getNextEventDate(event, req.body.date);
           if (!validDate) {
-            return res
-              .status(400)
-              .json({ message: "Neplatný dátum pre tento event." });
+            throw new AppError("Neplatný dátum pre tento event.", 400);
           }
 
           occurrence = await createOccurrence(
@@ -1737,10 +1730,21 @@ export const editEvent = async (req, res) => {
           return res.json({ message: "Úspešne editované" });
         }
       }
-      return res.status(400).json({ message: "Neznámy scope." });
+      throw new AppError("Neznámy scope", 400);
     });
+    for (const relPath of deletedImageUrls) {
+      const absPath = path.join(".", relPath);
+      fs.unlink(absPath).catch((err) => {
+        console.warn("⚠️ Nepodarilo sa zmazať:", absPath, err.message);
+      });
+    }
+
+    console.log("tu sa dostanem vasak ");
   } catch (err) {
-    return res.status(500).json({ message: "Nepodarilo sa editovať event." });
+    const message = err.message || "Nepodarilo sa editovať event";
+    const status = err.statusCode || 500;
+
+    return res.status(status).json(message);
   }
 };
 
