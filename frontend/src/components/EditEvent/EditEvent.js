@@ -222,6 +222,8 @@ const EditEvent = ({ eventId, date }) => {
           value.forEach((img) => formData.append("gallery", img));
         } else if (key === "mainImage" && value) {
           formData.append("mainImage", value[0]);
+        } else if (key === "deletedGallery") {
+          value.forEach((img) => formData.append("deletedGallery", img));
         } else {
           formData.append(key, value);
         }

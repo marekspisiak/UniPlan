@@ -32,6 +32,7 @@ const EventForm = ({
   const [success, setSuccess] = useState(null);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [mainImageChanged, setMainImageChanged] = useState(false);
 
   const {
     register,
@@ -64,7 +65,6 @@ const EventForm = ({
       gallery: [],
       deletedGallery: [],
       date: "",
-      mainiamgeChanged: false,
     },
   });
 
@@ -109,9 +109,6 @@ const EventForm = ({
     });
   };
 
-  // const all = watch();
-  // console.log(all);
-
   const onInternalSubmit = async (data) => {
     try {
       console.log(data);
@@ -135,11 +132,13 @@ const EventForm = ({
                 : "00:01"
             ).toISOString()
           : null,
+        mainImageChanged: mainImageChanged,
       };
       setLoading(true);
       await onSubmit(payload);
       setLoading(false);
       setSuccess(successMessage);
+      setMainImageChanged(false);
       mainImageRef.current?.clear();
       galleryRef.current?.clear();
     } catch (err) {
@@ -359,7 +358,7 @@ const EventForm = ({
               label="Profilová fotka (nepovinná)"
               onChange={({ files }) => {
                 setValue("mainImage", files);
-                setValue("mainImageChanged", true);
+                setMainImageChanged(true);
               }}
               multiple={false}
               existing={mainImage?.length > 0 ? [`${mainImage}`] : []}

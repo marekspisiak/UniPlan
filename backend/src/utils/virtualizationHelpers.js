@@ -134,19 +134,12 @@ export const getEventDayId = (event, targetDate = getCurrentUTCDate()) => {
 };
 
 export const validateEventDate = (event, targetDate) => {
-  console.log(targetDate);
-  console.log(event.startDate);
   if (isEqual(normalizeDate(event.startDate), normalizeDate(targetDate)))
     return true;
   if (!event.startDate) return null;
   const target = normalizeDate(targetDate);
   let result = false;
   getVirtualDates(event, target, (date) => {
-    console.log("---");
-    console.log(date);
-    console.log(targetDate);
-    console.log("---");
-
     if (isEqual(date, target)) {
       result = true;
       return "break"; // Stop the loop when the first valid date is found

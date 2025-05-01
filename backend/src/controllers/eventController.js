@@ -21,7 +21,10 @@ import {
   getAllVirtualEvents,
 } from "../utils/virtualizationHelpers.js";
 import { createRoom, joinRoom } from "../services/roomService.js";
-import { eventFormSchema } from "../validation/eventSchemas.js";
+import {
+  eventEditSchema,
+  eventFormSchema,
+} from "../validation/eventSchemas.js";
 import { preprocessFormData } from "../validation/preprocessing.js";
 import { Schema } from "zod";
 
@@ -1324,7 +1327,8 @@ async function updateEventImages({
       where: { id: eventId },
       data: { mainImage: null },
     });
-
+    console.log("mainimagechanged");
+    console.log(mainImageChanged);
     deletedImageUrls.push(previousMainImage);
   }
 
@@ -1415,68 +1419,65 @@ class AppError extends Error {
 export const editEvent = async (req, res) => {
   try {
     // validateEventData(req.body, true);
-    const { scope, occurrenceId } = req.body;
-    const userId = req.user.id;
+    const parsed = eventEditSchema.safeParse(req.body);
+
+    if (!parsed.success) {
+      console.log(parsed.error.flatten()); // ← sem to patrí
+      return res.status(400).json({
+        message: "Neplatné dáta",
+        errors: parsed.error.flatten(),
+      });
+    }
+
+    const validated = parsed.data;
+
+    const {
+      scope,
+      eventDayId,
+      title,
+      description,
+      location,
+      repeatUntil,
+      repeatDays,
+      repeatInterval,
+      date,
+      startDateTime,
+      endDateTime,
+      hasStartDate,
+      hasStartTime,
+      hasEndTime,
+      capacity,
+      attendancyLimit,
+      joinDaysBeforeStart,
+      categoryIds,
+      deletedGallery: rawGallery,
+      mainImageChanged,
+      previousMainImage,
+    } = validated;
+
     const eventId = parseInt(req.params.id);
-    const targetDate = normalizeDate(req.body.date);
+    const userId = req.user.id;
 
-    const eventDayId = parseInt(req.body.eventDayId);
-
-    if (!eventId || !scope) {
+    if (!eventId) {
       return res.status(400).json({ message: "Chýbajúce parametre." });
     }
 
-    const {
-      title,
-      description,
-      startDate,
-      location,
-      allowRecurringAttendance,
-      repeatUntil,
-      repeatDays,
-      startTime,
-      endTime,
-      repeatInterval,
+    // Normalize deletedGallery to just pathnames
+    const deletedGallery = (rawGallery || []).map((url) => {
+      try {
+        const parsed = new URL(url);
+        return parsed.pathname;
+      } catch {
+        return url;
+      }
+    });
+    console.log(categoryIds);
+    console.log(rawGallery);
+    console.log(parsed);
 
-      startDateTime: computedStartDate,
-      endDateTime: computedEndDate,
-    } = req.body;
+    const targetDate = normalizeDate(date);
 
-    console.log(computedStartDate);
-    console.log(computedEndDate);
-
-    const hasStartTime = req.body?.hasStartTime === "true";
-    const hasEndTime = req.body?.hasEndTime === "true";
-
-    const hasStartDate = req.body?.hasStartDate === "true";
-
-    const capacity = resolveInt(req.body.capacity);
-    console.log(capacity);
-    const attendancyLimit = resolveInt(req.body.attendancyLimit);
-
-    const joinDaysBeforeStart = resolveInt(req.body.joinDaysBeforeStart);
-
-    const categoryIds = toArray(req.body?.categoryIds);
-
-    const rawGallery = req.body?.deletedGallery;
     let deletedImageUrls = [];
-
-    const deletedGallery =
-      typeof rawGallery === "string"
-        ? rawGallery.split(",").map((url) => {
-            try {
-              const parsed = new URL(url);
-              return parsed.pathname; // odstráni "http://localhost:5000"
-            } catch {
-              return url; // fallback, ak to už je len cesta
-            }
-          })
-        : [];
-
-    function checkValue(value) {
-      if (value === undefined) return undefined;
-      return value === "" ? false : true;
-    }
 
     // let computedStartDate;
     // let computedEndDate;
@@ -1508,10 +1509,10 @@ export const editEvent = async (req, res) => {
         deletedImageUrls = await updateEventImages({
           tx,
           files: req.files,
-          mainImageChanged: req.body.mainImageChanged === "true",
+          mainImageChanged: mainImageChanged,
           deletedGallery: deletedGallery,
           eventId,
-          previousMainImage: req.body.previousMainImage || null,
+          previousMainImage: previousMainImage,
         });
 
         const updated = await tx.event.update({
@@ -1519,39 +1520,37 @@ export const editEvent = async (req, res) => {
           data: {
             title,
             description,
-            startDate: computedStartDate,
-            endDate: computedEndDate,
+            startDate: startDateTime,
+            endDate: endDateTime,
             hasStartDate: undefined,
             hasStartTime,
             hasEndTime,
             location,
-            capacity: parseInt(capacity),
-            attendancyLimit: parseInt(attendancyLimit),
-            joinDaysBeforeStart: parseInt(joinDaysBeforeStart),
+            capacity: capacity,
+            attendancyLimit: attendancyLimit,
+            joinDaysBeforeStart: joinDaysBeforeStart,
             repeatUntil: !isEmpty(repeatUntil)
               ? createUTCDate(repeatUntil)
               : null,
             categories: {
-              set: categoryIds.map((id) => ({ id: parseInt(id) })),
+              set: categoryIds.map((id) => ({ id: id })),
             },
           },
         });
 
         if (repeatDays) {
-          // Spracovanie repeatDaysif
-          const parsedRepeatDays = JSON.parse(repeatDays || "{}");
-
           const existingDays = await tx.eventDay.findMany({
             where: { eventId },
             include: { day: true },
           });
 
-          const newWeekDayPairs = Object.entries(parsedRepeatDays).flatMap(
-            ([week, days]) =>
-              days.map((day) => ({
-                week: parseInt(week),
-                dayId: parseInt(day),
-              }))
+          const newWeekDayPairs = Object.entries(
+            validated.repeatDays || {}
+          ).flatMap(([week, days]) =>
+            days.map((dayId) => ({
+              week: Number(week), // optional: môžeš ponechať aj ako string
+              dayId,
+            }))
           );
 
           // Vymaž staré dni + occurrences, ktoré sa na ne viažu
@@ -1617,8 +1616,8 @@ export const editEvent = async (req, res) => {
           ...buildEventChangePayload(
             req.body,
             original,
-            computedStartDate,
-            computedEndDate
+            startDateTime,
+            endDateTime
           ),
           hasStartDate,
           hasStartTime,
@@ -1652,21 +1651,21 @@ export const editEvent = async (req, res) => {
       }
 
       if (scope === "occurrence") {
-        if (parseInt(repeatInterval) === 0) {
+        if (repeatInterval === 0) {
           deletedImageUrls = await updateEventImages({
             tx,
             files: req.files,
-            mainImageChanged: req.body.mainImageChanged === "true",
+            mainImageChanged: mainImageChanged,
             deletedGallery: deletedGallery,
             eventId,
-            previousMainImage: req.body.previousMainImage || null,
+            previousMainImage: previousMainImage,
           });
 
           await tx.event.update({
             where: { id: eventId },
             data: {
               categories: {
-                set: categoryIds.map((id) => ({ id: parseInt(id) })),
+                set: categoryIds.map((id) => ({ id: id })),
               },
             },
           });
@@ -1678,20 +1677,19 @@ export const editEvent = async (req, res) => {
         // Skús nájsť existujúcu occurrence pre daný event a dátum
         let occurrence = await tx.eventOccurrence.findFirst({
           where: {
-            eventId: parseInt(eventId),
-            date: req.body.date,
+            eventId: eventId,
+            date: date,
           },
           include: {
             event: true,
             eventChange: true,
           },
         });
-        console.log("nenaclo");
 
         // Ak neexistuje, vytvor ju
         if (!occurrence) {
           const event = await tx.event.findUnique({
-            where: { id: parseInt(eventId) },
+            where: { id: eventId },
             include: { eventDays: { include: { day: true } } },
           });
 
@@ -1707,7 +1705,7 @@ export const editEvent = async (req, res) => {
           }
 
           // Validácia dátumu (napr. či patrí do cyklu)
-          const validDate = getNextEventDate(event, req.body.date);
+          const validDate = getNextEventDate(event, date);
           if (!validDate) {
             throw new AppError("Neplatný dátum pre tento event.", 400);
           }
@@ -1725,15 +1723,14 @@ export const editEvent = async (req, res) => {
           ...buildEventChangePayload(
             req.body,
             original,
-            computedStartDate,
-            computedEndDate,
-            req.body.date
+            startDateTime,
+            endDateTime,
+            date
           ),
           hasStartDate,
           hasStartTime,
           hasEndTime,
         };
-        console.log(newData);
 
         if (Object.keys(newData).length === 0) {
           return res
@@ -1762,18 +1759,21 @@ export const editEvent = async (req, res) => {
       }
       throw new AppError("Neznámy scope", 400);
     });
-    for (const relPath of deletedImageUrls) {
-      const absPath = path.join(".", relPath);
-      fs.unlink(absPath).catch((err) => {
-        console.warn("⚠️ Nepodarilo sa zmazať:", absPath, err.message);
-      });
-    }
+    try {
+      console.log(deletedImageUrls);
+      for (const relPath of deletedImageUrls) {
+        const absPath = path.join(".", relPath);
+        fs.unlink(absPath).catch((err) => {
+          console.warn("⚠️ Nepodarilo sa zmazať:", absPath, err.message);
+        });
+      }
+    } catch {}
 
     console.log("tu sa dostanem vasak ");
   } catch (err) {
     const message = err.message || "Nepodarilo sa editovať event";
     const status = err.statusCode || 500;
-    console.warn(message);
+    console.warn(err);
 
     return res.status(status).json(message);
   }

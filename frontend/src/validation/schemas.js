@@ -38,9 +38,20 @@ export const loginSchema = z.object({
 
 export const eventFormSchema = z
   .object({
-    title: z.string().min(1, "Názov je povinný"),
-    description: z.string().optional(),
-    mainImageChanged: z.boolean().optional(),
+    title: z
+      .string()
+      .min(1, "Názov je povinný")
+      .max(100, "Názov môže mať najviac 100 znakov"),
+
+    description: z
+      .string()
+      .max(700, "Popis môže mať najviac 700 znakov")
+      .optional(),
+
+    location: z
+      .string()
+      .max(255, "Miesto môže mať najviac 255 znakov")
+      .optional(),
 
     startDate: z.string().min(1, "Dátum je povinný"),
 
@@ -49,6 +60,7 @@ export const eventFormSchema = z
 
     repeat: z.boolean(),
     repeatUntil: z.string().optional(),
+
     repeatInterval: z
       .union([
         z.literal(""),
@@ -70,8 +82,6 @@ export const eventFormSchema = z
           .gt(0, "Počet účastí musí byť väčší ako 0"),
       ])
       .optional(),
-
-    location: z.string().optional(),
 
     capacity: z
       .union([
@@ -103,9 +113,8 @@ export const eventFormSchema = z
     repeatDays: z.record(z.array(z.number())).optional(),
   })
   .superRefine((data, ctx) => {
-    const today = new Date().toISOString().split("T")[0]; // dnešný dátum v "YYYY-MM-DD"
+    const today = new Date().toISOString().split("T")[0];
 
-    // ✅ Čas začiatku je povinný pri repeat
     if (data.repeat && !data.startTime) {
       ctx.addIssue({
         path: ["startTime"],
@@ -114,7 +123,6 @@ export const eventFormSchema = z
       });
     }
 
-    // ✅ Ak je zadaný endTime, musí byť aj startTime
     if (data.endTime && !data.startTime) {
       ctx.addIssue({
         path: ["startTime"],
@@ -123,7 +131,6 @@ export const eventFormSchema = z
       });
     }
 
-    // ✅ Ak sú oba časy, startTime < endTime
     if (data.startTime && data.endTime && data.startTime >= data.endTime) {
       ctx.addIssue({
         path: ["startTime"],
@@ -137,7 +144,6 @@ export const eventFormSchema = z
       });
     }
 
-    // ✅ repeatUntil musí byť po dnešnom aj po startDate
     if (data.repeatUntil) {
       if (data.repeatUntil <= today) {
         ctx.addIssue({

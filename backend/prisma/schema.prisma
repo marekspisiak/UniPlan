@@ -57,8 +57,8 @@ enum Role {
 
 model Event {
   id                         Int               @id @default(autoincrement())
-  title                      String
-  description                String?
+  title                      String  @db.VarChar(80)
+  description                String? @db.Text
   startDate                  DateTime?
   endDate                    DateTime?
   repeatUntil                DateTime?
@@ -66,7 +66,7 @@ model Event {
   hasStartDate               Boolean           @default(false)
   hasStartTime               Boolean           @default(false)
   hasEndTime                 Boolean           @default(false)
-  location                   String?
+  location                   String? @db.VarChar(120)
   capacity                   Int?
   mainImage                  String?
   createdAt                  DateTime          @default(now())
@@ -101,14 +101,14 @@ eventChangeId Int? @unique
 model EventChange {
   id                        Int                       @id @default(autoincrement())
   eventDay                 EventDay?                  // ← Nepotrebuje `@relation`, už je definovaná opačne
-  title                    String?
-  description              String?
+  title                    String? @db.VarChar(80)
+  description              String? @db.Text
   startDate                DateTime?
   endDate                  DateTime?
   hasStartDate            Boolean?           
   hasStartTime            Boolean?           
   hasEndTime              Boolean? 
-  location                 String?
+  location                 String? @db.VarChar(120)
   capacity                 Int?
   joinDaysBeforeStart      Int?
   createdBy                Int?

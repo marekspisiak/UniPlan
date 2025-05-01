@@ -118,3 +118,126 @@ export const eventFormSchema = z
       }
     }
   });
+
+const utcDateString = () =>
+  z
+    .string()
+    .refine(
+      (val) => /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}(:\d{2})?(\.\d{3})?Z$/.test(val),
+      { message: "Musí byť platný UTC ISO dátum (napr. 2025-05-01T12:00:00Z)" }
+    );
+
+const zResolvedIntFromFormData = z.preprocess((val) => {
+  if (val === "") return 0;
+  if (val === undefined) return undefined;
+  return parseInt(val);
+}, z.number().optional());
+
+export const eventEditSchema = z
+  .object({
+    scope: z.enum(["event", "eventDay", "occurrence"]),
+    occurrenceId: z.coerce.number().optional().nullable(),
+    eventDayId: z.coerce
+      .number()
+      .min(0, { message: "EventDayId nemôže byť záporné." })
+      .optional(),
+
+    title: z.string().max(80, "Názov môže mať najviac 100 znakov").optional(),
+    description: z
+      .string()
+      .max(700, "Popis môže mať najviac 1000 znakov")
+      .optional(),
+    location: z
+      .string()
+      .max(120, "Miesto môže mať najviac 255 znakov")
+      .optional(),
+
+    repeatUntil: utcDateString().nullable().optional(),
+    repeatInterval: z.coerce
+      .number()
+      .min(0, { message: "Interval musí byť 0 alebo viac." })
+      .optional()
+      .nullable(),
+
+    repeatDays: z.preprocess((val) => {
+      if (typeof val === "string") {
+        try {
+          return JSON.parse(val);
+        } catch {
+          return undefined;
+        }
+      }
+      return val;
+    }, z.record(z.string(), z.array(z.coerce.number())).optional()),
+
+    date: utcDateString().optional(),
+    startDateTime: utcDateString().nullable().optional(),
+    endDateTime: utcDateString().nullable().optional(),
+
+    hasStartTime: z.preprocess((val) => val === "true", z.boolean().optional()),
+    hasEndTime: z.preprocess((val) => val === "true", z.boolean().optional()),
+    hasStartDate: z.preprocess((val) => val === "true", z.boolean().optional()),
+
+    capacity: zResolvedIntFromFormData.refine(
+      (val) => val === undefined || val >= 0,
+      {
+        message: "Kapacita nemôže byť záporná.",
+      }
+    ),
+    attendancyLimit: zResolvedIntFromFormData.refine(
+      (val) => val === undefined || val >= 0,
+      {
+        message: "Limit účastí nemôže byť záporný.",
+      }
+    ),
+    joinDaysBeforeStart: zResolvedIntFromFormData.refine(
+      (val) => val === undefined || val >= 0,
+      {
+        message: "Počet dní pred začiatkom nemôže byť záporný.",
+      }
+    ),
+
+    categoryIds: z.preprocess((val) => {
+      if (typeof val === "string") return [parseInt(val)];
+      if (Array.isArray(val)) return val.map((v) => parseInt(v));
+      return [];
+    }, z.array(z.number()).optional()),
+
+    deletedGallery: z.preprocess((val) => {
+      if (typeof val === "string") return val.split(",").map((s) => s.trim());
+      if (Array.isArray(val)) {
+        return val.flatMap((entry) => entry.split(",").map((s) => s.trim()));
+      }
+      return [];
+    }, z.array(z.string()).optional()),
+
+    mainImageChanged: z.preprocess(
+      (val) => val === "true",
+      z.boolean().optional()
+    ),
+    previousMainImage: z.string().nullable().optional(),
+  })
+  .refine(
+    (data) => {
+      if (data.startDateTime && data.endDateTime) {
+        return new Date(data.startDateTime) < new Date(data.endDateTime);
+      }
+      return true;
+    },
+    {
+      message: "StartDateTime musí byť pred EndDateTime",
+      path: ["startDateTime"],
+    }
+  )
+  .refine(
+    (data) => {
+      if (data.startDateTime && data.repeatUntil) {
+        return new Date(data.startDateTime) <= new Date(data.repeatUntil);
+      }
+      return true;
+    },
+    {
+      message: "RepeatUntil musí byť po StartDateTime",
+      path: ["repeatUntil"],
+    }
+  );

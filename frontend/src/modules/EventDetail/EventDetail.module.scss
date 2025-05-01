@@ -4,6 +4,8 @@
   overflow-x: hidden; // 👈 žiadny horizontálny scroll
   overflow: auto;
   min-width: 50vw;
+  max-width: 720px;
+  min-width: 320px;
 }
 
 .header {
