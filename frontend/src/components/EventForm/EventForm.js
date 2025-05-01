@@ -120,7 +120,7 @@ const EventForm = ({
               data.startDate,
               data.startTime && data.startTime.trim() !== ""
                 ? data.startTime
-                : "00:01"
+                : "00:00"
             ).toISOString()
           : null,
 
@@ -129,20 +129,22 @@ const EventForm = ({
               data.startDate,
               data.endTime && data.endTime.trim() !== ""
                 ? data.endTime
-                : "00:01"
+                : "23:59"
             ).toISOString()
           : null,
         mainImageChanged: mainImageChanged,
       };
       setLoading(true);
       await onSubmit(payload);
-      setLoading(false);
+
       setSuccess(successMessage);
       setMainImageChanged(false);
       mainImageRef.current?.clear();
       galleryRef.current?.clear();
     } catch (err) {
       setError(err.message || "Chyba pri ukladaní eventu.");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -166,6 +168,22 @@ const EventForm = ({
           type="text"
           name="title"
           label="Názov"
+          register={register}
+          errors={errors}
+        />
+
+        <ValidatedControl
+          type="text"
+          name="location"
+          label="Miesto"
+          register={register}
+          errors={errors}
+        />
+
+        <ValidatedControl
+          type="number"
+          name="capacity"
+          label="Kapacita"
           register={register}
           errors={errors}
         />
@@ -299,13 +317,6 @@ const EventForm = ({
         )}
         {console.log(scope)}
 
-        <ValidatedControl
-          type="text"
-          name="location"
-          label="Miesto"
-          register={register}
-          errors={errors}
-        />
         <ValidatedControl
           type="number"
           name="capacity"

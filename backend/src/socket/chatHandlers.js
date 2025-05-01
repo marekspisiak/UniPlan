@@ -17,7 +17,7 @@ export function chatHandlers(io, socket) {
 
   socket.on("user-seen", async ({ roomId, userId, timestamp }) => {
     // Aktualizácia databázy cez Prisma (alebo čokoľvek iné)
-    console.log(timestamp);
+
     await prisma.roomMember.upsert({
       where: { roomId_userId: { roomId, userId } },
       update: { lastSeen: timestamp },

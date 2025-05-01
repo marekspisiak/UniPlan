@@ -117,7 +117,6 @@ export async function createOccurrence(
             event: true,
           },
         });
-        console.log(newOccurrence.event);
 
         return updatedOccurrence;
       }

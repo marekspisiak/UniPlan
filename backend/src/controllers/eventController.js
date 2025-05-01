@@ -631,7 +631,20 @@ export const getAllEvents = async (req, res) => {
       },
       include: {
         categories: true,
-        eventDays: { include: { day: true, eventChange: true, users: true } },
+        eventDays: {
+          include: {
+            day: true,
+            eventChange: true,
+            users: {
+              select: {
+                id: true,
+                firstName: true,
+                lastName: true,
+                email: true,
+              },
+            },
+          },
+        },
         organizer: {
           select: {
             id: true,
@@ -696,9 +709,7 @@ export const getAllEvents = async (req, res) => {
           virtual: false,
         });
       }
-      console.log(startDate);
 
-      console.log(endDate);
       if (isRecurring) {
         console.log(event);
         const virtualEvents = getAllVirtualEvents(event, startDate, endDate);
@@ -910,11 +921,20 @@ export const getEventByDate = async (req, res) => {
         eventDays: {
           include: {
             day: true,
-            users: true,
+            users: {
+              select: {
+                firstName: true,
+                lastName: true,
+                email: true,
+                id: true,
+              },
+            },
             eventChange: true, // 👈 toto je `eventDayAttendancy`
           },
         },
-        organizer: true,
+        organizer: {
+          select: { id: true, firstName: true, lastName: true, email: true },
+        },
         moderators: {
           include: {
             user: {
@@ -957,7 +977,9 @@ export const getEventByDate = async (req, res) => {
       eventDay = await prisma.eventDay.findUnique({
         where: { id: eventDayId },
         include: {
-          users: true,
+          users: {
+            select: { id: true, firstName: true, lastName: true, email: true },
+          },
           eventChange: true, // toto je tvoje "eventDayAttendancy"
         },
       });
@@ -1327,8 +1349,7 @@ async function updateEventImages({
       where: { id: eventId },
       data: { mainImage: null },
     });
-    console.log("mainimagechanged");
-    console.log(mainImageChanged);
+
     deletedImageUrls.push(previousMainImage);
   }
 
@@ -1422,6 +1443,7 @@ export const editEvent = async (req, res) => {
     const parsed = eventEditSchema.safeParse(req.body);
 
     if (!parsed.success) {
+      console.log(parsed);
       console.log(parsed.error.flatten()); // ← sem to patrí
       return res.status(400).json({
         message: "Neplatné dáta",
@@ -1471,9 +1493,6 @@ export const editEvent = async (req, res) => {
         return url;
       }
     });
-    console.log(categoryIds);
-    console.log(rawGallery);
-    console.log(parsed);
 
     const targetDate = normalizeDate(date);
 
@@ -1529,9 +1548,7 @@ export const editEvent = async (req, res) => {
             capacity: capacity,
             attendancyLimit: attendancyLimit,
             joinDaysBeforeStart: joinDaysBeforeStart,
-            repeatUntil: !isEmpty(repeatUntil)
-              ? createUTCDate(repeatUntil)
-              : null,
+            repeatUntil: repeatUntil,
             categories: {
               set: categoryIds.map((id) => ({ id: id })),
             },
@@ -1760,7 +1777,6 @@ export const editEvent = async (req, res) => {
       throw new AppError("Neznámy scope", 400);
     });
     try {
-      console.log(deletedImageUrls);
       for (const relPath of deletedImageUrls) {
         const absPath = path.join(".", relPath);
         fs.unlink(absPath).catch((err) => {
@@ -1768,8 +1784,6 @@ export const editEvent = async (req, res) => {
         });
       }
     } catch {}
-
-    console.log("tu sa dostanem vasak ");
   } catch (err) {
     const message = err.message || "Nepodarilo sa editovať event";
     const status = err.statusCode || 500;

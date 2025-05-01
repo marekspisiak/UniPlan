@@ -170,7 +170,7 @@ export const eventEditSchema = z
       return val;
     }, z.record(z.string(), z.array(z.coerce.number())).optional()),
 
-    date: utcDateString().optional(),
+    date: utcDateString(),
     startDateTime: utcDateString().nullable().optional(),
     endDateTime: utcDateString().nullable().optional(),
 
@@ -217,27 +217,86 @@ export const eventEditSchema = z
     ),
     previousMainImage: z.string().nullable().optional(),
   })
-  .refine(
-    (data) => {
-      if (data.startDateTime && data.endDateTime) {
-        return new Date(data.startDateTime) < new Date(data.endDateTime);
-      }
-      return true;
-    },
-    {
-      message: "StartDateTime musí byť pred EndDateTime",
-      path: ["startDateTime"],
+  .superRefine((data, ctx) => {
+    // ✅ Ak je scope = "eventDay", eventDayId je povinné
+    if (
+      data.scope === "eventDay" &&
+      (data.eventDayId === undefined || data.eventDayId === null)
+    ) {
+      ctx.addIssue({
+        path: ["eventDayId"],
+        code: "custom",
+        message: "EventDayId je povinné, keď je scope 'eventDay'.",
+      });
     }
-  )
-  .refine(
-    (data) => {
-      if (data.startDateTime && data.repeatUntil) {
-        return new Date(data.startDateTime) <= new Date(data.repeatUntil);
+
+    // ✅ Ak je scope = "event", niektoré polia musia byť neprázdne
+    if (data.scope === "event") {
+      if (!data.hasStartTime) {
+        ctx.addIssue({
+          path: ["hasStartTime"],
+          code: "custom",
+          message: "Musí byť zapnutý čas začiatku pri úprave celého eventu.",
+        });
       }
-      return true;
-    },
-    {
-      message: "RepeatUntil musí byť po StartDateTime",
-      path: ["repeatUntil"],
+
+      if (data.startDateTime === null) {
+        ctx.addIssue({
+          path: ["startDateTime"],
+          code: "custom",
+          message:
+            "Začiatok eventu (startDateTime) je povinný pri scope 'event'.",
+        });
+      }
+
+      if (data.capacity !== undefined && data.capacity <= 0) {
+        ctx.addIssue({
+          path: ["capacity"],
+          code: "custom",
+          message: "Kapacita musí byť väčšia ako 0 pri scope 'event'.",
+        });
+      }
+
+      if (data.attendancyLimit !== undefined && data.attendancyLimit <= 0) {
+        ctx.addIssue({
+          path: ["attendancyLimit"],
+          code: "custom",
+          message: "Limit účastí musí byť väčší ako 0 pri scope 'event'.",
+        });
+      }
+
+      if (
+        data.joinDaysBeforeStart !== undefined &&
+        data.joinDaysBeforeStart <= 0
+      ) {
+        ctx.addIssue({
+          path: ["joinDaysBeforeStart"],
+          code: "custom",
+          message:
+            "Počet dní pred začiatkom musí byť väčší ako 0 pri scope 'event'.",
+        });
+      }
     }
-  );
+
+    // ✅ Start musí byť pred end
+    if (data.startDateTime && data.endDateTime) {
+      if (new Date(data.startDateTime) >= new Date(data.endDateTime)) {
+        ctx.addIssue({
+          path: ["startDateTime"],
+          code: "custom",
+          message: "StartDateTime musí byť pred EndDateTime",
+        });
+      }
+    }
+
+    // ✅ RepeatUntil musí byť po startDateTime
+    if (data.startDateTime && data.repeatUntil) {
+      if (new Date(data.startDateTime) > new Date(data.repeatUntil)) {
+        ctx.addIssue({
+          path: ["repeatUntil"],
+          code: "custom",
+          message: "RepeatUntil musí byť po StartDateTime",
+        });
+      }
+    }
+  });
