@@ -63,6 +63,7 @@ const EventForm = ({
       gallery: [],
       deletedGallery: [],
       date: "",
+      mainiamgeChanged: false,
     },
   });
 

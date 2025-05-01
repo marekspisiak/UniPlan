@@ -40,6 +40,7 @@ export const eventFormSchema = z
   .object({
     title: z.string().min(1, "Názov je povinný"),
     description: z.string().optional(),
+    mainImageChanged: z.boolean().optional(),
 
     startDate: z.string().min(1, "Dátum je povinný"),
 

@@ -76,6 +76,7 @@ const EditEvent = ({ eventId, date }) => {
         });
 
         if (fixNumbers(newData.repeatInterval) === "") {
+          console.log("occurrece");
           setScope("occurrence");
         }
       } catch (err) {
@@ -180,10 +181,12 @@ const EditEvent = ({ eventId, date }) => {
         if (key in form && form[key] !== initialData[key]) {
           console.log("pridavam", key);
           filtered[key] = form[key];
+          console.log(form[key]);
         }
       }
 
       console.log(filtered);
+      console.log(form);
 
       const entries = {
         ...filtered,
@@ -193,6 +196,7 @@ const EditEvent = ({ eventId, date }) => {
         eventDayId: initialData.eventDayId,
         repeatInterval:
           initialData.repeatInterval === "" ? 0 : initialData.repeatInterval,
+        mainImageChanged: form.mainImageChanged,
       };
       console.log(entries);
       console.log(form);

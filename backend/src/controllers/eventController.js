@@ -1567,7 +1567,7 @@ export const editEvent = async (req, res) => {
 
       if (scope === "eventDay") {
         if (!eventDayId) {
-          return res.status(400).json({ message: "Chýba eventDayId." });
+          throw new AppError("Chýba eventDayId.", 400);
         }
 
         const eventDay = await tx.eventDay.findUnique({
@@ -1578,7 +1578,7 @@ export const editEvent = async (req, res) => {
         });
 
         if (!eventDay || eventDay.event.id !== eventId) {
-          return res.status(404).json({ message: "EventDay neexistuje." });
+          throw new AppError("EventDay neexistuje.", 400);
         }
 
         const original = eventDay.event;
@@ -1642,9 +1642,7 @@ export const editEvent = async (req, res) => {
         }
 
         if (!eventId || !computedStartDate) {
-          return res
-            .status(400)
-            .json({ message: "Chýba eventId alebo dátum." });
+          throw new AppError("Chýba eventId alebo dátum.", 400);
         }
         // Skús nájsť existujúcu occurrence pre daný event a dátum
         let occurrence = await tx.eventOccurrence.findFirst({
