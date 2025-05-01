@@ -133,8 +133,12 @@ const EventForm = ({
             ).toISOString()
           : null,
         mainImageChanged: mainImageChanged,
+        hasStartDate: Boolean(data.startDate && data.startDate.trim() !== ""),
+        hasStartTime: Boolean(data.startTime && data.startTime.trim() !== ""),
+        hasEndTime: Boolean(data.endTime && data.endTime.trim() !== ""),
       };
       setLoading(true);
+      console.log(payload);
       await onSubmit(payload);
 
       setSuccess(successMessage);

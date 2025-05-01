@@ -70,7 +70,7 @@ const ChangePasswordForm = ({ setIsChangingPassword }) => {
       {message && <Toast success={message} onClose={() => setMessage("")} />}
 
       <Form onSubmit={handleSubmit}>
-        <Form.Group className="mb-3">
+        <Form.Group className={styles.formGroup}>
           <Form.Label>Aktuálne heslo</Form.Label>
           <Form.Control
             type="password"
@@ -81,7 +81,7 @@ const ChangePasswordForm = ({ setIsChangingPassword }) => {
           />
         </Form.Group>
 
-        <Form.Group className="mb-3">
+        <Form.Group className={styles.formGroup}>
           <Form.Label>Nové heslo</Form.Label>
           <Form.Control
             type="password"
@@ -92,7 +92,7 @@ const ChangePasswordForm = ({ setIsChangingPassword }) => {
           />
         </Form.Group>
 
-        <Form.Group className="mb-3">
+        <Form.Group className={styles.formGroup}>
           <Form.Label>Potvrď nové heslo</Form.Label>
           <Form.Control
             type="password"

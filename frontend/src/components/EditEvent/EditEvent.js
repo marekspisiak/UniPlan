@@ -199,9 +199,7 @@ const EditEvent = ({ eventId, date }) => {
         repeatInterval:
           initialData.repeatInterval === "" ? 0 : initialData.repeatInterval,
         mainImageChanged: form.mainImageChanged,
-        hasStartDate: Boolean(form.startDate && form.startDate.trim() !== ""),
-        hasStartTime: Boolean(form.startTime && form.startTime.trim() !== ""),
-        hasEndTime: Boolean(form.endTime && form.endTime.trim() !== ""),
+
         ...(filtered.startDate !== undefined ||
         filtered.startTime !== undefined ||
         filtered.endTime !== undefined

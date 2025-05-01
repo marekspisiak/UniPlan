@@ -22,9 +22,16 @@ const CreateEvent = () => {
         repeatDays: repeatDaysJSON,
       };
 
-      console.log(entries);
+      // Odstráni všetky "" hodnoty (prázdne stringy)
+      const cleanedEntries = Object.fromEntries(
+        Object.entries(entries).filter(
+          ([_, value]) =>
+            !(typeof value === "string" && value.trim() === "") &&
+            !(Array.isArray(value) && value.every((v) => v === ""))
+        )
+      );
 
-      Object.entries(entries).forEach(([key, value]) => {
+      Object.entries(cleanedEntries).forEach(([key, value]) => {
         if (key === "categoryIds") {
           value.forEach((cat) => {
             formData.append("categoryIds", cat); // ⬅️ iba id

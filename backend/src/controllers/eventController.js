@@ -22,30 +22,29 @@ import {
 } from "../utils/virtualizationHelpers.js";
 import { createRoom, joinRoom } from "../services/roomService.js";
 import {
+  eventCreateSchema,
   eventEditSchema,
-  eventFormSchema,
 } from "../validation/eventSchemas.js";
-import { preprocessFormData } from "../validation/preprocessing.js";
-import { Schema } from "zod";
 
 export const createEvent = async (req, res) => {
   try {
-    // console.log(req.body);
-    // const parsedBody = preprocessFormData(req.body);
-    // const result = eventFormSchema.parse(parsedBody);
-    // if (!result.success) {
-    //   // console.log(result.error);
-    //   return res.status(400).json({
-    //     message: "Neplatné údaje",
-    //     errors: result.error.errors,
-    //   });
-    // }
+    console.log(req.body);
+    const parsed = eventCreateSchema.safeParse(req.body);
+
+    if (!parsed.success) {
+      console.log(parsed.error);
+      return res.status(400).json({
+        message: "Neplatné údaje",
+        errors: parsed.error.flatten(),
+      });
+    }
+
+    const data = parsed.data;
+
     const {
       title,
       description,
-      startDate,
-      startTime,
-      endTime,
+
       repeatUntil,
       location,
       capacity,
@@ -55,56 +54,31 @@ export const createEvent = async (req, res) => {
       repeatInterval,
       allowRecurringAttendance,
       maxAttendancesPerCycle,
-    } = req.body;
+      hasStartTime,
+      hasEndTime,
+      hasStartDate,
+      startDateTime,
+      endDateTime,
+      moderators,
+      categoryIds,
+    } = data;
 
-    const categoryIds = toArray(req.body.categoryIds);
-    const moderatorsRaw = toArray(req.body.moderators);
-    const moderators = moderatorsRaw.map((mod) => JSON.parse(mod));
+    const userId = req.user.id;
+
+    // console.log(req.body);
 
     let mainImageUrl = null;
     let galleryUrls = [];
 
     if (req.files?.mainImage?.[0]) {
-      mainImageUrl = `/uploads/events/${req.files.mainImage[0].filename}`;
+      const path = req.files.mainImage[0].path.replace(/\\/g, "/");
+      mainImageUrl = "/" + path;
     }
 
     if (req.files?.gallery?.length) {
       galleryUrls = req.files.gallery.map(
-        (file) => `/uploads/events/${file.filename}`
+        (file) => "/" + file.path.replace(/\\/g, "/")
       );
-    }
-
-    let computedStartDate = null;
-    let computedEndDate = null;
-    let hasStartDate = false;
-    let hasStartTime = false;
-    let hasEndTime = false;
-
-    if (startDate && startDate !== "undefined" && startDate !== "") {
-      hasStartDate = true;
-    }
-
-    if (startTime && startTime !== "undefined" && startTime !== "") {
-      hasStartTime = true;
-    }
-
-    if (endTime && endTime !== "undefined" && endTime !== "") {
-      hasEndTime = true;
-    }
-
-    // Manuálna konštrukcia dátumu v lokálnom čase bez UTC posunu
-    if (hasStartDate || hasStartTime) {
-      if (hasStartTime) {
-        computedStartDate = createUTCDate(startDate, startTime);
-      } else {
-        computedStartDate = createUTCDate(startDate);
-      }
-    } else {
-      computedStartDate = getCurrentUTCDate();
-    }
-
-    if (hasEndTime) {
-      computedEndDate = createUTCDate(null, endTime);
     }
 
     const newEvent = await prisma.$transaction(async (tx) => {
@@ -112,17 +86,16 @@ export const createEvent = async (req, res) => {
         data: {
           title,
           description,
-          startDate: computedStartDate,
-          endDate: computedEndDate,
-          repeatUntil: repeatUntil ? createUTCDate(repeatUntil) : null,
-          repeatInterval: repeatInterval ? parseInt(repeatInterval) : null,
+          startDate: startDateTime,
+          endDate: endDateTime,
+          repeatUntil,
+          repeatInterval,
           location,
-          capacity: capacity ? parseInt(capacity) : null,
-          attendancyLimit: attendancyLimit ? parseInt(attendancyLimit) : null,
-          allowRecurringAttendance: allowRecurringAttendance === "true",
-          joinDaysBeforeStart: joinDaysBeforeStart
-            ? parseInt(joinDaysBeforeStart)
-            : null,
+          capacity,
+          attendancyLimit,
+          allowRecurringAttendance,
+          joinDaysBeforeStart,
+
           mainImage: mainImageUrl,
           gallery: galleryUrls.length
             ? {
@@ -132,12 +105,12 @@ export const createEvent = async (req, res) => {
           hasStartDate,
           hasStartTime,
           hasEndTime,
-          attendancyLimit: parseInt(maxAttendancesPerCycle),
+          attendancyLimit: maxAttendancesPerCycle,
           organizer: {
-            connect: { id: req.user.id },
+            connect: { id: userId },
           },
           categories: {
-            connect: categoryIds.map((id) => ({ id: parseInt(id) })),
+            connect: categoryIds.map((id) => ({ id })),
           },
         },
       });
@@ -166,7 +139,7 @@ export const createEvent = async (req, res) => {
 
       // Teraz pripravíš pole všetkých userId
       const allUserIds = [
-        req.user.id, // organizátor
+        userId, // organizátor
         ...moderators.map((mod) => mod.id), // všetci moderátori
       ];
 
@@ -176,19 +149,13 @@ export const createEvent = async (req, res) => {
       }
 
       if (repeatDays) {
-        const parsedRepeatDays = JSON.parse(repeatDays);
-
-        for (const [week, days] of Object.entries(parsedRepeatDays)) {
+        for (const [week, days] of Object.entries(repeatDays)) {
           for (const id of days) {
             await tx.eventDay.create({
               data: {
-                event: {
-                  connect: { id: newEvent.id },
-                },
+                event: { connect: { id: newEvent.id } },
                 week: parseInt(week),
-                day: {
-                  connect: { id: parseInt(id) },
-                },
+                day: { connect: { id: parseInt(id) } },
               },
             });
           }
@@ -201,8 +168,32 @@ export const createEvent = async (req, res) => {
 
     res.status(201).json({ id: newEvent.id });
   } catch (err) {
-    console.log(err);
-    return res.status(500).json({ message: "Nepodarilo sa vytvoriť event." });
+    const message = err.message || "Nepodarilo sa vytvoriť event.";
+    const status = err.statusCode || 500;
+    console.warn(err);
+
+    // ⚠️ Automatické mazanie súborov z req.files (v prípade chyby)
+    try {
+      if (req.files) {
+        const allFiles = [
+          ...(Array.isArray(req.files.gallery) ? req.files.gallery : []),
+          ...(Array.isArray(req.files.mainImage) ? req.files.mainImage : []),
+        ];
+
+        for (const file of allFiles) {
+          const absPath = file.path;
+          fs.unlink(absPath).catch((e) => {
+            console.warn(
+              "⚠️ Nepodarilo sa zmazať dočasný súbor:",
+              absPath,
+              e.message
+            );
+          });
+        }
+      }
+    } catch {}
+
+    return res.status(status).json(message);
   }
 };
 
@@ -1788,6 +1779,27 @@ export const editEvent = async (req, res) => {
     const message = err.message || "Nepodarilo sa editovať event";
     const status = err.statusCode || 500;
     console.warn(err);
+
+    // ⚠️ Automatické mazanie súborov z req.files (v prípade chyby)
+    try {
+      if (req.files) {
+        const allFiles = [
+          ...(Array.isArray(req.files.gallery) ? req.files.gallery : []),
+          ...(Array.isArray(req.files.mainImage) ? req.files.mainImage : []),
+        ];
+
+        for (const file of allFiles) {
+          const absPath = file.path;
+          fs.unlink(absPath).catch((e) => {
+            console.warn(
+              "⚠️ Nepodarilo sa zmazať dočasný súbor:",
+              absPath,
+              e.message
+            );
+          });
+        }
+      }
+    } catch {}
 
     return res.status(status).json(message);
   }

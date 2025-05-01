@@ -38,19 +38,14 @@ export const loginSchema = z.object({
 
 export const eventFormSchema = z
   .object({
-    title: z
-      .string()
-      .min(1, "Názov je povinný")
-      .max(100, "Názov môže mať najviac 100 znakov"),
-
+    title: z.string().max(80, "Názov môže mať najviac 80 znakov").optional(),
     description: z
       .string()
       .max(700, "Popis môže mať najviac 700 znakov")
       .optional(),
-
     location: z
       .string()
-      .max(255, "Miesto môže mať najviac 255 znakov")
+      .max(120, "Miesto môže mať najviac 120 znakov")
       .optional(),
 
     startDate: z.string().min(1, "Dátum je povinný"),
