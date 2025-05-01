@@ -17,6 +17,9 @@ import { getCurrentUTCDate } from "../../utils/dateUtils";
 import { FixedSizeList } from "react-window";
 import InfiniteScroll from "react-infinite-scroll-component";
 import { Plus } from "lucide-react";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { recommendationsFilterSchema } from "../../validation/schemas";
 
 const Recommendations = () => {
   const { user } = useAuth();

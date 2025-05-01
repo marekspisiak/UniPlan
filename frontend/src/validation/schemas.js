@@ -187,3 +187,21 @@ export const getEditProfileSchema = (originalEmail) =>
         });
       }
     });
+export const recommendationsFilterSchema = z.object({
+  search: z.string().optional(),
+  searchLocation: z.string().optional(),
+  onlyAvailable: z.boolean(),
+  onlyRecommended: z.boolean(),
+  useMyInterests: z.boolean(),
+  selectedCategories: z.array(z.number()),
+  allCategories: z.boolean(),
+  onlySingle: z.boolean(),
+  onlyRecurring: z.boolean(),
+  manage: z.boolean(),
+  myEvents: z.boolean(),
+  startDate: z.string().min(1, "Dátum je povinný"),
+  endDate: z.string().min(1, "Dátum je povinný"),
+  startTime: z.string().optional(),
+  endTime: z.string().optional(),
+  daysOfWeek: z.array(z.number()),
+});

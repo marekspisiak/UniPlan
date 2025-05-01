@@ -18550,3 +18550,2765 @@
   "response": "[{\"id\":1328,\"title\":\"asd\",\"description\":\"\",\"startDate\":\"2025-05-02T00:00:00.000Z\",\"endDate\":null,\"repeatUntil\":null,\"repeatInterval\":null,\"hasStartDate\":true,\"hasStartTime\":false,\"hasEndTime\":false,\"location\":\"asd\",\"capacity\":null,\"mainImage\":null,\"createdAt\":\"2025-05-01T17:50:53.600Z\",\"attendancyLimit\":null,\"allowRecurringAttendance\":false,\"joinDaysBeforeStart\":null,\"organizerId\":1,\"categories\":[{\"id\":1,\"name\":\"WORKSHOP\",\"label\":\"Workshop\",\"icon\":\"🧪\"}],\"eventDays\":[],\"organizer\":{\"id\":1,\"firstName\":\"Vladimírasdasd\",\"lastName\":\"Valent\",\"email\":\"spisiak@stud.uniza.sk\"},\"moderators\":[{\"id\":1037,\"userId\":1,\"eventId\":1328,\"canEditEvent\":true,\"canManageParticipants\":false,\"canManageAttendees\":false,\"canManageModerators\":false,\"canRepostEvent\":false,\"user\":{\"id\":1,\"firstName\":\"Vladimírasdasd\",\"lastName\":\"Valent\",\"email\":\"spisiak@stud.uniza.sk\"}}],\"eventOccurrences\":[{\"id\":1366,\"eventId\":1328,\"date\":\"2025-05-02T00:00:00.000Z\",\"eventDayId\":null,\"eventChangeId\":null,\"eventChange\":null,\"eventDay\":null,\"participants\":[]}],\"participants\":[],\"date\":\"2025-05-02T00:00:00.000Z\",\"virtual\":false},{\"id\":1329,\"title\":\"asd\",\"description\":\"\",\"startDate\":\"2025-05-02T00:00:00.000Z\",\"endDate\":null,\"repeatUntil\":null,\"repeatInterval\":null,\"hasStartDate\":true,\"hasStartTime\":false,\"hasEndTime\":false,\"location\":\"asd\",\"capacity\":null,\"mainImage\":null,\"createdAt\":\"2025-05-01T17:51:03.112Z\",\"attendancyLimit\":null,\"allowRecurringAttendance\":false,\"joinDaysBeforeStart\":null,\"organizerId\":1,\"categories\":[{\"id\":1,\"name\":\"WORKSHOP\",\"label\":\"Workshop\",\"icon\":\"🧪\"}],\"eventDays\":[],\"organizer\":{\"id\":1,\"firstName\":\"Vladimírasdasd\",\"lastName\":\"Valent\",\"email\":\"spisiak@stud.uniza.sk\"},\"moderators\":[{\"id\":1038,\"userId\":1,\"eventId\":1329,\"canEditEvent\":true,\"canManageParticipants\":false,\"canManageAttendees\":false,\"canManageModerators\":false,\"canRepostEvent\":false,\"user\":{\"id\":1,\"firstName\":\"Vladimírasdasd\",\"lastName\":\"Valent\",\"email\":\"spisiak@stud.uniza.sk\"}}],\"eventOccurrences\":[{\"id\":1367,\"eventId\":1329,\"date\":\"2025-05-02T00:00:00.000Z\",\"eventDayId\":null,\"eventChangeId\":null,\"eventChange\":null,\"eventDay\":null,\"participants\":[]}],\"participants\":[],\"date\":\"2025-05-02T00:00:00.000Z\",\"virtual\":false},{\"id\":1332,\"title\":\"asd\",\"description\":\"\",\"startDate\":\"2025-05-02T00:00:00.000Z\",\"endDate\":null,\"repeatUntil\":null,\"repeatInterval\":null,\"hasStartDate\":true,\"hasStartTime\":false,\"hasEndTime\":false,\"location\":\"\",\"capacity\":null,\"mainImage\":null,\"createdAt\":\"2025-05-01T18:20:42.118Z\",\"attendancyLimit\":null,\"allowRecurringAttendance\":false,\"joinDaysBeforeStart\":null,\"organizerId\":1,\"categories\":[],\"eventDays\":[],\"organizer\":{\"id\":1,\"firstName\":\"Vladimírasdasd\",\"lastName\":\"Valent\",\"email\":\"spisiak@stud.uniza.sk\"},\"moderators\":[],\"eventOccurrences\":[{\"id\":1370,\"eventId\":1332,\"date\":\"2025-05-02T00:00:00.000Z\",\"eventDayId\":null,\"eventChangeId\":null,\"eventChange\":null,\"eventDay\":null,\"participants\":[]}],\"participants\":[],\"date\":\"2025-05-02T00:00:00.000Z\",\"virtual\":false},{\"id\":1333,\"title\":\"asd\",\"description\":\"\",\"startDate\":\"2025-05-02T00:00:00.000Z\",\"endDate\":null,\"repeatUntil\":null,\"repeatInterval\":null,\"hasStartDate\":true,\"hasStartTime\":false,\"hasEndTime\":false,\"location\":\"\",\"capacity\":null,\"mainImage\":null,\"createdAt\":\"2025-05-01T18:22:25.072Z\",\"attendancyLimit\":null,\"allowRecurringAttendance\":false,\"joinDaysBeforeStart\":null,\"organizerId\":1,\"categories\":[],\"eventDays\":[],\"organizer\":{\"id\":1,\"firstName\":\"Vladimírasdasd\",\"lastName\":\"Valent\",\"email\":\"spisiak@stud.uniza.sk\"},\"moderators\":[],\"eventOccurrences\":[{\"id\":1371,\"eventId\":1333,\"date\":\"2025-05-02T00:00:00.000Z\",\"eventDayId\":null,\"eventChangeId\":null,\"eventChange\":null,\"eventDay\":null,\"participants\":[]}],\"participants\":[],\"date\":\"2025-05-02T00:00:00.000Z\",\"virtual\":false},{\"id\":1334,\"title\":\"asd\",\"description\":\"\",\"startDate\":\"2025-05-02T00:00:00.000Z\",\"endDate\":\"2025-05-01T23:59:00.000Z\",\"repeatUntil\":null,\"repeatInterval\":null,\"hasStartDate\":true,\"hasStartTime\":false,\"hasEndTime\":false,\"location\":\"\",\"capacity\":null,\"mainImage\":\"/uploads/events/event_main_1746124119194.png\",\"createdAt\":\"2025-05-01T18:28:39.202Z\",\"attendancyLimit\":null,\"allowRecurringAttendance\":false,\"joinDaysBeforeStart\":null,\"organizerId\":1,\"categories\":[],\"eventDays\":[],\"organizer\":{\"id\":1,\"firstName\":\"Vladimírasdasd\",\"lastName\":\"Valent\",\"email\":\"spisiak@stud.uniza.sk\"},\"moderators\":[],\"eventOccurrences\":[{\"id\":1372,\"eventId\":1334,\"date\":\"2025-05-02T00:00:00.000Z\",\"eventDayId\":null,\"eventChangeId\":null,\"eventChange\":null,\"eventDay\":null,\"participants\":[]}],\"participants\":[],\"date\":\"2025-05-02T00:00:00.000Z\",\"virtual\":false},{\"id\":1330,\"title\":\"asd\",\"description\":\"\",\"startDate\":\"2025-05-03T14:22:00.000Z\",\"endDate\":null,\"repeatUntil\":null,\"repeatInterval\":1,\"hasStartDate\":true,\"hasStartTime\":true,\"hasEndTime\":false,\"location\":\"\",\"capacity\":null,\"mainImage\":null,\"createdAt\":\"2025-05-01T17:57:06.728Z\",\"attendancyLimit\":null,\"allowRecurringAttendance\":true,\"joinDaysBeforeStart\":null,\"organizerId\":1,\"categories\":[],\"eventDays\":[{\"id\":4452,\"eventId\":1330,\"week\":0,\"dayId\":3,\"eventChangeId\":null,\"day\":{\"id\":3,\"name\":\"Streda\"},\"eventChange\":null,\"users\":[]},{\"id\":4453,\"eventId\":1330,\"week\":0,\"dayId\":6,\"eventChangeId\":null,\"day\":{\"id\":6,\"name\":\"Sobota\"},\"eventChange\":null,\"users\":[{\"id\":1,\"firstName\":\"Vladimírasdasd\",\"lastName\":\"Valent\",\"email\":\"spisiak@stud.uniza.sk\"}]}],\"organizer\":{\"id\":1,\"firstName\":\"Vladimírasdasd\",\"lastName\":\"Valent\",\"email\":\"spisiak@stud.uniza.sk\"},\"moderators\":[{\"id\":1039,\"userId\":1,\"eventId\":1330,\"canEditEvent\":true,\"canManageParticipants\":false,\"canManageAttendees\":false,\"canManageModerators\":false,\"canRepostEvent\":false,\"user\":{\"id\":1,\"firstName\":\"Vladimírasdasd\",\"lastName\":\"Valent\",\"email\":\"spisiak@stud.uniza.sk\"}},{\"id\":1041,\"userId\":2,\"eventId\":1330,\"canEditEvent\":false,\"canManageParticipants\":false,\"canManageAttendees\":true,\"canManageModerators\":false,\"canRepostEvent\":false,\"user\":{\"id\":2,\"firstName\":\"Test\",\"lastName\":\"Test\",\"email\":\"teasdasdst@uniza.sk\"}}],\"eventOccurrences\":[{\"id\":1368,\"eventId\":1330,\"date\":\"2025-05-03T00:00:00.000Z\",\"eventDayId\":4453,\"eventChangeId\":null,\"eventChange\":null,\"eventDay\":{\"id\":4453,\"eventId\":1330,\"week\":0,\"dayId\":6,\"eventChangeId\":null,\"eventChange\":null},\"participants\":[{\"id\":1,\"firstName\":\"Vladimírasdasd\",\"lastName\":\"Valent\",\"email\":\"spisiak@stud.uniza.sk\"}]}],\"participants\":[{\"id\":1,\"firstName\":\"Vladimírasdasd\",\"lastName\":\"Valent\",\"email\":\"spisiak@stud.uniza.sk\"}],\"date\":\"2025-05-03T00:00:00.000Z\",\"virtual\":false},{\"id\":1331,\"title\":\"asd\",\"description\":\"\",\"startDate\":\"2025-05-03T14:22:00.000Z\",\"endDate\":null,\"repeatUntil\":null,\"repeatInterval\":1,\"hasStartDate\":true,\"hasStartTime\":true,\"hasEndTime\":false,\"location\":\"\",\"capacity\":null,\"mainImage\":null,\"createdAt\":\"2025-05-01T17:57:12.829Z\",\"attendancyLimit\":null,\"allowRecurringAttendance\":true,\"joinDaysBeforeStart\":null,\"organizerId\":1,\"categories\":[],\"eventDays\":[{\"id\":4454,\"eventId\":1331,\"week\":0,\"dayId\":3,\"eventChangeId\":null,\"day\":{\"id\":3,\"name\":\"Streda\"},\"eventChange\":null,\"users\":[{\"id\":1,\"firstName\":\"Vladimírasdasd\",\"lastName\":\"Valent\",\"email\":\"spisiak@stud.uniza.sk\"}]},{\"id\":4455,\"eventId\":1331,\"week\":0,\"dayId\":6,\"eventChangeId\":null,\"day\":{\"id\":6,\"name\":\"Sobota\"},\"eventChange\":null,\"users\":[{\"id\":1,\"firstName\":\"Vladimírasdasd\",\"lastName\":\"Valent\",\"email\":\"spisiak@stud.uniza.sk\"}]}],\"organizer\":{\"id\":1,\"firstName\":\"Vladimírasdasd\",\"lastName\":\"Valent\",\"email\":\"spisiak@stud.uniza.sk\"},\"moderators\":[{\"id\":1040,\"userId\":1,\"eventId\":1331,\"canEditEvent\":true,\"canManageParticipants\":false,\"canManageAttendees\":false,\"canManageModerators\":false,\"canRepostEvent\":false,\"user\":{\"id\":1,\"firstName\":\"Vladimírasdasd\",\"lastName\":\"Valent\",\"email\":\"spisiak@stud.uniza.sk\"}}],\"eventOccurrences\":[{\"id\":1369,\"eventId\":1331,\"date\":\"2025-05-03T00:00:00.000Z\",\"eventDayId\":4455,\"eventChangeId\":null,\"eventChange\":null,\"eventDay\":{\"id\":4455,\"eventId\":1331,\"week\":0,\"dayId\":6,\"eventChangeId\":null,\"eventChange\":null},\"participants\":[{\"id\":1,\"firstName\":\"Vladimírasdasd\",\"lastName\":\"Valent\",\"email\":\"spisiak@stud.uniza.sk\"}]}],\"participants\":[{\"id\":1,\"firstName\":\"Vladimírasdasd\",\"lastName\":\"Valent\",\"email\":\"spisiak@stud.uniza.sk\"}],\"date\":\"2025-05-03T00:00:00.000Z\",\"virtual\":false},{\"id\":1330,\"title\":\"asd\",\"description\":\"\",\"startDate\":\"2025-05-07T14:22:00.000Z\",\"endDate\":null,\"repeatUntil\":null,\"repeatInterval\":1,\"hasStartDate\":true,\"hasStartTime\":true,\"hasEndTime\":false,\"location\":\"\",\"capacity\":null,\"mainImage\":null,\"createdAt\":\"2025-05-01T17:57:06.728Z\",\"attendancyLimit\":null,\"allowRecurringAttendance\":true,\"joinDaysBeforeStart\":null,\"organizerId\":1,\"categories\":[],\"eventDays\":[{\"id\":4452,\"eventId\":1330,\"week\":0,\"dayId\":3,\"eventChangeId\":null,\"day\":{\"id\":3,\"name\":\"Streda\"},\"eventChange\":null,\"users\":[]},{\"id\":4453,\"eventId\":1330,\"week\":0,\"dayId\":6,\"eventChangeId\":null,\"day\":{\"id\":6,\"name\":\"Sobota\"},\"eventChange\":null,\"users\":[{\"id\":1,\"firstName\":\"Vladimírasdasd\",\"lastName\":\"Valent\",\"email\":\"spisiak@stud.uniza.sk\"}]}],\"organizer\":{\"id\":1,\"firstName\":\"Vladimírasdasd\",\"lastName\":\"Valent\",\"email\":\"spisiak@stud.uniza.sk\"},\"moderators\":[{\"id\":1039,\"userId\":1,\"eventId\":1330,\"canEditEvent\":true,\"canManageParticipants\":false,\"canManageAttendees\":false,\"canManageModerators\":false,\"canRepostEvent\":false,\"user\":{\"id\":1,\"firstName\":\"Vladimírasdasd\",\"lastName\":\"Valent\",\"email\":\"spisiak@stud.uniza.sk\"}},{\"id\":1041,\"userId\":2,\"eventId\":1330,\"canEditEvent\":false,\"canManageParticipants\":false,\"canManageAttendees\":true,\"canManageModerators\":false,\"canRepostEvent\":false,\"user\":{\"id\":2,\"firstName\":\"Test\",\"lastName\":\"Test\",\"email\":\"teasdasdst@uniza.sk\"}}],\"eventOccurrences\":[{\"id\":1368,\"eventId\":1330,\"date\":\"2025-05-03T00:00:00.000Z\",\"eventDayId\":4453,\"eventChangeId\":null,\"eventChange\":null,\"eventDay\":{\"id\":4453,\"eventId\":1330,\"week\":0,\"dayId\":6,\"eventChangeId\":null,\"eventChange\":null},\"participants\":[{\"id\":1,\"firstName\":\"Vladimírasdasd\",\"lastName\":\"Valent\",\"email\":\"spisiak@stud.uniza.sk\"}]}],\"date\":\"2025-05-07T00:00:00.000Z\",\"virtual\":true,\"participants\":[]},{\"id\":1331,\"title\":\"asd\",\"description\":\"\",\"startDate\":\"2025-05-07T14:22:00.000Z\",\"endDate\":null,\"repeatUntil\":null,\"repeatInterval\":1,\"hasStartDate\":true,\"hasStartTime\":true,\"hasEndTime\":false,\"location\":\"\",\"capacity\":null,\"mainImage\":null,\"createdAt\":\"2025-05-01T17:57:12.829Z\",\"attendancyLimit\":null,\"allowRecurringAttendance\":true,\"joinDaysBeforeStart\":null,\"organizerId\":1,\"categories\":[],\"eventDays\":[{\"id\":4454,\"eventId\":1331,\"week\":0,\"dayId\":3,\"eventChangeId\":null,\"day\":{\"id\":3,\"name\":\"Streda\"},\"eventChange\":null,\"users\":[{\"id\":1,\"firstName\":\"Vladimírasdasd\",\"lastName\":\"Valent\",\"email\":\"spisiak@stud.uniza.sk\"}]},{\"id\":4455,\"eventId\":1331,\"week\":0,\"dayId\":6,\"eventChangeId\":null,\"day\":{\"id\":6,\"name\":\"Sobota\"},\"eventChange\":null,\"users\":[{\"id\":1,\"firstName\":\"Vladimírasdasd\",\"lastName\":\"Valent\",\"email\":\"spisiak@stud.uniza.sk\"}]}],\"organizer\":{\"id\":1,\"firstName\":\"Vladimírasdasd\",\"lastName\":\"Valent\",\"email\":\"spisiak@stud.uniza.sk\"},\"moderators\":[{\"id\":1040,\"userId\":1,\"eventId\":1331,\"canEditEvent\":true,\"canManageParticipants\":false,\"canManageAttendees\":false,\"canManageModerators\":false,\"canRepostEvent\":false,\"user\":{\"id\":1,\"firstName\":\"Vladimírasdasd\",\"lastName\":\"Valent\",\"email\":\"spisiak@stud.uniza.sk\"}}],\"eventOccurrences\":[{\"id\":1369,\"eventId\":1331,\"date\":\"2025-05-03T00:00:00.000Z\",\"eventDayId\":4455,\"eventChangeId\":null,\"eventChange\":null,\"eventDay\":{\"id\":4455,\"eventId\":1331,\"week\":0,\"dayId\":6,\"eventChangeId\":null,\"eventChange\":null},\"participants\":[{\"id\":1,\"firstName\":\"Vladimírasdasd\",\"lastName\":\"Valent\",\"email\":\"spisiak@stud.uniza.sk\"}]}],\"date\":\"2025-05-07T00:00:00.000Z\",\"virtual\":true,\"participants\":[{\"id\":1,\"firstName\":\"Vladimírasdasd\",\"lastName\":\"Valent\",\"email\":\"spisiak@stud.uniza.sk\"}]},{\"id\":1335,\"title\":\"asdasd\",\"description\":null,\"startDate\":\"2025-05-09T00:00:00.000Z\",\"endDate\":\"2025-05-08T23:59:00.000Z\",\"repeatUntil\":null,\"repeatInterval\":null,\"hasStartDate\":true,\"hasStartTime\":false,\"hasEndTime\":false,\"location\":null,\"capacity\":null,\"mainImage\":null,\"createdAt\":\"2025-05-01T20:04:06.426Z\",\"attendancyLimit\":null,\"allowRecurringAttendance\":false,\"joinDaysBeforeStart\":null,\"organizerId\":1,\"categories\":[],\"eventDays\":[],\"organizer\":{\"id\":1,\"firstName\":\"Vladimírasdasd\",\"lastName\":\"Valent\",\"email\":\"spisiak@stud.uniza.sk\"},\"moderators\":[],\"eventOccurrences\":[{\"id\":1373,\"eventId\":1335,\"date\":\"2025-05-09T00:00:00.000Z\",\"eventDayId\":null,\"eventChangeId\":null,\"eventChange\":null,\"eventDay\":null,\"participants\":[]}],\"participants\":[],\"date\":\"2025-05-09T00:00:00.000Z\",\"virtual\":false},{\"id\":1330,\"title\":\"asd\",\"description\":\"\",\"startDate\":\"2025-05-10T14:22:00.000Z\",\"endDate\":null,\"repeatUntil\":null,\"repeatInterval\":1,\"hasStartDate\":true,\"hasStartTime\":true,\"hasEndTime\":false,\"location\":\"\",\"capacity\":null,\"mainImage\":null,\"createdAt\":\"2025-05-01T17:57:06.728Z\",\"attendancyLimit\":null,\"allowRecurringAttendance\":true,\"joinDaysBeforeStart\":null,\"organizerId\":1,\"categories\":[],\"eventDays\":[{\"id\":4452,\"eventId\":1330,\"week\":0,\"dayId\":3,\"eventChangeId\":null,\"day\":{\"id\":3,\"name\":\"Streda\"},\"eventChange\":null,\"users\":[]},{\"id\":4453,\"eventId\":1330,\"week\":0,\"dayId\":6,\"eventChangeId\":null,\"day\":{\"id\":6,\"name\":\"Sobota\"},\"eventChange\":null,\"users\":[{\"id\":1,\"firstName\":\"Vladimírasdasd\",\"lastName\":\"Valent\",\"email\":\"spisiak@stud.uniza.sk\"}]}],\"organizer\":{\"id\":1,\"firstName\":\"Vladimírasdasd\",\"lastName\":\"Valent\",\"email\":\"spisiak@stud.uniza.sk\"},\"moderators\":[{\"id\":1039,\"userId\":1,\"eventId\":1330,\"canEditEvent\":true,\"canManageParticipants\":false,\"canManageAttendees\":false,\"canManageModerators\":false,\"canRepostEvent\":false,\"user\":{\"id\":1,\"firstName\":\"Vladimírasdasd\",\"lastName\":\"Valent\",\"email\":\"spisiak@stud.uniza.sk\"}},{\"id\":1041,\"userId\":2,\"eventId\":1330,\"canEditEvent\":false,\"canManageParticipants\":false,\"canManageAttendees\":true,\"canManageModerators\":false,\"canRepostEvent\":false,\"user\":{\"id\":2,\"firstName\":\"Test\",\"lastName\":\"Test\",\"email\":\"teasdasdst@uniza.sk\"}}],\"eventOccurrences\":[{\"id\":1368,\"eventId\":1330,\"date\":\"2025-05-03T00:00:00.000Z\",\"eventDayId\":4453,\"eventChangeId\":null,\"eventChange\":null,\"eventDay\":{\"id\":4453,\"eventId\":1330,\"week\":0,\"dayId\":6,\"eventChangeId\":null,\"eventChange\":null},\"participants\":[{\"id\":1,\"firstName\":\"Vladimírasdasd\",\"lastName\":\"Valent\",\"email\":\"spisiak@stud.uniza.sk\"}]}],\"date\":\"2025-05-10T00:00:00.000Z\",\"virtual\":true,\"participants\":[{\"id\":1,\"firstName\":\"Vladimírasdasd\",\"lastName\":\"Valent\",\"email\":\"spisiak@stud.uniza.sk\"}]},{\"id\":1331,\"title\":\"asd\",\"description\":\"\",\"startDate\":\"2025-05-10T14:22:00.000Z\",\"endDate\":null,\"repeatUntil\":null,\"repeatInterval\":1,\"hasStartDate\":true,\"hasStartTime\":true,\"hasEndTime\":false,\"location\":\"\",\"capacity\":null,\"mainImage\":null,\"createdAt\":\"2025-05-01T17:57:12.829Z\",\"attendancyLimit\":null,\"allowRecurringAttendance\":true,\"joinDaysBeforeStart\":null,\"organizerId\":1,\"categories\":[],\"eventDays\":[{\"id\":4454,\"eventId\":1331,\"week\":0,\"dayId\":3,\"eventChangeId\":null,\"day\":{\"id\":3,\"name\":\"Streda\"},\"eventChange\":null,\"users\":[{\"id\":1,\"firstName\":\"Vladimírasdasd\",\"lastName\":\"Valent\",\"email\":\"spisiak@stud.uniza.sk\"}]},{\"id\":4455,\"eventId\":1331,\"week\":0,\"dayId\":6,\"eventChangeId\":null,\"day\":{\"id\":6,\"name\":\"Sobota\"},\"eventChange\":null,\"users\":[{\"id\":1,\"firstName\":\"Vladimírasdasd\",\"lastName\":\"Valent\",\"email\":\"spisiak@stud.uniza.sk\"}]}],\"organizer\":{\"id\":1,\"firstName\":\"Vladimírasdasd\",\"lastName\":\"Valent\",\"email\":\"spisiak@stud.uniza.sk\"},\"moderators\":[{\"id\":1040,\"userId\":1,\"eventId\":1331,\"canEditEvent\":true,\"canManageParticipants\":false,\"canManageAttendees\":false,\"canManageModerators\":false,\"canRepostEvent\":false,\"user\":{\"id\":1,\"firstName\":\"Vladimírasdasd\",\"lastName\":\"Valent\",\"email\":\"spisiak@stud.uniza.sk\"}}],\"eventOccurrences\":[{\"id\":1369,\"eventId\":1331,\"date\":\"2025-05-03T00:00:00.000Z\",\"eventDayId\":4455,\"eventChangeId\":null,\"eventChange\":null,\"eventDay\":{\"id\":4455,\"eventId\":1331,\"week\":0,\"dayId\":6,\"eventChangeId\":null,\"eventChange\":null},\"participants\":[{\"id\":1,\"firstName\":\"Vladimírasdasd\",\"lastName\":\"Valent\",\"email\":\"spisiak@stud.uniza.sk\"}]}],\"date\":\"2025-05-10T00:00:00.000Z\",\"virtual\":true,\"participants\":[{\"id\":1,\"firstName\":\"Vladimírasdasd\",\"lastName\":\"Valent\",\"email\":\"spisiak@stud.uniza.sk\"}]},{\"id\":1330,\"title\":\"asd\",\"description\":\"\",\"startDate\":\"2025-05-14T14:22:00.000Z\",\"endDate\":null,\"repeatUntil\":null,\"repeatInterval\":1,\"hasStartDate\":true,\"hasStartTime\":true,\"hasEndTime\":false,\"location\":\"\",\"capacity\":null,\"mainImage\":null,\"createdAt\":\"2025-05-01T17:57:06.728Z\",\"attendancyLimit\":null,\"allowRecurringAttendance\":true,\"joinDaysBeforeStart\":null,\"organizerId\":1,\"categories\":[],\"eventDays\":[{\"id\":4452,\"eventId\":1330,\"week\":0,\"dayId\":3,\"eventChangeId\":null,\"day\":{\"id\":3,\"name\":\"Streda\"},\"eventChange\":null,\"users\":[]},{\"id\":4453,\"eventId\":1330,\"week\":0,\"dayId\":6,\"eventChangeId\":null,\"day\":{\"id\":6,\"name\":\"Sobota\"},\"eventChange\":null,\"users\":[{\"id\":1,\"firstName\":\"Vladimírasdasd\",\"lastName\":\"Valent\",\"email\":\"spisiak@stud.uniza.sk\"}]}],\"organizer\":{\"id\":1,\"firstName\":\"Vladimírasdasd\",\"lastName\":\"Valent\",\"email\":\"spisiak@stud.uniza.sk\"},\"moderators\":[{\"id\":1039,\"userId\":1,\"eventId\":1330,\"canEditEvent\":true,\"canManageParticipants\":false,\"canManageAttendees\":false,\"canManageModerators\":false,\"canRepostEvent\":false,\"user\":{\"id\":1,\"firstName\":\"Vladimírasdasd\",\"lastName\":\"Valent\",\"email\":\"spisiak@stud.uniza.sk\"}},{\"id\":1041,\"userId\":2,\"eventId\":1330,\"canEditEvent\":false,\"canManageParticipants\":false,\"canManageAttendees\":true,\"canManageModerators\":false,\"canRepostEvent\":false,\"user\":{\"id\":2,\"firstName\":\"Test\",\"lastName\":\"Test\",\"email\":\"teasdasdst@uniza.sk\"}}],\"eventOccurrences\":[{\"id\":1368,\"eventId\":1330,\"date\":\"2025-05-03T00:00:00.000Z\",\"eventDayId\":4453,\"eventChangeId\":null,\"eventChange\":null,\"eventDay\":{\"id\":4453,\"eventId\":1330,\"week\":0,\"dayId\":6,\"eventChangeId\":null,\"eventChange\":null},\"participants\":[{\"id\":1,\"firstName\":\"Vladimírasdasd\",\"lastName\":\"Valent\",\"email\":\"spisiak@stud.uniza.sk\"}]}],\"date\":\"2025-05-14T00:00:00.000Z\",\"virtual\":true,\"participants\":[]},{\"id\":1331,\"title\":\"asd\",\"description\":\"\",\"startDate\":\"2025-05-14T14:22:00.000Z\",\"endDate\":null,\"repeatUntil\":null,\"repeatInterval\":1,\"hasStartDate\":true,\"hasStartTime\":true,\"hasEndTime\":false,\"location\":\"\",\"capacity\":null,\"mainImage\":null,\"createdAt\":\"2025-05-01T17:57:12.829Z\",\"attendancyLimit\":null,\"allowRecurringAttendance\":true,\"joinDaysBeforeStart\":null,\"organizerId\":1,\"categories\":[],\"eventDays\":[{\"id\":4454,\"eventId\":1331,\"week\":0,\"dayId\":3,\"eventChangeId\":null,\"day\":{\"id\":3,\"name\":\"Streda\"},\"eventChange\":null,\"users\":[{\"id\":1,\"firstName\":\"Vladimírasdasd\",\"lastName\":\"Valent\",\"email\":\"spisiak@stud.uniza.sk\"}]},{\"id\":4455,\"eventId\":1331,\"week\":0,\"dayId\":6,\"eventChangeId\":null,\"day\":{\"id\":6,\"name\":\"Sobota\"},\"eventChange\":null,\"users\":[{\"id\":1,\"firstName\":\"Vladimírasdasd\",\"lastName\":\"Valent\",\"email\":\"spisiak@stud.uniza.sk\"}]}],\"organizer\":{\"id\":1,\"firstName\":\"Vladimírasdasd\",\"lastName\":\"Valent\",\"email\":\"spisiak@stud.uniza.sk\"},\"moderators\":[{\"id\":1040,\"userId\":1,\"eventId\":1331,\"canEditEvent\":true,\"canManageParticipants\":false,\"canManageAttendees\":false,\"canManageModerators\":false,\"canRepostEvent\":false,\"user\":{\"id\":1,\"firstName\":\"Vladimírasdasd\",\"lastName\":\"Valent\",\"email\":\"spisiak@stud.uniza.sk\"}}],\"eventOccurrences\":[{\"id\":1369,\"eventId\":1331,\"date\":\"2025-05-03T00:00:00.000Z\",\"eventDayId\":4455,\"eventChangeId\":null,\"eventChange\":null,\"eventDay\":{\"id\":4455,\"eventId\":1331,\"week\":0,\"dayId\":6,\"eventChangeId\":null,\"eventChange\":null},\"participants\":[{\"id\":1,\"firstName\":\"Vladimírasdasd\",\"lastName\":\"Valent\",\"email\":\"spisiak@stud.uniza.sk\"}]}],\"date\":\"2025-05-14T00:00:00.000Z\",\"virtual\":true,\"participants\":[{\"id\":1,\"firstName\":\"Vladimírasdasd\",\"lastName\":\"Valent\",\"email\":\"spisiak@stud.uniza.sk\"}]}]"
 }
 
+{
+  "time": "2025-05-01T20:09:17.103Z",
+  "method": "GET",
+  "url": "/api/events/1328?date=2025-05-02T00:00:00.000Z",
+  "status": 200,
+  "response": {
+    "id": 1328,
+    "title": "asd",
+    "description": "",
+    "startDate": "2025-05-02T00:00:00.000Z",
+    "endDate": null,
+    "repeatUntil": null,
+    "repeatInterval": null,
+    "hasStartDate": true,
+    "hasStartTime": false,
+    "hasEndTime": false,
+    "location": "asd",
+    "capacity": null,
+    "mainImage": null,
+    "createdAt": "2025-05-01T17:50:53.600Z",
+    "attendancyLimit": null,
+    "allowRecurringAttendance": false,
+    "joinDaysBeforeStart": null,
+    "organizerId": 1,
+    "categories": [
+      {
+        "id": 1,
+        "name": "WORKSHOP",
+        "label": "Workshop",
+        "icon": "🧪"
+      }
+    ],
+    "gallery": [],
+    "room": {
+      "id": 1079,
+      "eventId": 1328
+    },
+    "eventDays": [],
+    "organizer": {
+      "id": 1,
+      "firstName": "Vladimírasdasd",
+      "lastName": "Valent",
+      "email": "spisiak@stud.uniza.sk"
+    },
+    "moderators": [
+      {
+        "id": 1037,
+        "userId": 1,
+        "eventId": 1328,
+        "canEditEvent": true,
+        "canManageParticipants": false,
+        "canManageAttendees": false,
+        "canManageModerators": false,
+        "canRepostEvent": false,
+        "user": {
+          "id": 1,
+          "firstName": "Vladimírasdasd",
+          "lastName": "Valent",
+          "email": "spisiak@stud.uniza.sk"
+        }
+      }
+    ],
+    "eventOccurrences": [
+      {
+        "id": 1366,
+        "eventId": 1328,
+        "date": "2025-05-02T00:00:00.000Z",
+        "eventDayId": null,
+        "eventChangeId": null,
+        "eventChange": null,
+        "participants": []
+      }
+    ],
+    "date": "2025-05-02T00:00:00.000Z",
+    "eventChange": null,
+    "eventChangeDay": null,
+    "participants": [],
+    "attendants": [],
+    "eventDayId": null,
+    "occurrenceId": 1366,
+    "virtual": false
+  }
+}
+
+{
+  "time": "2025-05-01T20:09:17.104Z",
+  "method": "GET",
+  "url": "/api/events/1328?date=2025-05-02T00:00:00.000Z",
+  "status": 200,
+  "response": "{\"id\":1328,\"title\":\"asd\",\"description\":\"\",\"startDate\":\"2025-05-02T00:00:00.000Z\",\"endDate\":null,\"repeatUntil\":null,\"repeatInterval\":null,\"hasStartDate\":true,\"hasStartTime\":false,\"hasEndTime\":false,\"location\":\"asd\",\"capacity\":null,\"mainImage\":null,\"createdAt\":\"2025-05-01T17:50:53.600Z\",\"attendancyLimit\":null,\"allowRecurringAttendance\":false,\"joinDaysBeforeStart\":null,\"organizerId\":1,\"categories\":[{\"id\":1,\"name\":\"WORKSHOP\",\"label\":\"Workshop\",\"icon\":\"🧪\"}],\"gallery\":[],\"room\":{\"id\":1079,\"eventId\":1328},\"eventDays\":[],\"organizer\":{\"id\":1,\"firstName\":\"Vladimírasdasd\",\"lastName\":\"Valent\",\"email\":\"spisiak@stud.uniza.sk\"},\"moderators\":[{\"id\":1037,\"userId\":1,\"eventId\":1328,\"canEditEvent\":true,\"canManageParticipants\":false,\"canManageAttendees\":false,\"canManageModerators\":false,\"canRepostEvent\":false,\"user\":{\"id\":1,\"firstName\":\"Vladimírasdasd\",\"lastName\":\"Valent\",\"email\":\"spisiak@stud.uniza.sk\"}}],\"eventOccurrences\":[{\"id\":1366,\"eventId\":1328,\"date\":\"2025-05-02T00:00:00.000Z\",\"eventDayId\":null,\"eventChangeId\":null,\"eventChange\":null,\"participants\":[]}],\"date\":\"2025-05-02T00:00:00.000Z\",\"eventChange\":null,\"eventChangeDay\":null,\"participants\":[],\"attendants\":[],\"eventDayId\":null,\"occurrenceId\":1366,\"virtual\":false}"
+}
+
+{
+  "time": "2025-05-01T20:13:49.415Z",
+  "method": "GET",
+  "url": "/api/events/get?startDate=2025-05-01&endDate=2025-05-15",
+  "status": 200,
+  "response": [
+    {
+      "id": 1328,
+      "title": "asd",
+      "description": "",
+      "startDate": "2025-05-02T00:00:00.000Z",
+      "endDate": null,
+      "repeatUntil": null,
+      "repeatInterval": null,
+      "hasStartDate": true,
+      "hasStartTime": false,
+      "hasEndTime": false,
+      "location": "asd",
+      "capacity": null,
+      "mainImage": null,
+      "createdAt": "2025-05-01T17:50:53.600Z",
+      "attendancyLimit": null,
+      "allowRecurringAttendance": false,
+      "joinDaysBeforeStart": null,
+      "organizerId": 1,
+      "categories": [
+        {
+          "id": 1,
+          "name": "WORKSHOP",
+          "label": "Workshop",
+          "icon": "🧪"
+        }
+      ],
+      "eventDays": [],
+      "organizer": {
+        "id": 1,
+        "firstName": "Vladimírasdasd",
+        "lastName": "Valent",
+        "email": "spisiak@stud.uniza.sk"
+      },
+      "moderators": [
+        {
+          "id": 1037,
+          "userId": 1,
+          "eventId": 1328,
+          "canEditEvent": true,
+          "canManageParticipants": false,
+          "canManageAttendees": false,
+          "canManageModerators": false,
+          "canRepostEvent": false,
+          "user": {
+            "id": 1,
+            "firstName": "Vladimírasdasd",
+            "lastName": "Valent",
+            "email": "spisiak@stud.uniza.sk"
+          }
+        }
+      ],
+      "eventOccurrences": [
+        {
+          "id": 1366,
+          "eventId": 1328,
+          "date": "2025-05-02T00:00:00.000Z",
+          "eventDayId": null,
+          "eventChangeId": null,
+          "eventChange": null,
+          "eventDay": null,
+          "participants": []
+        }
+      ],
+      "participants": [],
+      "date": "2025-05-02T00:00:00.000Z",
+      "virtual": false
+    },
+    {
+      "id": 1329,
+      "title": "asd",
+      "description": "",
+      "startDate": "2025-05-02T00:00:00.000Z",
+      "endDate": null,
+      "repeatUntil": null,
+      "repeatInterval": null,
+      "hasStartDate": true,
+      "hasStartTime": false,
+      "hasEndTime": false,
+      "location": "asd",
+      "capacity": null,
+      "mainImage": null,
+      "createdAt": "2025-05-01T17:51:03.112Z",
+      "attendancyLimit": null,
+      "allowRecurringAttendance": false,
+      "joinDaysBeforeStart": null,
+      "organizerId": 1,
+      "categories": [
+        {
+          "id": 1,
+          "name": "WORKSHOP",
+          "label": "Workshop",
+          "icon": "🧪"
+        }
+      ],
+      "eventDays": [],
+      "organizer": {
+        "id": 1,
+        "firstName": "Vladimírasdasd",
+        "lastName": "Valent",
+        "email": "spisiak@stud.uniza.sk"
+      },
+      "moderators": [
+        {
+          "id": 1038,
+          "userId": 1,
+          "eventId": 1329,
+          "canEditEvent": true,
+          "canManageParticipants": false,
+          "canManageAttendees": false,
+          "canManageModerators": false,
+          "canRepostEvent": false,
+          "user": {
+            "id": 1,
+            "firstName": "Vladimírasdasd",
+            "lastName": "Valent",
+            "email": "spisiak@stud.uniza.sk"
+          }
+        }
+      ],
+      "eventOccurrences": [
+        {
+          "id": 1367,
+          "eventId": 1329,
+          "date": "2025-05-02T00:00:00.000Z",
+          "eventDayId": null,
+          "eventChangeId": null,
+          "eventChange": null,
+          "eventDay": null,
+          "participants": []
+        }
+      ],
+      "participants": [],
+      "date": "2025-05-02T00:00:00.000Z",
+      "virtual": false
+    },
+    {
+      "id": 1332,
+      "title": "asd",
+      "description": "",
+      "startDate": "2025-05-02T00:00:00.000Z",
+      "endDate": null,
+      "repeatUntil": null,
+      "repeatInterval": null,
+      "hasStartDate": true,
+      "hasStartTime": false,
+      "hasEndTime": false,
+      "location": "",
+      "capacity": null,
+      "mainImage": null,
+      "createdAt": "2025-05-01T18:20:42.118Z",
+      "attendancyLimit": null,
+      "allowRecurringAttendance": false,
+      "joinDaysBeforeStart": null,
+      "organizerId": 1,
+      "categories": [],
+      "eventDays": [],
+      "organizer": {
+        "id": 1,
+        "firstName": "Vladimírasdasd",
+        "lastName": "Valent",
+        "email": "spisiak@stud.uniza.sk"
+      },
+      "moderators": [],
+      "eventOccurrences": [
+        {
+          "id": 1370,
+          "eventId": 1332,
+          "date": "2025-05-02T00:00:00.000Z",
+          "eventDayId": null,
+          "eventChangeId": null,
+          "eventChange": null,
+          "eventDay": null,
+          "participants": []
+        }
+      ],
+      "participants": [],
+      "date": "2025-05-02T00:00:00.000Z",
+      "virtual": false
+    },
+    {
+      "id": 1333,
+      "title": "asd",
+      "description": "",
+      "startDate": "2025-05-02T00:00:00.000Z",
+      "endDate": null,
+      "repeatUntil": null,
+      "repeatInterval": null,
+      "hasStartDate": true,
+      "hasStartTime": false,
+      "hasEndTime": false,
+      "location": "",
+      "capacity": null,
+      "mainImage": null,
+      "createdAt": "2025-05-01T18:22:25.072Z",
+      "attendancyLimit": null,
+      "allowRecurringAttendance": false,
+      "joinDaysBeforeStart": null,
+      "organizerId": 1,
+      "categories": [],
+      "eventDays": [],
+      "organizer": {
+        "id": 1,
+        "firstName": "Vladimírasdasd",
+        "lastName": "Valent",
+        "email": "spisiak@stud.uniza.sk"
+      },
+      "moderators": [],
+      "eventOccurrences": [
+        {
+          "id": 1371,
+          "eventId": 1333,
+          "date": "2025-05-02T00:00:00.000Z",
+          "eventDayId": null,
+          "eventChangeId": null,
+          "eventChange": null,
+          "eventDay": null,
+          "participants": []
+        }
+      ],
+      "participants": [],
+      "date": "2025-05-02T00:00:00.000Z",
+      "virtual": false
+    },
+    {
+      "id": 1334,
+      "title": "asd",
+      "description": "",
+      "startDate": "2025-05-02T00:00:00.000Z",
+      "endDate": "2025-05-01T23:59:00.000Z",
+      "repeatUntil": null,
+      "repeatInterval": null,
+      "hasStartDate": true,
+      "hasStartTime": false,
+      "hasEndTime": false,
+      "location": "",
+      "capacity": null,
+      "mainImage": "/uploads/events/event_main_1746124119194.png",
+      "createdAt": "2025-05-01T18:28:39.202Z",
+      "attendancyLimit": null,
+      "allowRecurringAttendance": false,
+      "joinDaysBeforeStart": null,
+      "organizerId": 1,
+      "categories": [],
+      "eventDays": [],
+      "organizer": {
+        "id": 1,
+        "firstName": "Vladimírasdasd",
+        "lastName": "Valent",
+        "email": "spisiak@stud.uniza.sk"
+      },
+      "moderators": [],
+      "eventOccurrences": [
+        {
+          "id": 1372,
+          "eventId": 1334,
+          "date": "2025-05-02T00:00:00.000Z",
+          "eventDayId": null,
+          "eventChangeId": null,
+          "eventChange": null,
+          "eventDay": null,
+          "participants": []
+        }
+      ],
+      "participants": [],
+      "date": "2025-05-02T00:00:00.000Z",
+      "virtual": false
+    },
+    {
+      "id": 1330,
+      "title": "asd",
+      "description": "",
+      "startDate": "2025-05-03T14:22:00.000Z",
+      "endDate": null,
+      "repeatUntil": null,
+      "repeatInterval": 1,
+      "hasStartDate": true,
+      "hasStartTime": true,
+      "hasEndTime": false,
+      "location": "",
+      "capacity": null,
+      "mainImage": null,
+      "createdAt": "2025-05-01T17:57:06.728Z",
+      "attendancyLimit": null,
+      "allowRecurringAttendance": true,
+      "joinDaysBeforeStart": null,
+      "organizerId": 1,
+      "categories": [],
+      "eventDays": [
+        {
+          "id": 4452,
+          "eventId": 1330,
+          "week": 0,
+          "dayId": 3,
+          "eventChangeId": null,
+          "day": {
+            "id": 3,
+            "name": "Streda"
+          },
+          "eventChange": null,
+          "users": []
+        },
+        {
+          "id": 4453,
+          "eventId": 1330,
+          "week": 0,
+          "dayId": 6,
+          "eventChangeId": null,
+          "day": {
+            "id": 6,
+            "name": "Sobota"
+          },
+          "eventChange": null,
+          "users": [
+            {
+              "id": 1,
+              "firstName": "Vladimírasdasd",
+              "lastName": "Valent",
+              "email": "spisiak@stud.uniza.sk"
+            }
+          ]
+        }
+      ],
+      "organizer": {
+        "id": 1,
+        "firstName": "Vladimírasdasd",
+        "lastName": "Valent",
+        "email": "spisiak@stud.uniza.sk"
+      },
+      "moderators": [
+        {
+          "id": 1039,
+          "userId": 1,
+          "eventId": 1330,
+          "canEditEvent": true,
+          "canManageParticipants": false,
+          "canManageAttendees": false,
+          "canManageModerators": false,
+          "canRepostEvent": false,
+          "user": {
+            "id": 1,
+            "firstName": "Vladimírasdasd",
+            "lastName": "Valent",
+            "email": "spisiak@stud.uniza.sk"
+          }
+        },
+        {
+          "id": 1041,
+          "userId": 2,
+          "eventId": 1330,
+          "canEditEvent": false,
+          "canManageParticipants": false,
+          "canManageAttendees": true,
+          "canManageModerators": false,
+          "canRepostEvent": false,
+          "user": {
+            "id": 2,
+            "firstName": "Test",
+            "lastName": "Test",
+            "email": "teasdasdst@uniza.sk"
+          }
+        }
+      ],
+      "eventOccurrences": [
+        {
+          "id": 1368,
+          "eventId": 1330,
+          "date": "2025-05-03T00:00:00.000Z",
+          "eventDayId": 4453,
+          "eventChangeId": null,
+          "eventChange": null,
+          "eventDay": {
+            "id": 4453,
+            "eventId": 1330,
+            "week": 0,
+            "dayId": 6,
+            "eventChangeId": null,
+            "eventChange": null
+          },
+          "participants": [
+            {
+              "id": 1,
+              "firstName": "Vladimírasdasd",
+              "lastName": "Valent",
+              "email": "spisiak@stud.uniza.sk"
+            }
+          ]
+        }
+      ],
+      "participants": [
+        {
+          "id": 1,
+          "firstName": "Vladimírasdasd",
+          "lastName": "Valent",
+          "email": "spisiak@stud.uniza.sk"
+        }
+      ],
+      "date": "2025-05-03T00:00:00.000Z",
+      "virtual": false
+    },
+    {
+      "id": 1331,
+      "title": "asd",
+      "description": "",
+      "startDate": "2025-05-03T14:22:00.000Z",
+      "endDate": null,
+      "repeatUntil": null,
+      "repeatInterval": 1,
+      "hasStartDate": true,
+      "hasStartTime": true,
+      "hasEndTime": false,
+      "location": "",
+      "capacity": null,
+      "mainImage": null,
+      "createdAt": "2025-05-01T17:57:12.829Z",
+      "attendancyLimit": null,
+      "allowRecurringAttendance": true,
+      "joinDaysBeforeStart": null,
+      "organizerId": 1,
+      "categories": [],
+      "eventDays": [
+        {
+          "id": 4454,
+          "eventId": 1331,
+          "week": 0,
+          "dayId": 3,
+          "eventChangeId": null,
+          "day": {
+            "id": 3,
+            "name": "Streda"
+          },
+          "eventChange": null,
+          "users": [
+            {
+              "id": 1,
+              "firstName": "Vladimírasdasd",
+              "lastName": "Valent",
+              "email": "spisiak@stud.uniza.sk"
+            }
+          ]
+        },
+        {
+          "id": 4455,
+          "eventId": 1331,
+          "week": 0,
+          "dayId": 6,
+          "eventChangeId": null,
+          "day": {
+            "id": 6,
+            "name": "Sobota"
+          },
+          "eventChange": null,
+          "users": [
+            {
+              "id": 1,
+              "firstName": "Vladimírasdasd",
+              "lastName": "Valent",
+              "email": "spisiak@stud.uniza.sk"
+            }
+          ]
+        }
+      ],
+      "organizer": {
+        "id": 1,
+        "firstName": "Vladimírasdasd",
+        "lastName": "Valent",
+        "email": "spisiak@stud.uniza.sk"
+      },
+      "moderators": [
+        {
+          "id": 1040,
+          "userId": 1,
+          "eventId": 1331,
+          "canEditEvent": true,
+          "canManageParticipants": false,
+          "canManageAttendees": false,
+          "canManageModerators": false,
+          "canRepostEvent": false,
+          "user": {
+            "id": 1,
+            "firstName": "Vladimírasdasd",
+            "lastName": "Valent",
+            "email": "spisiak@stud.uniza.sk"
+          }
+        }
+      ],
+      "eventOccurrences": [
+        {
+          "id": 1369,
+          "eventId": 1331,
+          "date": "2025-05-03T00:00:00.000Z",
+          "eventDayId": 4455,
+          "eventChangeId": null,
+          "eventChange": null,
+          "eventDay": {
+            "id": 4455,
+            "eventId": 1331,
+            "week": 0,
+            "dayId": 6,
+            "eventChangeId": null,
+            "eventChange": null
+          },
+          "participants": [
+            {
+              "id": 1,
+              "firstName": "Vladimírasdasd",
+              "lastName": "Valent",
+              "email": "spisiak@stud.uniza.sk"
+            }
+          ]
+        }
+      ],
+      "participants": [
+        {
+          "id": 1,
+          "firstName": "Vladimírasdasd",
+          "lastName": "Valent",
+          "email": "spisiak@stud.uniza.sk"
+        }
+      ],
+      "date": "2025-05-03T00:00:00.000Z",
+      "virtual": false
+    },
+    {
+      "id": 1330,
+      "title": "asd",
+      "description": "",
+      "startDate": "2025-05-07T14:22:00.000Z",
+      "endDate": null,
+      "repeatUntil": null,
+      "repeatInterval": 1,
+      "hasStartDate": true,
+      "hasStartTime": true,
+      "hasEndTime": false,
+      "location": "",
+      "capacity": null,
+      "mainImage": null,
+      "createdAt": "2025-05-01T17:57:06.728Z",
+      "attendancyLimit": null,
+      "allowRecurringAttendance": true,
+      "joinDaysBeforeStart": null,
+      "organizerId": 1,
+      "categories": [],
+      "eventDays": [
+        {
+          "id": 4452,
+          "eventId": 1330,
+          "week": 0,
+          "dayId": 3,
+          "eventChangeId": null,
+          "day": {
+            "id": 3,
+            "name": "Streda"
+          },
+          "eventChange": null,
+          "users": []
+        },
+        {
+          "id": 4453,
+          "eventId": 1330,
+          "week": 0,
+          "dayId": 6,
+          "eventChangeId": null,
+          "day": {
+            "id": 6,
+            "name": "Sobota"
+          },
+          "eventChange": null,
+          "users": [
+            {
+              "id": 1,
+              "firstName": "Vladimírasdasd",
+              "lastName": "Valent",
+              "email": "spisiak@stud.uniza.sk"
+            }
+          ]
+        }
+      ],
+      "organizer": {
+        "id": 1,
+        "firstName": "Vladimírasdasd",
+        "lastName": "Valent",
+        "email": "spisiak@stud.uniza.sk"
+      },
+      "moderators": [
+        {
+          "id": 1039,
+          "userId": 1,
+          "eventId": 1330,
+          "canEditEvent": true,
+          "canManageParticipants": false,
+          "canManageAttendees": false,
+          "canManageModerators": false,
+          "canRepostEvent": false,
+          "user": {
+            "id": 1,
+            "firstName": "Vladimírasdasd",
+            "lastName": "Valent",
+            "email": "spisiak@stud.uniza.sk"
+          }
+        },
+        {
+          "id": 1041,
+          "userId": 2,
+          "eventId": 1330,
+          "canEditEvent": false,
+          "canManageParticipants": false,
+          "canManageAttendees": true,
+          "canManageModerators": false,
+          "canRepostEvent": false,
+          "user": {
+            "id": 2,
+            "firstName": "Test",
+            "lastName": "Test",
+            "email": "teasdasdst@uniza.sk"
+          }
+        }
+      ],
+      "eventOccurrences": [
+        {
+          "id": 1368,
+          "eventId": 1330,
+          "date": "2025-05-03T00:00:00.000Z",
+          "eventDayId": 4453,
+          "eventChangeId": null,
+          "eventChange": null,
+          "eventDay": {
+            "id": 4453,
+            "eventId": 1330,
+            "week": 0,
+            "dayId": 6,
+            "eventChangeId": null,
+            "eventChange": null
+          },
+          "participants": [
+            {
+              "id": 1,
+              "firstName": "Vladimírasdasd",
+              "lastName": "Valent",
+              "email": "spisiak@stud.uniza.sk"
+            }
+          ]
+        }
+      ],
+      "date": "2025-05-07T00:00:00.000Z",
+      "virtual": true,
+      "participants": []
+    },
+    {
+      "id": 1331,
+      "title": "asd",
+      "description": "",
+      "startDate": "2025-05-07T14:22:00.000Z",
+      "endDate": null,
+      "repeatUntil": null,
+      "repeatInterval": 1,
+      "hasStartDate": true,
+      "hasStartTime": true,
+      "hasEndTime": false,
+      "location": "",
+      "capacity": null,
+      "mainImage": null,
+      "createdAt": "2025-05-01T17:57:12.829Z",
+      "attendancyLimit": null,
+      "allowRecurringAttendance": true,
+      "joinDaysBeforeStart": null,
+      "organizerId": 1,
+      "categories": [],
+      "eventDays": [
+        {
+          "id": 4454,
+          "eventId": 1331,
+          "week": 0,
+          "dayId": 3,
+          "eventChangeId": null,
+          "day": {
+            "id": 3,
+            "name": "Streda"
+          },
+          "eventChange": null,
+          "users": [
+            {
+              "id": 1,
+              "firstName": "Vladimírasdasd",
+              "lastName": "Valent",
+              "email": "spisiak@stud.uniza.sk"
+            }
+          ]
+        },
+        {
+          "id": 4455,
+          "eventId": 1331,
+          "week": 0,
+          "dayId": 6,
+          "eventChangeId": null,
+          "day": {
+            "id": 6,
+            "name": "Sobota"
+          },
+          "eventChange": null,
+          "users": [
+            {
+              "id": 1,
+              "firstName": "Vladimírasdasd",
+              "lastName": "Valent",
+              "email": "spisiak@stud.uniza.sk"
+            }
+          ]
+        }
+      ],
+      "organizer": {
+        "id": 1,
+        "firstName": "Vladimírasdasd",
+        "lastName": "Valent",
+        "email": "spisiak@stud.uniza.sk"
+      },
+      "moderators": [
+        {
+          "id": 1040,
+          "userId": 1,
+          "eventId": 1331,
+          "canEditEvent": true,
+          "canManageParticipants": false,
+          "canManageAttendees": false,
+          "canManageModerators": false,
+          "canRepostEvent": false,
+          "user": {
+            "id": 1,
+            "firstName": "Vladimírasdasd",
+            "lastName": "Valent",
+            "email": "spisiak@stud.uniza.sk"
+          }
+        }
+      ],
+      "eventOccurrences": [
+        {
+          "id": 1369,
+          "eventId": 1331,
+          "date": "2025-05-03T00:00:00.000Z",
+          "eventDayId": 4455,
+          "eventChangeId": null,
+          "eventChange": null,
+          "eventDay": {
+            "id": 4455,
+            "eventId": 1331,
+            "week": 0,
+            "dayId": 6,
+            "eventChangeId": null,
+            "eventChange": null
+          },
+          "participants": [
+            {
+              "id": 1,
+              "firstName": "Vladimírasdasd",
+              "lastName": "Valent",
+              "email": "spisiak@stud.uniza.sk"
+            }
+          ]
+        }
+      ],
+      "date": "2025-05-07T00:00:00.000Z",
+      "virtual": true,
+      "participants": [
+        {
+          "id": 1,
+          "firstName": "Vladimírasdasd",
+          "lastName": "Valent",
+          "email": "spisiak@stud.uniza.sk"
+        }
+      ]
+    },
+    {
+      "id": 1335,
+      "title": "asdasd",
+      "description": null,
+      "startDate": "2025-05-09T00:00:00.000Z",
+      "endDate": "2025-05-08T23:59:00.000Z",
+      "repeatUntil": null,
+      "repeatInterval": null,
+      "hasStartDate": true,
+      "hasStartTime": false,
+      "hasEndTime": false,
+      "location": null,
+      "capacity": null,
+      "mainImage": null,
+      "createdAt": "2025-05-01T20:04:06.426Z",
+      "attendancyLimit": null,
+      "allowRecurringAttendance": false,
+      "joinDaysBeforeStart": null,
+      "organizerId": 1,
+      "categories": [],
+      "eventDays": [],
+      "organizer": {
+        "id": 1,
+        "firstName": "Vladimírasdasd",
+        "lastName": "Valent",
+        "email": "spisiak@stud.uniza.sk"
+      },
+      "moderators": [],
+      "eventOccurrences": [
+        {
+          "id": 1373,
+          "eventId": 1335,
+          "date": "2025-05-09T00:00:00.000Z",
+          "eventDayId": null,
+          "eventChangeId": null,
+          "eventChange": null,
+          "eventDay": null,
+          "participants": []
+        }
+      ],
+      "participants": [],
+      "date": "2025-05-09T00:00:00.000Z",
+      "virtual": false
+    },
+    {
+      "id": 1330,
+      "title": "asd",
+      "description": "",
+      "startDate": "2025-05-10T14:22:00.000Z",
+      "endDate": null,
+      "repeatUntil": null,
+      "repeatInterval": 1,
+      "hasStartDate": true,
+      "hasStartTime": true,
+      "hasEndTime": false,
+      "location": "",
+      "capacity": null,
+      "mainImage": null,
+      "createdAt": "2025-05-01T17:57:06.728Z",
+      "attendancyLimit": null,
+      "allowRecurringAttendance": true,
+      "joinDaysBeforeStart": null,
+      "organizerId": 1,
+      "categories": [],
+      "eventDays": [
+        {
+          "id": 4452,
+          "eventId": 1330,
+          "week": 0,
+          "dayId": 3,
+          "eventChangeId": null,
+          "day": {
+            "id": 3,
+            "name": "Streda"
+          },
+          "eventChange": null,
+          "users": []
+        },
+        {
+          "id": 4453,
+          "eventId": 1330,
+          "week": 0,
+          "dayId": 6,
+          "eventChangeId": null,
+          "day": {
+            "id": 6,
+            "name": "Sobota"
+          },
+          "eventChange": null,
+          "users": [
+            {
+              "id": 1,
+              "firstName": "Vladimírasdasd",
+              "lastName": "Valent",
+              "email": "spisiak@stud.uniza.sk"
+            }
+          ]
+        }
+      ],
+      "organizer": {
+        "id": 1,
+        "firstName": "Vladimírasdasd",
+        "lastName": "Valent",
+        "email": "spisiak@stud.uniza.sk"
+      },
+      "moderators": [
+        {
+          "id": 1039,
+          "userId": 1,
+          "eventId": 1330,
+          "canEditEvent": true,
+          "canManageParticipants": false,
+          "canManageAttendees": false,
+          "canManageModerators": false,
+          "canRepostEvent": false,
+          "user": {
+            "id": 1,
+            "firstName": "Vladimírasdasd",
+            "lastName": "Valent",
+            "email": "spisiak@stud.uniza.sk"
+          }
+        },
+        {
+          "id": 1041,
+          "userId": 2,
+          "eventId": 1330,
+          "canEditEvent": false,
+          "canManageParticipants": false,
+          "canManageAttendees": true,
+          "canManageModerators": false,
+          "canRepostEvent": false,
+          "user": {
+            "id": 2,
+            "firstName": "Test",
+            "lastName": "Test",
+            "email": "teasdasdst@uniza.sk"
+          }
+        }
+      ],
+      "eventOccurrences": [
+        {
+          "id": 1368,
+          "eventId": 1330,
+          "date": "2025-05-03T00:00:00.000Z",
+          "eventDayId": 4453,
+          "eventChangeId": null,
+          "eventChange": null,
+          "eventDay": {
+            "id": 4453,
+            "eventId": 1330,
+            "week": 0,
+            "dayId": 6,
+            "eventChangeId": null,
+            "eventChange": null
+          },
+          "participants": [
+            {
+              "id": 1,
+              "firstName": "Vladimírasdasd",
+              "lastName": "Valent",
+              "email": "spisiak@stud.uniza.sk"
+            }
+          ]
+        }
+      ],
+      "date": "2025-05-10T00:00:00.000Z",
+      "virtual": true,
+      "participants": [
+        {
+          "id": 1,
+          "firstName": "Vladimírasdasd",
+          "lastName": "Valent",
+          "email": "spisiak@stud.uniza.sk"
+        }
+      ]
+    },
+    {
+      "id": 1331,
+      "title": "asd",
+      "description": "",
+      "startDate": "2025-05-10T14:22:00.000Z",
+      "endDate": null,
+      "repeatUntil": null,
+      "repeatInterval": 1,
+      "hasStartDate": true,
+      "hasStartTime": true,
+      "hasEndTime": false,
+      "location": "",
+      "capacity": null,
+      "mainImage": null,
+      "createdAt": "2025-05-01T17:57:12.829Z",
+      "attendancyLimit": null,
+      "allowRecurringAttendance": true,
+      "joinDaysBeforeStart": null,
+      "organizerId": 1,
+      "categories": [],
+      "eventDays": [
+        {
+          "id": 4454,
+          "eventId": 1331,
+          "week": 0,
+          "dayId": 3,
+          "eventChangeId": null,
+          "day": {
+            "id": 3,
+            "name": "Streda"
+          },
+          "eventChange": null,
+          "users": [
+            {
+              "id": 1,
+              "firstName": "Vladimírasdasd",
+              "lastName": "Valent",
+              "email": "spisiak@stud.uniza.sk"
+            }
+          ]
+        },
+        {
+          "id": 4455,
+          "eventId": 1331,
+          "week": 0,
+          "dayId": 6,
+          "eventChangeId": null,
+          "day": {
+            "id": 6,
+            "name": "Sobota"
+          },
+          "eventChange": null,
+          "users": [
+            {
+              "id": 1,
+              "firstName": "Vladimírasdasd",
+              "lastName": "Valent",
+              "email": "spisiak@stud.uniza.sk"
+            }
+          ]
+        }
+      ],
+      "organizer": {
+        "id": 1,
+        "firstName": "Vladimírasdasd",
+        "lastName": "Valent",
+        "email": "spisiak@stud.uniza.sk"
+      },
+      "moderators": [
+        {
+          "id": 1040,
+          "userId": 1,
+          "eventId": 1331,
+          "canEditEvent": true,
+          "canManageParticipants": false,
+          "canManageAttendees": false,
+          "canManageModerators": false,
+          "canRepostEvent": false,
+          "user": {
+            "id": 1,
+            "firstName": "Vladimírasdasd",
+            "lastName": "Valent",
+            "email": "spisiak@stud.uniza.sk"
+          }
+        }
+      ],
+      "eventOccurrences": [
+        {
+          "id": 1369,
+          "eventId": 1331,
+          "date": "2025-05-03T00:00:00.000Z",
+          "eventDayId": 4455,
+          "eventChangeId": null,
+          "eventChange": null,
+          "eventDay": {
+            "id": 4455,
+            "eventId": 1331,
+            "week": 0,
+            "dayId": 6,
+            "eventChangeId": null,
+            "eventChange": null
+          },
+          "participants": [
+            {
+              "id": 1,
+              "firstName": "Vladimírasdasd",
+              "lastName": "Valent",
+              "email": "spisiak@stud.uniza.sk"
+            }
+          ]
+        }
+      ],
+      "date": "2025-05-10T00:00:00.000Z",
+      "virtual": true,
+      "participants": [
+        {
+          "id": 1,
+          "firstName": "Vladimírasdasd",
+          "lastName": "Valent",
+          "email": "spisiak@stud.uniza.sk"
+        }
+      ]
+    },
+    {
+      "id": 1330,
+      "title": "asd",
+      "description": "",
+      "startDate": "2025-05-14T14:22:00.000Z",
+      "endDate": null,
+      "repeatUntil": null,
+      "repeatInterval": 1,
+      "hasStartDate": true,
+      "hasStartTime": true,
+      "hasEndTime": false,
+      "location": "",
+      "capacity": null,
+      "mainImage": null,
+      "createdAt": "2025-05-01T17:57:06.728Z",
+      "attendancyLimit": null,
+      "allowRecurringAttendance": true,
+      "joinDaysBeforeStart": null,
+      "organizerId": 1,
+      "categories": [],
+      "eventDays": [
+        {
+          "id": 4452,
+          "eventId": 1330,
+          "week": 0,
+          "dayId": 3,
+          "eventChangeId": null,
+          "day": {
+            "id": 3,
+            "name": "Streda"
+          },
+          "eventChange": null,
+          "users": []
+        },
+        {
+          "id": 4453,
+          "eventId": 1330,
+          "week": 0,
+          "dayId": 6,
+          "eventChangeId": null,
+          "day": {
+            "id": 6,
+            "name": "Sobota"
+          },
+          "eventChange": null,
+          "users": [
+            {
+              "id": 1,
+              "firstName": "Vladimírasdasd",
+              "lastName": "Valent",
+              "email": "spisiak@stud.uniza.sk"
+            }
+          ]
+        }
+      ],
+      "organizer": {
+        "id": 1,
+        "firstName": "Vladimírasdasd",
+        "lastName": "Valent",
+        "email": "spisiak@stud.uniza.sk"
+      },
+      "moderators": [
+        {
+          "id": 1039,
+          "userId": 1,
+          "eventId": 1330,
+          "canEditEvent": true,
+          "canManageParticipants": false,
+          "canManageAttendees": false,
+          "canManageModerators": false,
+          "canRepostEvent": false,
+          "user": {
+            "id": 1,
+            "firstName": "Vladimírasdasd",
+            "lastName": "Valent",
+            "email": "spisiak@stud.uniza.sk"
+          }
+        },
+        {
+          "id": 1041,
+          "userId": 2,
+          "eventId": 1330,
+          "canEditEvent": false,
+          "canManageParticipants": false,
+          "canManageAttendees": true,
+          "canManageModerators": false,
+          "canRepostEvent": false,
+          "user": {
+            "id": 2,
+            "firstName": "Test",
+            "lastName": "Test",
+            "email": "teasdasdst@uniza.sk"
+          }
+        }
+      ],
+      "eventOccurrences": [
+        {
+          "id": 1368,
+          "eventId": 1330,
+          "date": "2025-05-03T00:00:00.000Z",
+          "eventDayId": 4453,
+          "eventChangeId": null,
+          "eventChange": null,
+          "eventDay": {
+            "id": 4453,
+            "eventId": 1330,
+            "week": 0,
+            "dayId": 6,
+            "eventChangeId": null,
+            "eventChange": null
+          },
+          "participants": [
+            {
+              "id": 1,
+              "firstName": "Vladimírasdasd",
+              "lastName": "Valent",
+              "email": "spisiak@stud.uniza.sk"
+            }
+          ]
+        }
+      ],
+      "date": "2025-05-14T00:00:00.000Z",
+      "virtual": true,
+      "participants": []
+    },
+    {
+      "id": 1331,
+      "title": "asd",
+      "description": "",
+      "startDate": "2025-05-14T14:22:00.000Z",
+      "endDate": null,
+      "repeatUntil": null,
+      "repeatInterval": 1,
+      "hasStartDate": true,
+      "hasStartTime": true,
+      "hasEndTime": false,
+      "location": "",
+      "capacity": null,
+      "mainImage": null,
+      "createdAt": "2025-05-01T17:57:12.829Z",
+      "attendancyLimit": null,
+      "allowRecurringAttendance": true,
+      "joinDaysBeforeStart": null,
+      "organizerId": 1,
+      "categories": [],
+      "eventDays": [
+        {
+          "id": 4454,
+          "eventId": 1331,
+          "week": 0,
+          "dayId": 3,
+          "eventChangeId": null,
+          "day": {
+            "id": 3,
+            "name": "Streda"
+          },
+          "eventChange": null,
+          "users": [
+            {
+              "id": 1,
+              "firstName": "Vladimírasdasd",
+              "lastName": "Valent",
+              "email": "spisiak@stud.uniza.sk"
+            }
+          ]
+        },
+        {
+          "id": 4455,
+          "eventId": 1331,
+          "week": 0,
+          "dayId": 6,
+          "eventChangeId": null,
+          "day": {
+            "id": 6,
+            "name": "Sobota"
+          },
+          "eventChange": null,
+          "users": [
+            {
+              "id": 1,
+              "firstName": "Vladimírasdasd",
+              "lastName": "Valent",
+              "email": "spisiak@stud.uniza.sk"
+            }
+          ]
+        }
+      ],
+      "organizer": {
+        "id": 1,
+        "firstName": "Vladimírasdasd",
+        "lastName": "Valent",
+        "email": "spisiak@stud.uniza.sk"
+      },
+      "moderators": [
+        {
+          "id": 1040,
+          "userId": 1,
+          "eventId": 1331,
+          "canEditEvent": true,
+          "canManageParticipants": false,
+          "canManageAttendees": false,
+          "canManageModerators": false,
+          "canRepostEvent": false,
+          "user": {
+            "id": 1,
+            "firstName": "Vladimírasdasd",
+            "lastName": "Valent",
+            "email": "spisiak@stud.uniza.sk"
+          }
+        }
+      ],
+      "eventOccurrences": [
+        {
+          "id": 1369,
+          "eventId": 1331,
+          "date": "2025-05-03T00:00:00.000Z",
+          "eventDayId": 4455,
+          "eventChangeId": null,
+          "eventChange": null,
+          "eventDay": {
+            "id": 4455,
+            "eventId": 1331,
+            "week": 0,
+            "dayId": 6,
+            "eventChangeId": null,
+            "eventChange": null
+          },
+          "participants": [
+            {
+              "id": 1,
+              "firstName": "Vladimírasdasd",
+              "lastName": "Valent",
+              "email": "spisiak@stud.uniza.sk"
+            }
+          ]
+        }
+      ],
+      "date": "2025-05-14T00:00:00.000Z",
+      "virtual": true,
+      "participants": [
+        {
+          "id": 1,
+          "firstName": "Vladimírasdasd",
+          "lastName": "Valent",
+          "email": "spisiak@stud.uniza.sk"
+        }
+      ]
+    }
+  ]
+}
+
+{
+  "time": "2025-05-01T20:13:49.416Z",
+  "method": "GET",
+  "url": "/api/events/get?startDate=2025-05-01&endDate=2025-05-15",
+  "status": 200,
+  "response": "[{\"id\":1328,\"title\":\"asd\",\"description\":\"\",\"startDate\":\"2025-05-02T00:00:00.000Z\",\"endDate\":null,\"repeatUntil\":null,\"repeatInterval\":null,\"hasStartDate\":true,\"hasStartTime\":false,\"hasEndTime\":false,\"location\":\"asd\",\"capacity\":null,\"mainImage\":null,\"createdAt\":\"2025-05-01T17:50:53.600Z\",\"attendancyLimit\":null,\"allowRecurringAttendance\":false,\"joinDaysBeforeStart\":null,\"organizerId\":1,\"categories\":[{\"id\":1,\"name\":\"WORKSHOP\",\"label\":\"Workshop\",\"icon\":\"🧪\"}],\"eventDays\":[],\"organizer\":{\"id\":1,\"firstName\":\"Vladimírasdasd\",\"lastName\":\"Valent\",\"email\":\"spisiak@stud.uniza.sk\"},\"moderators\":[{\"id\":1037,\"userId\":1,\"eventId\":1328,\"canEditEvent\":true,\"canManageParticipants\":false,\"canManageAttendees\":false,\"canManageModerators\":false,\"canRepostEvent\":false,\"user\":{\"id\":1,\"firstName\":\"Vladimírasdasd\",\"lastName\":\"Valent\",\"email\":\"spisiak@stud.uniza.sk\"}}],\"eventOccurrences\":[{\"id\":1366,\"eventId\":1328,\"date\":\"2025-05-02T00:00:00.000Z\",\"eventDayId\":null,\"eventChangeId\":null,\"eventChange\":null,\"eventDay\":null,\"participants\":[]}],\"participants\":[],\"date\":\"2025-05-02T00:00:00.000Z\",\"virtual\":false},{\"id\":1329,\"title\":\"asd\",\"description\":\"\",\"startDate\":\"2025-05-02T00:00:00.000Z\",\"endDate\":null,\"repeatUntil\":null,\"repeatInterval\":null,\"hasStartDate\":true,\"hasStartTime\":false,\"hasEndTime\":false,\"location\":\"asd\",\"capacity\":null,\"mainImage\":null,\"createdAt\":\"2025-05-01T17:51:03.112Z\",\"attendancyLimit\":null,\"allowRecurringAttendance\":false,\"joinDaysBeforeStart\":null,\"organizerId\":1,\"categories\":[{\"id\":1,\"name\":\"WORKSHOP\",\"label\":\"Workshop\",\"icon\":\"🧪\"}],\"eventDays\":[],\"organizer\":{\"id\":1,\"firstName\":\"Vladimírasdasd\",\"lastName\":\"Valent\",\"email\":\"spisiak@stud.uniza.sk\"},\"moderators\":[{\"id\":1038,\"userId\":1,\"eventId\":1329,\"canEditEvent\":true,\"canManageParticipants\":false,\"canManageAttendees\":false,\"canManageModerators\":false,\"canRepostEvent\":false,\"user\":{\"id\":1,\"firstName\":\"Vladimírasdasd\",\"lastName\":\"Valent\",\"email\":\"spisiak@stud.uniza.sk\"}}],\"eventOccurrences\":[{\"id\":1367,\"eventId\":1329,\"date\":\"2025-05-02T00:00:00.000Z\",\"eventDayId\":null,\"eventChangeId\":null,\"eventChange\":null,\"eventDay\":null,\"participants\":[]}],\"participants\":[],\"date\":\"2025-05-02T00:00:00.000Z\",\"virtual\":false},{\"id\":1332,\"title\":\"asd\",\"description\":\"\",\"startDate\":\"2025-05-02T00:00:00.000Z\",\"endDate\":null,\"repeatUntil\":null,\"repeatInterval\":null,\"hasStartDate\":true,\"hasStartTime\":false,\"hasEndTime\":false,\"location\":\"\",\"capacity\":null,\"mainImage\":null,\"createdAt\":\"2025-05-01T18:20:42.118Z\",\"attendancyLimit\":null,\"allowRecurringAttendance\":false,\"joinDaysBeforeStart\":null,\"organizerId\":1,\"categories\":[],\"eventDays\":[],\"organizer\":{\"id\":1,\"firstName\":\"Vladimírasdasd\",\"lastName\":\"Valent\",\"email\":\"spisiak@stud.uniza.sk\"},\"moderators\":[],\"eventOccurrences\":[{\"id\":1370,\"eventId\":1332,\"date\":\"2025-05-02T00:00:00.000Z\",\"eventDayId\":null,\"eventChangeId\":null,\"eventChange\":null,\"eventDay\":null,\"participants\":[]}],\"participants\":[],\"date\":\"2025-05-02T00:00:00.000Z\",\"virtual\":false},{\"id\":1333,\"title\":\"asd\",\"description\":\"\",\"startDate\":\"2025-05-02T00:00:00.000Z\",\"endDate\":null,\"repeatUntil\":null,\"repeatInterval\":null,\"hasStartDate\":true,\"hasStartTime\":false,\"hasEndTime\":false,\"location\":\"\",\"capacity\":null,\"mainImage\":null,\"createdAt\":\"2025-05-01T18:22:25.072Z\",\"attendancyLimit\":null,\"allowRecurringAttendance\":false,\"joinDaysBeforeStart\":null,\"organizerId\":1,\"categories\":[],\"eventDays\":[],\"organizer\":{\"id\":1,\"firstName\":\"Vladimírasdasd\",\"lastName\":\"Valent\",\"email\":\"spisiak@stud.uniza.sk\"},\"moderators\":[],\"eventOccurrences\":[{\"id\":1371,\"eventId\":1333,\"date\":\"2025-05-02T00:00:00.000Z\",\"eventDayId\":null,\"eventChangeId\":null,\"eventChange\":null,\"eventDay\":null,\"participants\":[]}],\"participants\":[],\"date\":\"2025-05-02T00:00:00.000Z\",\"virtual\":false},{\"id\":1334,\"title\":\"asd\",\"description\":\"\",\"startDate\":\"2025-05-02T00:00:00.000Z\",\"endDate\":\"2025-05-01T23:59:00.000Z\",\"repeatUntil\":null,\"repeatInterval\":null,\"hasStartDate\":true,\"hasStartTime\":false,\"hasEndTime\":false,\"location\":\"\",\"capacity\":null,\"mainImage\":\"/uploads/events/event_main_1746124119194.png\",\"createdAt\":\"2025-05-01T18:28:39.202Z\",\"attendancyLimit\":null,\"allowRecurringAttendance\":false,\"joinDaysBeforeStart\":null,\"organizerId\":1,\"categories\":[],\"eventDays\":[],\"organizer\":{\"id\":1,\"firstName\":\"Vladimírasdasd\",\"lastName\":\"Valent\",\"email\":\"spisiak@stud.uniza.sk\"},\"moderators\":[],\"eventOccurrences\":[{\"id\":1372,\"eventId\":1334,\"date\":\"2025-05-02T00:00:00.000Z\",\"eventDayId\":null,\"eventChangeId\":null,\"eventChange\":null,\"eventDay\":null,\"participants\":[]}],\"participants\":[],\"date\":\"2025-05-02T00:00:00.000Z\",\"virtual\":false},{\"id\":1330,\"title\":\"asd\",\"description\":\"\",\"startDate\":\"2025-05-03T14:22:00.000Z\",\"endDate\":null,\"repeatUntil\":null,\"repeatInterval\":1,\"hasStartDate\":true,\"hasStartTime\":true,\"hasEndTime\":false,\"location\":\"\",\"capacity\":null,\"mainImage\":null,\"createdAt\":\"2025-05-01T17:57:06.728Z\",\"attendancyLimit\":null,\"allowRecurringAttendance\":true,\"joinDaysBeforeStart\":null,\"organizerId\":1,\"categories\":[],\"eventDays\":[{\"id\":4452,\"eventId\":1330,\"week\":0,\"dayId\":3,\"eventChangeId\":null,\"day\":{\"id\":3,\"name\":\"Streda\"},\"eventChange\":null,\"users\":[]},{\"id\":4453,\"eventId\":1330,\"week\":0,\"dayId\":6,\"eventChangeId\":null,\"day\":{\"id\":6,\"name\":\"Sobota\"},\"eventChange\":null,\"users\":[{\"id\":1,\"firstName\":\"Vladimírasdasd\",\"lastName\":\"Valent\",\"email\":\"spisiak@stud.uniza.sk\"}]}],\"organizer\":{\"id\":1,\"firstName\":\"Vladimírasdasd\",\"lastName\":\"Valent\",\"email\":\"spisiak@stud.uniza.sk\"},\"moderators\":[{\"id\":1039,\"userId\":1,\"eventId\":1330,\"canEditEvent\":true,\"canManageParticipants\":false,\"canManageAttendees\":false,\"canManageModerators\":false,\"canRepostEvent\":false,\"user\":{\"id\":1,\"firstName\":\"Vladimírasdasd\",\"lastName\":\"Valent\",\"email\":\"spisiak@stud.uniza.sk\"}},{\"id\":1041,\"userId\":2,\"eventId\":1330,\"canEditEvent\":false,\"canManageParticipants\":false,\"canManageAttendees\":true,\"canManageModerators\":false,\"canRepostEvent\":false,\"user\":{\"id\":2,\"firstName\":\"Test\",\"lastName\":\"Test\",\"email\":\"teasdasdst@uniza.sk\"}}],\"eventOccurrences\":[{\"id\":1368,\"eventId\":1330,\"date\":\"2025-05-03T00:00:00.000Z\",\"eventDayId\":4453,\"eventChangeId\":null,\"eventChange\":null,\"eventDay\":{\"id\":4453,\"eventId\":1330,\"week\":0,\"dayId\":6,\"eventChangeId\":null,\"eventChange\":null},\"participants\":[{\"id\":1,\"firstName\":\"Vladimírasdasd\",\"lastName\":\"Valent\",\"email\":\"spisiak@stud.uniza.sk\"}]}],\"participants\":[{\"id\":1,\"firstName\":\"Vladimírasdasd\",\"lastName\":\"Valent\",\"email\":\"spisiak@stud.uniza.sk\"}],\"date\":\"2025-05-03T00:00:00.000Z\",\"virtual\":false},{\"id\":1331,\"title\":\"asd\",\"description\":\"\",\"startDate\":\"2025-05-03T14:22:00.000Z\",\"endDate\":null,\"repeatUntil\":null,\"repeatInterval\":1,\"hasStartDate\":true,\"hasStartTime\":true,\"hasEndTime\":false,\"location\":\"\",\"capacity\":null,\"mainImage\":null,\"createdAt\":\"2025-05-01T17:57:12.829Z\",\"attendancyLimit\":null,\"allowRecurringAttendance\":true,\"joinDaysBeforeStart\":null,\"organizerId\":1,\"categories\":[],\"eventDays\":[{\"id\":4454,\"eventId\":1331,\"week\":0,\"dayId\":3,\"eventChangeId\":null,\"day\":{\"id\":3,\"name\":\"Streda\"},\"eventChange\":null,\"users\":[{\"id\":1,\"firstName\":\"Vladimírasdasd\",\"lastName\":\"Valent\",\"email\":\"spisiak@stud.uniza.sk\"}]},{\"id\":4455,\"eventId\":1331,\"week\":0,\"dayId\":6,\"eventChangeId\":null,\"day\":{\"id\":6,\"name\":\"Sobota\"},\"eventChange\":null,\"users\":[{\"id\":1,\"firstName\":\"Vladimírasdasd\",\"lastName\":\"Valent\",\"email\":\"spisiak@stud.uniza.sk\"}]}],\"organizer\":{\"id\":1,\"firstName\":\"Vladimírasdasd\",\"lastName\":\"Valent\",\"email\":\"spisiak@stud.uniza.sk\"},\"moderators\":[{\"id\":1040,\"userId\":1,\"eventId\":1331,\"canEditEvent\":true,\"canManageParticipants\":false,\"canManageAttendees\":false,\"canManageModerators\":false,\"canRepostEvent\":false,\"user\":{\"id\":1,\"firstName\":\"Vladimírasdasd\",\"lastName\":\"Valent\",\"email\":\"spisiak@stud.uniza.sk\"}}],\"eventOccurrences\":[{\"id\":1369,\"eventId\":1331,\"date\":\"2025-05-03T00:00:00.000Z\",\"eventDayId\":4455,\"eventChangeId\":null,\"eventChange\":null,\"eventDay\":{\"id\":4455,\"eventId\":1331,\"week\":0,\"dayId\":6,\"eventChangeId\":null,\"eventChange\":null},\"participants\":[{\"id\":1,\"firstName\":\"Vladimírasdasd\",\"lastName\":\"Valent\",\"email\":\"spisiak@stud.uniza.sk\"}]}],\"participants\":[{\"id\":1,\"firstName\":\"Vladimírasdasd\",\"lastName\":\"Valent\",\"email\":\"spisiak@stud.uniza.sk\"}],\"date\":\"2025-05-03T00:00:00.000Z\",\"virtual\":false},{\"id\":1330,\"title\":\"asd\",\"description\":\"\",\"startDate\":\"2025-05-07T14:22:00.000Z\",\"endDate\":null,\"repeatUntil\":null,\"repeatInterval\":1,\"hasStartDate\":true,\"hasStartTime\":true,\"hasEndTime\":false,\"location\":\"\",\"capacity\":null,\"mainImage\":null,\"createdAt\":\"2025-05-01T17:57:06.728Z\",\"attendancyLimit\":null,\"allowRecurringAttendance\":true,\"joinDaysBeforeStart\":null,\"organizerId\":1,\"categories\":[],\"eventDays\":[{\"id\":4452,\"eventId\":1330,\"week\":0,\"dayId\":3,\"eventChangeId\":null,\"day\":{\"id\":3,\"name\":\"Streda\"},\"eventChange\":null,\"users\":[]},{\"id\":4453,\"eventId\":1330,\"week\":0,\"dayId\":6,\"eventChangeId\":null,\"day\":{\"id\":6,\"name\":\"Sobota\"},\"eventChange\":null,\"users\":[{\"id\":1,\"firstName\":\"Vladimírasdasd\",\"lastName\":\"Valent\",\"email\":\"spisiak@stud.uniza.sk\"}]}],\"organizer\":{\"id\":1,\"firstName\":\"Vladimírasdasd\",\"lastName\":\"Valent\",\"email\":\"spisiak@stud.uniza.sk\"},\"moderators\":[{\"id\":1039,\"userId\":1,\"eventId\":1330,\"canEditEvent\":true,\"canManageParticipants\":false,\"canManageAttendees\":false,\"canManageModerators\":false,\"canRepostEvent\":false,\"user\":{\"id\":1,\"firstName\":\"Vladimírasdasd\",\"lastName\":\"Valent\",\"email\":\"spisiak@stud.uniza.sk\"}},{\"id\":1041,\"userId\":2,\"eventId\":1330,\"canEditEvent\":false,\"canManageParticipants\":false,\"canManageAttendees\":true,\"canManageModerators\":false,\"canRepostEvent\":false,\"user\":{\"id\":2,\"firstName\":\"Test\",\"lastName\":\"Test\",\"email\":\"teasdasdst@uniza.sk\"}}],\"eventOccurrences\":[{\"id\":1368,\"eventId\":1330,\"date\":\"2025-05-03T00:00:00.000Z\",\"eventDayId\":4453,\"eventChangeId\":null,\"eventChange\":null,\"eventDay\":{\"id\":4453,\"eventId\":1330,\"week\":0,\"dayId\":6,\"eventChangeId\":null,\"eventChange\":null},\"participants\":[{\"id\":1,\"firstName\":\"Vladimírasdasd\",\"lastName\":\"Valent\",\"email\":\"spisiak@stud.uniza.sk\"}]}],\"date\":\"2025-05-07T00:00:00.000Z\",\"virtual\":true,\"participants\":[]},{\"id\":1331,\"title\":\"asd\",\"description\":\"\",\"startDate\":\"2025-05-07T14:22:00.000Z\",\"endDate\":null,\"repeatUntil\":null,\"repeatInterval\":1,\"hasStartDate\":true,\"hasStartTime\":true,\"hasEndTime\":false,\"location\":\"\",\"capacity\":null,\"mainImage\":null,\"createdAt\":\"2025-05-01T17:57:12.829Z\",\"attendancyLimit\":null,\"allowRecurringAttendance\":true,\"joinDaysBeforeStart\":null,\"organizerId\":1,\"categories\":[],\"eventDays\":[{\"id\":4454,\"eventId\":1331,\"week\":0,\"dayId\":3,\"eventChangeId\":null,\"day\":{\"id\":3,\"name\":\"Streda\"},\"eventChange\":null,\"users\":[{\"id\":1,\"firstName\":\"Vladimírasdasd\",\"lastName\":\"Valent\",\"email\":\"spisiak@stud.uniza.sk\"}]},{\"id\":4455,\"eventId\":1331,\"week\":0,\"dayId\":6,\"eventChangeId\":null,\"day\":{\"id\":6,\"name\":\"Sobota\"},\"eventChange\":null,\"users\":[{\"id\":1,\"firstName\":\"Vladimírasdasd\",\"lastName\":\"Valent\",\"email\":\"spisiak@stud.uniza.sk\"}]}],\"organizer\":{\"id\":1,\"firstName\":\"Vladimírasdasd\",\"lastName\":\"Valent\",\"email\":\"spisiak@stud.uniza.sk\"},\"moderators\":[{\"id\":1040,\"userId\":1,\"eventId\":1331,\"canEditEvent\":true,\"canManageParticipants\":false,\"canManageAttendees\":false,\"canManageModerators\":false,\"canRepostEvent\":false,\"user\":{\"id\":1,\"firstName\":\"Vladimírasdasd\",\"lastName\":\"Valent\",\"email\":\"spisiak@stud.uniza.sk\"}}],\"eventOccurrences\":[{\"id\":1369,\"eventId\":1331,\"date\":\"2025-05-03T00:00:00.000Z\",\"eventDayId\":4455,\"eventChangeId\":null,\"eventChange\":null,\"eventDay\":{\"id\":4455,\"eventId\":1331,\"week\":0,\"dayId\":6,\"eventChangeId\":null,\"eventChange\":null},\"participants\":[{\"id\":1,\"firstName\":\"Vladimírasdasd\",\"lastName\":\"Valent\",\"email\":\"spisiak@stud.uniza.sk\"}]}],\"date\":\"2025-05-07T00:00:00.000Z\",\"virtual\":true,\"participants\":[{\"id\":1,\"firstName\":\"Vladimírasdasd\",\"lastName\":\"Valent\",\"email\":\"spisiak@stud.uniza.sk\"}]},{\"id\":1335,\"title\":\"asdasd\",\"description\":null,\"startDate\":\"2025-05-09T00:00:00.000Z\",\"endDate\":\"2025-05-08T23:59:00.000Z\",\"repeatUntil\":null,\"repeatInterval\":null,\"hasStartDate\":true,\"hasStartTime\":false,\"hasEndTime\":false,\"location\":null,\"capacity\":null,\"mainImage\":null,\"createdAt\":\"2025-05-01T20:04:06.426Z\",\"attendancyLimit\":null,\"allowRecurringAttendance\":false,\"joinDaysBeforeStart\":null,\"organizerId\":1,\"categories\":[],\"eventDays\":[],\"organizer\":{\"id\":1,\"firstName\":\"Vladimírasdasd\",\"lastName\":\"Valent\",\"email\":\"spisiak@stud.uniza.sk\"},\"moderators\":[],\"eventOccurrences\":[{\"id\":1373,\"eventId\":1335,\"date\":\"2025-05-09T00:00:00.000Z\",\"eventDayId\":null,\"eventChangeId\":null,\"eventChange\":null,\"eventDay\":null,\"participants\":[]}],\"participants\":[],\"date\":\"2025-05-09T00:00:00.000Z\",\"virtual\":false},{\"id\":1330,\"title\":\"asd\",\"description\":\"\",\"startDate\":\"2025-05-10T14:22:00.000Z\",\"endDate\":null,\"repeatUntil\":null,\"repeatInterval\":1,\"hasStartDate\":true,\"hasStartTime\":true,\"hasEndTime\":false,\"location\":\"\",\"capacity\":null,\"mainImage\":null,\"createdAt\":\"2025-05-01T17:57:06.728Z\",\"attendancyLimit\":null,\"allowRecurringAttendance\":true,\"joinDaysBeforeStart\":null,\"organizerId\":1,\"categories\":[],\"eventDays\":[{\"id\":4452,\"eventId\":1330,\"week\":0,\"dayId\":3,\"eventChangeId\":null,\"day\":{\"id\":3,\"name\":\"Streda\"},\"eventChange\":null,\"users\":[]},{\"id\":4453,\"eventId\":1330,\"week\":0,\"dayId\":6,\"eventChangeId\":null,\"day\":{\"id\":6,\"name\":\"Sobota\"},\"eventChange\":null,\"users\":[{\"id\":1,\"firstName\":\"Vladimírasdasd\",\"lastName\":\"Valent\",\"email\":\"spisiak@stud.uniza.sk\"}]}],\"organizer\":{\"id\":1,\"firstName\":\"Vladimírasdasd\",\"lastName\":\"Valent\",\"email\":\"spisiak@stud.uniza.sk\"},\"moderators\":[{\"id\":1039,\"userId\":1,\"eventId\":1330,\"canEditEvent\":true,\"canManageParticipants\":false,\"canManageAttendees\":false,\"canManageModerators\":false,\"canRepostEvent\":false,\"user\":{\"id\":1,\"firstName\":\"Vladimírasdasd\",\"lastName\":\"Valent\",\"email\":\"spisiak@stud.uniza.sk\"}},{\"id\":1041,\"userId\":2,\"eventId\":1330,\"canEditEvent\":false,\"canManageParticipants\":false,\"canManageAttendees\":true,\"canManageModerators\":false,\"canRepostEvent\":false,\"user\":{\"id\":2,\"firstName\":\"Test\",\"lastName\":\"Test\",\"email\":\"teasdasdst@uniza.sk\"}}],\"eventOccurrences\":[{\"id\":1368,\"eventId\":1330,\"date\":\"2025-05-03T00:00:00.000Z\",\"eventDayId\":4453,\"eventChangeId\":null,\"eventChange\":null,\"eventDay\":{\"id\":4453,\"eventId\":1330,\"week\":0,\"dayId\":6,\"eventChangeId\":null,\"eventChange\":null},\"participants\":[{\"id\":1,\"firstName\":\"Vladimírasdasd\",\"lastName\":\"Valent\",\"email\":\"spisiak@stud.uniza.sk\"}]}],\"date\":\"2025-05-10T00:00:00.000Z\",\"virtual\":true,\"participants\":[{\"id\":1,\"firstName\":\"Vladimírasdasd\",\"lastName\":\"Valent\",\"email\":\"spisiak@stud.uniza.sk\"}]},{\"id\":1331,\"title\":\"asd\",\"description\":\"\",\"startDate\":\"2025-05-10T14:22:00.000Z\",\"endDate\":null,\"repeatUntil\":null,\"repeatInterval\":1,\"hasStartDate\":true,\"hasStartTime\":true,\"hasEndTime\":false,\"location\":\"\",\"capacity\":null,\"mainImage\":null,\"createdAt\":\"2025-05-01T17:57:12.829Z\",\"attendancyLimit\":null,\"allowRecurringAttendance\":true,\"joinDaysBeforeStart\":null,\"organizerId\":1,\"categories\":[],\"eventDays\":[{\"id\":4454,\"eventId\":1331,\"week\":0,\"dayId\":3,\"eventChangeId\":null,\"day\":{\"id\":3,\"name\":\"Streda\"},\"eventChange\":null,\"users\":[{\"id\":1,\"firstName\":\"Vladimírasdasd\",\"lastName\":\"Valent\",\"email\":\"spisiak@stud.uniza.sk\"}]},{\"id\":4455,\"eventId\":1331,\"week\":0,\"dayId\":6,\"eventChangeId\":null,\"day\":{\"id\":6,\"name\":\"Sobota\"},\"eventChange\":null,\"users\":[{\"id\":1,\"firstName\":\"Vladimírasdasd\",\"lastName\":\"Valent\",\"email\":\"spisiak@stud.uniza.sk\"}]}],\"organizer\":{\"id\":1,\"firstName\":\"Vladimírasdasd\",\"lastName\":\"Valent\",\"email\":\"spisiak@stud.uniza.sk\"},\"moderators\":[{\"id\":1040,\"userId\":1,\"eventId\":1331,\"canEditEvent\":true,\"canManageParticipants\":false,\"canManageAttendees\":false,\"canManageModerators\":false,\"canRepostEvent\":false,\"user\":{\"id\":1,\"firstName\":\"Vladimírasdasd\",\"lastName\":\"Valent\",\"email\":\"spisiak@stud.uniza.sk\"}}],\"eventOccurrences\":[{\"id\":1369,\"eventId\":1331,\"date\":\"2025-05-03T00:00:00.000Z\",\"eventDayId\":4455,\"eventChangeId\":null,\"eventChange\":null,\"eventDay\":{\"id\":4455,\"eventId\":1331,\"week\":0,\"dayId\":6,\"eventChangeId\":null,\"eventChange\":null},\"participants\":[{\"id\":1,\"firstName\":\"Vladimírasdasd\",\"lastName\":\"Valent\",\"email\":\"spisiak@stud.uniza.sk\"}]}],\"date\":\"2025-05-10T00:00:00.000Z\",\"virtual\":true,\"participants\":[{\"id\":1,\"firstName\":\"Vladimírasdasd\",\"lastName\":\"Valent\",\"email\":\"spisiak@stud.uniza.sk\"}]},{\"id\":1330,\"title\":\"asd\",\"description\":\"\",\"startDate\":\"2025-05-14T14:22:00.000Z\",\"endDate\":null,\"repeatUntil\":null,\"repeatInterval\":1,\"hasStartDate\":true,\"hasStartTime\":true,\"hasEndTime\":false,\"location\":\"\",\"capacity\":null,\"mainImage\":null,\"createdAt\":\"2025-05-01T17:57:06.728Z\",\"attendancyLimit\":null,\"allowRecurringAttendance\":true,\"joinDaysBeforeStart\":null,\"organizerId\":1,\"categories\":[],\"eventDays\":[{\"id\":4452,\"eventId\":1330,\"week\":0,\"dayId\":3,\"eventChangeId\":null,\"day\":{\"id\":3,\"name\":\"Streda\"},\"eventChange\":null,\"users\":[]},{\"id\":4453,\"eventId\":1330,\"week\":0,\"dayId\":6,\"eventChangeId\":null,\"day\":{\"id\":6,\"name\":\"Sobota\"},\"eventChange\":null,\"users\":[{\"id\":1,\"firstName\":\"Vladimírasdasd\",\"lastName\":\"Valent\",\"email\":\"spisiak@stud.uniza.sk\"}]}],\"organizer\":{\"id\":1,\"firstName\":\"Vladimírasdasd\",\"lastName\":\"Valent\",\"email\":\"spisiak@stud.uniza.sk\"},\"moderators\":[{\"id\":1039,\"userId\":1,\"eventId\":1330,\"canEditEvent\":true,\"canManageParticipants\":false,\"canManageAttendees\":false,\"canManageModerators\":false,\"canRepostEvent\":false,\"user\":{\"id\":1,\"firstName\":\"Vladimírasdasd\",\"lastName\":\"Valent\",\"email\":\"spisiak@stud.uniza.sk\"}},{\"id\":1041,\"userId\":2,\"eventId\":1330,\"canEditEvent\":false,\"canManageParticipants\":false,\"canManageAttendees\":true,\"canManageModerators\":false,\"canRepostEvent\":false,\"user\":{\"id\":2,\"firstName\":\"Test\",\"lastName\":\"Test\",\"email\":\"teasdasdst@uniza.sk\"}}],\"eventOccurrences\":[{\"id\":1368,\"eventId\":1330,\"date\":\"2025-05-03T00:00:00.000Z\",\"eventDayId\":4453,\"eventChangeId\":null,\"eventChange\":null,\"eventDay\":{\"id\":4453,\"eventId\":1330,\"week\":0,\"dayId\":6,\"eventChangeId\":null,\"eventChange\":null},\"participants\":[{\"id\":1,\"firstName\":\"Vladimírasdasd\",\"lastName\":\"Valent\",\"email\":\"spisiak@stud.uniza.sk\"}]}],\"date\":\"2025-05-14T00:00:00.000Z\",\"virtual\":true,\"participants\":[]},{\"id\":1331,\"title\":\"asd\",\"description\":\"\",\"startDate\":\"2025-05-14T14:22:00.000Z\",\"endDate\":null,\"repeatUntil\":null,\"repeatInterval\":1,\"hasStartDate\":true,\"hasStartTime\":true,\"hasEndTime\":false,\"location\":\"\",\"capacity\":null,\"mainImage\":null,\"createdAt\":\"2025-05-01T17:57:12.829Z\",\"attendancyLimit\":null,\"allowRecurringAttendance\":true,\"joinDaysBeforeStart\":null,\"organizerId\":1,\"categories\":[],\"eventDays\":[{\"id\":4454,\"eventId\":1331,\"week\":0,\"dayId\":3,\"eventChangeId\":null,\"day\":{\"id\":3,\"name\":\"Streda\"},\"eventChange\":null,\"users\":[{\"id\":1,\"firstName\":\"Vladimírasdasd\",\"lastName\":\"Valent\",\"email\":\"spisiak@stud.uniza.sk\"}]},{\"id\":4455,\"eventId\":1331,\"week\":0,\"dayId\":6,\"eventChangeId\":null,\"day\":{\"id\":6,\"name\":\"Sobota\"},\"eventChange\":null,\"users\":[{\"id\":1,\"firstName\":\"Vladimírasdasd\",\"lastName\":\"Valent\",\"email\":\"spisiak@stud.uniza.sk\"}]}],\"organizer\":{\"id\":1,\"firstName\":\"Vladimírasdasd\",\"lastName\":\"Valent\",\"email\":\"spisiak@stud.uniza.sk\"},\"moderators\":[{\"id\":1040,\"userId\":1,\"eventId\":1331,\"canEditEvent\":true,\"canManageParticipants\":false,\"canManageAttendees\":false,\"canManageModerators\":false,\"canRepostEvent\":false,\"user\":{\"id\":1,\"firstName\":\"Vladimírasdasd\",\"lastName\":\"Valent\",\"email\":\"spisiak@stud.uniza.sk\"}}],\"eventOccurrences\":[{\"id\":1369,\"eventId\":1331,\"date\":\"2025-05-03T00:00:00.000Z\",\"eventDayId\":4455,\"eventChangeId\":null,\"eventChange\":null,\"eventDay\":{\"id\":4455,\"eventId\":1331,\"week\":0,\"dayId\":6,\"eventChangeId\":null,\"eventChange\":null},\"participants\":[{\"id\":1,\"firstName\":\"Vladimírasdasd\",\"lastName\":\"Valent\",\"email\":\"spisiak@stud.uniza.sk\"}]}],\"date\":\"2025-05-14T00:00:00.000Z\",\"virtual\":true,\"participants\":[{\"id\":1,\"firstName\":\"Vladimírasdasd\",\"lastName\":\"Valent\",\"email\":\"spisiak@stud.uniza.sk\"}]}]"
+}
+
+{
+  "time": "2025-05-01T20:13:49.463Z",
+  "method": "GET",
+  "url": "/api/events/get?startDate=2025-05-01&endDate=2025-05-15",
+  "status": 200,
+  "response": "[{\"id\":1328,\"title\":\"asd\",\"description\":\"\",\"startDate\":\"2025-05-02T00:00:00.000Z\",\"endDate\":null,\"repeatUntil\":null,\"repeatInterval\":null,\"hasStartDate\":true,\"hasStartTime\":false,\"hasEndTime\":false,\"location\":\"asd\",\"capacity\":null,\"mainImage\":null,\"createdAt\":\"2025-05-01T17:50:53.600Z\",\"attendancyLimit\":null,\"allowRecurringAttendance\":false,\"joinDaysBeforeStart\":null,\"organizerId\":1,\"categories\":[{\"id\":1,\"name\":\"WORKSHOP\",\"label\":\"Workshop\",\"icon\":\"🧪\"}],\"eventDays\":[],\"organizer\":{\"id\":1,\"firstName\":\"Vladimírasdasd\",\"lastName\":\"Valent\",\"email\":\"spisiak@stud.uniza.sk\"},\"moderators\":[{\"id\":1037,\"userId\":1,\"eventId\":1328,\"canEditEvent\":true,\"canManageParticipants\":false,\"canManageAttendees\":false,\"canManageModerators\":false,\"canRepostEvent\":false,\"user\":{\"id\":1,\"firstName\":\"Vladimírasdasd\",\"lastName\":\"Valent\",\"email\":\"spisiak@stud.uniza.sk\"}}],\"eventOccurrences\":[{\"id\":1366,\"eventId\":1328,\"date\":\"2025-05-02T00:00:00.000Z\",\"eventDayId\":null,\"eventChangeId\":null,\"eventChange\":null,\"eventDay\":null,\"participants\":[]}],\"participants\":[],\"date\":\"2025-05-02T00:00:00.000Z\",\"virtual\":false},{\"id\":1329,\"title\":\"asd\",\"description\":\"\",\"startDate\":\"2025-05-02T00:00:00.000Z\",\"endDate\":null,\"repeatUntil\":null,\"repeatInterval\":null,\"hasStartDate\":true,\"hasStartTime\":false,\"hasEndTime\":false,\"location\":\"asd\",\"capacity\":null,\"mainImage\":null,\"createdAt\":\"2025-05-01T17:51:03.112Z\",\"attendancyLimit\":null,\"allowRecurringAttendance\":false,\"joinDaysBeforeStart\":null,\"organizerId\":1,\"categories\":[{\"id\":1,\"name\":\"WORKSHOP\",\"label\":\"Workshop\",\"icon\":\"🧪\"}],\"eventDays\":[],\"organizer\":{\"id\":1,\"firstName\":\"Vladimírasdasd\",\"lastName\":\"Valent\",\"email\":\"spisiak@stud.uniza.sk\"},\"moderators\":[{\"id\":1038,\"userId\":1,\"eventId\":1329,\"canEditEvent\":true,\"canManageParticipants\":false,\"canManageAttendees\":false,\"canManageModerators\":false,\"canRepostEvent\":false,\"user\":{\"id\":1,\"firstName\":\"Vladimírasdasd\",\"lastName\":\"Valent\",\"email\":\"spisiak@stud.uniza.sk\"}}],\"eventOccurrences\":[{\"id\":1367,\"eventId\":1329,\"date\":\"2025-05-02T00:00:00.000Z\",\"eventDayId\":null,\"eventChangeId\":null,\"eventChange\":null,\"eventDay\":null,\"participants\":[]}],\"participants\":[],\"date\":\"2025-05-02T00:00:00.000Z\",\"virtual\":false},{\"id\":1332,\"title\":\"asd\",\"description\":\"\",\"startDate\":\"2025-05-02T00:00:00.000Z\",\"endDate\":null,\"repeatUntil\":null,\"repeatInterval\":null,\"hasStartDate\":true,\"hasStartTime\":false,\"hasEndTime\":false,\"location\":\"\",\"capacity\":null,\"mainImage\":null,\"createdAt\":\"2025-05-01T18:20:42.118Z\",\"attendancyLimit\":null,\"allowRecurringAttendance\":false,\"joinDaysBeforeStart\":null,\"organizerId\":1,\"categories\":[],\"eventDays\":[],\"organizer\":{\"id\":1,\"firstName\":\"Vladimírasdasd\",\"lastName\":\"Valent\",\"email\":\"spisiak@stud.uniza.sk\"},\"moderators\":[],\"eventOccurrences\":[{\"id\":1370,\"eventId\":1332,\"date\":\"2025-05-02T00:00:00.000Z\",\"eventDayId\":null,\"eventChangeId\":null,\"eventChange\":null,\"eventDay\":null,\"participants\":[]}],\"participants\":[],\"date\":\"2025-05-02T00:00:00.000Z\",\"virtual\":false},{\"id\":1333,\"title\":\"asd\",\"description\":\"\",\"startDate\":\"2025-05-02T00:00:00.000Z\",\"endDate\":null,\"repeatUntil\":null,\"repeatInterval\":null,\"hasStartDate\":true,\"hasStartTime\":false,\"hasEndTime\":false,\"location\":\"\",\"capacity\":null,\"mainImage\":null,\"createdAt\":\"2025-05-01T18:22:25.072Z\",\"attendancyLimit\":null,\"allowRecurringAttendance\":false,\"joinDaysBeforeStart\":null,\"organizerId\":1,\"categories\":[],\"eventDays\":[],\"organizer\":{\"id\":1,\"firstName\":\"Vladimírasdasd\",\"lastName\":\"Valent\",\"email\":\"spisiak@stud.uniza.sk\"},\"moderators\":[],\"eventOccurrences\":[{\"id\":1371,\"eventId\":1333,\"date\":\"2025-05-02T00:00:00.000Z\",\"eventDayId\":null,\"eventChangeId\":null,\"eventChange\":null,\"eventDay\":null,\"participants\":[]}],\"participants\":[],\"date\":\"2025-05-02T00:00:00.000Z\",\"virtual\":false},{\"id\":1334,\"title\":\"asd\",\"description\":\"\",\"startDate\":\"2025-05-02T00:00:00.000Z\",\"endDate\":\"2025-05-01T23:59:00.000Z\",\"repeatUntil\":null,\"repeatInterval\":null,\"hasStartDate\":true,\"hasStartTime\":false,\"hasEndTime\":false,\"location\":\"\",\"capacity\":null,\"mainImage\":\"/uploads/events/event_main_1746124119194.png\",\"createdAt\":\"2025-05-01T18:28:39.202Z\",\"attendancyLimit\":null,\"allowRecurringAttendance\":false,\"joinDaysBeforeStart\":null,\"organizerId\":1,\"categories\":[],\"eventDays\":[],\"organizer\":{\"id\":1,\"firstName\":\"Vladimírasdasd\",\"lastName\":\"Valent\",\"email\":\"spisiak@stud.uniza.sk\"},\"moderators\":[],\"eventOccurrences\":[{\"id\":1372,\"eventId\":1334,\"date\":\"2025-05-02T00:00:00.000Z\",\"eventDayId\":null,\"eventChangeId\":null,\"eventChange\":null,\"eventDay\":null,\"participants\":[]}],\"participants\":[],\"date\":\"2025-05-02T00:00:00.000Z\",\"virtual\":false},{\"id\":1330,\"title\":\"asd\",\"description\":\"\",\"startDate\":\"2025-05-03T14:22:00.000Z\",\"endDate\":null,\"repeatUntil\":null,\"repeatInterval\":1,\"hasStartDate\":true,\"hasStartTime\":true,\"hasEndTime\":false,\"location\":\"\",\"capacity\":null,\"mainImage\":null,\"createdAt\":\"2025-05-01T17:57:06.728Z\",\"attendancyLimit\":null,\"allowRecurringAttendance\":true,\"joinDaysBeforeStart\":null,\"organizerId\":1,\"categories\":[],\"eventDays\":[{\"id\":4452,\"eventId\":1330,\"week\":0,\"dayId\":3,\"eventChangeId\":null,\"day\":{\"id\":3,\"name\":\"Streda\"},\"eventChange\":null,\"users\":[]},{\"id\":4453,\"eventId\":1330,\"week\":0,\"dayId\":6,\"eventChangeId\":null,\"day\":{\"id\":6,\"name\":\"Sobota\"},\"eventChange\":null,\"users\":[{\"id\":1,\"firstName\":\"Vladimírasdasd\",\"lastName\":\"Valent\",\"email\":\"spisiak@stud.uniza.sk\"}]}],\"organizer\":{\"id\":1,\"firstName\":\"Vladimírasdasd\",\"lastName\":\"Valent\",\"email\":\"spisiak@stud.uniza.sk\"},\"moderators\":[{\"id\":1039,\"userId\":1,\"eventId\":1330,\"canEditEvent\":true,\"canManageParticipants\":false,\"canManageAttendees\":false,\"canManageModerators\":false,\"canRepostEvent\":false,\"user\":{\"id\":1,\"firstName\":\"Vladimírasdasd\",\"lastName\":\"Valent\",\"email\":\"spisiak@stud.uniza.sk\"}},{\"id\":1041,\"userId\":2,\"eventId\":1330,\"canEditEvent\":false,\"canManageParticipants\":false,\"canManageAttendees\":true,\"canManageModerators\":false,\"canRepostEvent\":false,\"user\":{\"id\":2,\"firstName\":\"Test\",\"lastName\":\"Test\",\"email\":\"teasdasdst@uniza.sk\"}}],\"eventOccurrences\":[{\"id\":1368,\"eventId\":1330,\"date\":\"2025-05-03T00:00:00.000Z\",\"eventDayId\":4453,\"eventChangeId\":null,\"eventChange\":null,\"eventDay\":{\"id\":4453,\"eventId\":1330,\"week\":0,\"dayId\":6,\"eventChangeId\":null,\"eventChange\":null},\"participants\":[{\"id\":1,\"firstName\":\"Vladimírasdasd\",\"lastName\":\"Valent\",\"email\":\"spisiak@stud.uniza.sk\"}]}],\"participants\":[{\"id\":1,\"firstName\":\"Vladimírasdasd\",\"lastName\":\"Valent\",\"email\":\"spisiak@stud.uniza.sk\"}],\"date\":\"2025-05-03T00:00:00.000Z\",\"virtual\":false},{\"id\":1331,\"title\":\"asd\",\"description\":\"\",\"startDate\":\"2025-05-03T14:22:00.000Z\",\"endDate\":null,\"repeatUntil\":null,\"repeatInterval\":1,\"hasStartDate\":true,\"hasStartTime\":true,\"hasEndTime\":false,\"location\":\"\",\"capacity\":null,\"mainImage\":null,\"createdAt\":\"2025-05-01T17:57:12.829Z\",\"attendancyLimit\":null,\"allowRecurringAttendance\":true,\"joinDaysBeforeStart\":null,\"organizerId\":1,\"categories\":[],\"eventDays\":[{\"id\":4454,\"eventId\":1331,\"week\":0,\"dayId\":3,\"eventChangeId\":null,\"day\":{\"id\":3,\"name\":\"Streda\"},\"eventChange\":null,\"users\":[{\"id\":1,\"firstName\":\"Vladimírasdasd\",\"lastName\":\"Valent\",\"email\":\"spisiak@stud.uniza.sk\"}]},{\"id\":4455,\"eventId\":1331,\"week\":0,\"dayId\":6,\"eventChangeId\":null,\"day\":{\"id\":6,\"name\":\"Sobota\"},\"eventChange\":null,\"users\":[{\"id\":1,\"firstName\":\"Vladimírasdasd\",\"lastName\":\"Valent\",\"email\":\"spisiak@stud.uniza.sk\"}]}],\"organizer\":{\"id\":1,\"firstName\":\"Vladimírasdasd\",\"lastName\":\"Valent\",\"email\":\"spisiak@stud.uniza.sk\"},\"moderators\":[{\"id\":1040,\"userId\":1,\"eventId\":1331,\"canEditEvent\":true,\"canManageParticipants\":false,\"canManageAttendees\":false,\"canManageModerators\":false,\"canRepostEvent\":false,\"user\":{\"id\":1,\"firstName\":\"Vladimírasdasd\",\"lastName\":\"Valent\",\"email\":\"spisiak@stud.uniza.sk\"}}],\"eventOccurrences\":[{\"id\":1369,\"eventId\":1331,\"date\":\"2025-05-03T00:00:00.000Z\",\"eventDayId\":4455,\"eventChangeId\":null,\"eventChange\":null,\"eventDay\":{\"id\":4455,\"eventId\":1331,\"week\":0,\"dayId\":6,\"eventChangeId\":null,\"eventChange\":null},\"participants\":[{\"id\":1,\"firstName\":\"Vladimírasdasd\",\"lastName\":\"Valent\",\"email\":\"spisiak@stud.uniza.sk\"}]}],\"participants\":[{\"id\":1,\"firstName\":\"Vladimírasdasd\",\"lastName\":\"Valent\",\"email\":\"spisiak@stud.uniza.sk\"}],\"date\":\"2025-05-03T00:00:00.000Z\",\"virtual\":false},{\"id\":1330,\"title\":\"asd\",\"description\":\"\",\"startDate\":\"2025-05-07T14:22:00.000Z\",\"endDate\":null,\"repeatUntil\":null,\"repeatInterval\":1,\"hasStartDate\":true,\"hasStartTime\":true,\"hasEndTime\":false,\"location\":\"\",\"capacity\":null,\"mainImage\":null,\"createdAt\":\"2025-05-01T17:57:06.728Z\",\"attendancyLimit\":null,\"allowRecurringAttendance\":true,\"joinDaysBeforeStart\":null,\"organizerId\":1,\"categories\":[],\"eventDays\":[{\"id\":4452,\"eventId\":1330,\"week\":0,\"dayId\":3,\"eventChangeId\":null,\"day\":{\"id\":3,\"name\":\"Streda\"},\"eventChange\":null,\"users\":[]},{\"id\":4453,\"eventId\":1330,\"week\":0,\"dayId\":6,\"eventChangeId\":null,\"day\":{\"id\":6,\"name\":\"Sobota\"},\"eventChange\":null,\"users\":[{\"id\":1,\"firstName\":\"Vladimírasdasd\",\"lastName\":\"Valent\",\"email\":\"spisiak@stud.uniza.sk\"}]}],\"organizer\":{\"id\":1,\"firstName\":\"Vladimírasdasd\",\"lastName\":\"Valent\",\"email\":\"spisiak@stud.uniza.sk\"},\"moderators\":[{\"id\":1039,\"userId\":1,\"eventId\":1330,\"canEditEvent\":true,\"canManageParticipants\":false,\"canManageAttendees\":false,\"canManageModerators\":false,\"canRepostEvent\":false,\"user\":{\"id\":1,\"firstName\":\"Vladimírasdasd\",\"lastName\":\"Valent\",\"email\":\"spisiak@stud.uniza.sk\"}},{\"id\":1041,\"userId\":2,\"eventId\":1330,\"canEditEvent\":false,\"canManageParticipants\":false,\"canManageAttendees\":true,\"canManageModerators\":false,\"canRepostEvent\":false,\"user\":{\"id\":2,\"firstName\":\"Test\",\"lastName\":\"Test\",\"email\":\"teasdasdst@uniza.sk\"}}],\"eventOccurrences\":[{\"id\":1368,\"eventId\":1330,\"date\":\"2025-05-03T00:00:00.000Z\",\"eventDayId\":4453,\"eventChangeId\":null,\"eventChange\":null,\"eventDay\":{\"id\":4453,\"eventId\":1330,\"week\":0,\"dayId\":6,\"eventChangeId\":null,\"eventChange\":null},\"participants\":[{\"id\":1,\"firstName\":\"Vladimírasdasd\",\"lastName\":\"Valent\",\"email\":\"spisiak@stud.uniza.sk\"}]}],\"date\":\"2025-05-07T00:00:00.000Z\",\"virtual\":true,\"participants\":[]},{\"id\":1331,\"title\":\"asd\",\"description\":\"\",\"startDate\":\"2025-05-07T14:22:00.000Z\",\"endDate\":null,\"repeatUntil\":null,\"repeatInterval\":1,\"hasStartDate\":true,\"hasStartTime\":true,\"hasEndTime\":false,\"location\":\"\",\"capacity\":null,\"mainImage\":null,\"createdAt\":\"2025-05-01T17:57:12.829Z\",\"attendancyLimit\":null,\"allowRecurringAttendance\":true,\"joinDaysBeforeStart\":null,\"organizerId\":1,\"categories\":[],\"eventDays\":[{\"id\":4454,\"eventId\":1331,\"week\":0,\"dayId\":3,\"eventChangeId\":null,\"day\":{\"id\":3,\"name\":\"Streda\"},\"eventChange\":null,\"users\":[{\"id\":1,\"firstName\":\"Vladimírasdasd\",\"lastName\":\"Valent\",\"email\":\"spisiak@stud.uniza.sk\"}]},{\"id\":4455,\"eventId\":1331,\"week\":0,\"dayId\":6,\"eventChangeId\":null,\"day\":{\"id\":6,\"name\":\"Sobota\"},\"eventChange\":null,\"users\":[{\"id\":1,\"firstName\":\"Vladimírasdasd\",\"lastName\":\"Valent\",\"email\":\"spisiak@stud.uniza.sk\"}]}],\"organizer\":{\"id\":1,\"firstName\":\"Vladimírasdasd\",\"lastName\":\"Valent\",\"email\":\"spisiak@stud.uniza.sk\"},\"moderators\":[{\"id\":1040,\"userId\":1,\"eventId\":1331,\"canEditEvent\":true,\"canManageParticipants\":false,\"canManageAttendees\":false,\"canManageModerators\":false,\"canRepostEvent\":false,\"user\":{\"id\":1,\"firstName\":\"Vladimírasdasd\",\"lastName\":\"Valent\",\"email\":\"spisiak@stud.uniza.sk\"}}],\"eventOccurrences\":[{\"id\":1369,\"eventId\":1331,\"date\":\"2025-05-03T00:00:00.000Z\",\"eventDayId\":4455,\"eventChangeId\":null,\"eventChange\":null,\"eventDay\":{\"id\":4455,\"eventId\":1331,\"week\":0,\"dayId\":6,\"eventChangeId\":null,\"eventChange\":null},\"participants\":[{\"id\":1,\"firstName\":\"Vladimírasdasd\",\"lastName\":\"Valent\",\"email\":\"spisiak@stud.uniza.sk\"}]}],\"date\":\"2025-05-07T00:00:00.000Z\",\"virtual\":true,\"participants\":[{\"id\":1,\"firstName\":\"Vladimírasdasd\",\"lastName\":\"Valent\",\"email\":\"spisiak@stud.uniza.sk\"}]},{\"id\":1335,\"title\":\"asdasd\",\"description\":null,\"startDate\":\"2025-05-09T00:00:00.000Z\",\"endDate\":\"2025-05-08T23:59:00.000Z\",\"repeatUntil\":null,\"repeatInterval\":null,\"hasStartDate\":true,\"hasStartTime\":false,\"hasEndTime\":false,\"location\":null,\"capacity\":null,\"mainImage\":null,\"createdAt\":\"2025-05-01T20:04:06.426Z\",\"attendancyLimit\":null,\"allowRecurringAttendance\":false,\"joinDaysBeforeStart\":null,\"organizerId\":1,\"categories\":[],\"eventDays\":[],\"organizer\":{\"id\":1,\"firstName\":\"Vladimírasdasd\",\"lastName\":\"Valent\",\"email\":\"spisiak@stud.uniza.sk\"},\"moderators\":[],\"eventOccurrences\":[{\"id\":1373,\"eventId\":1335,\"date\":\"2025-05-09T00:00:00.000Z\",\"eventDayId\":null,\"eventChangeId\":null,\"eventChange\":null,\"eventDay\":null,\"participants\":[]}],\"participants\":[],\"date\":\"2025-05-09T00:00:00.000Z\",\"virtual\":false},{\"id\":1330,\"title\":\"asd\",\"description\":\"\",\"startDate\":\"2025-05-10T14:22:00.000Z\",\"endDate\":null,\"repeatUntil\":null,\"repeatInterval\":1,\"hasStartDate\":true,\"hasStartTime\":true,\"hasEndTime\":false,\"location\":\"\",\"capacity\":null,\"mainImage\":null,\"createdAt\":\"2025-05-01T17:57:06.728Z\",\"attendancyLimit\":null,\"allowRecurringAttendance\":true,\"joinDaysBeforeStart\":null,\"organizerId\":1,\"categories\":[],\"eventDays\":[{\"id\":4452,\"eventId\":1330,\"week\":0,\"dayId\":3,\"eventChangeId\":null,\"day\":{\"id\":3,\"name\":\"Streda\"},\"eventChange\":null,\"users\":[]},{\"id\":4453,\"eventId\":1330,\"week\":0,\"dayId\":6,\"eventChangeId\":null,\"day\":{\"id\":6,\"name\":\"Sobota\"},\"eventChange\":null,\"users\":[{\"id\":1,\"firstName\":\"Vladimírasdasd\",\"lastName\":\"Valent\",\"email\":\"spisiak@stud.uniza.sk\"}]}],\"organizer\":{\"id\":1,\"firstName\":\"Vladimírasdasd\",\"lastName\":\"Valent\",\"email\":\"spisiak@stud.uniza.sk\"},\"moderators\":[{\"id\":1039,\"userId\":1,\"eventId\":1330,\"canEditEvent\":true,\"canManageParticipants\":false,\"canManageAttendees\":false,\"canManageModerators\":false,\"canRepostEvent\":false,\"user\":{\"id\":1,\"firstName\":\"Vladimírasdasd\",\"lastName\":\"Valent\",\"email\":\"spisiak@stud.uniza.sk\"}},{\"id\":1041,\"userId\":2,\"eventId\":1330,\"canEditEvent\":false,\"canManageParticipants\":false,\"canManageAttendees\":true,\"canManageModerators\":false,\"canRepostEvent\":false,\"user\":{\"id\":2,\"firstName\":\"Test\",\"lastName\":\"Test\",\"email\":\"teasdasdst@uniza.sk\"}}],\"eventOccurrences\":[{\"id\":1368,\"eventId\":1330,\"date\":\"2025-05-03T00:00:00.000Z\",\"eventDayId\":4453,\"eventChangeId\":null,\"eventChange\":null,\"eventDay\":{\"id\":4453,\"eventId\":1330,\"week\":0,\"dayId\":6,\"eventChangeId\":null,\"eventChange\":null},\"participants\":[{\"id\":1,\"firstName\":\"Vladimírasdasd\",\"lastName\":\"Valent\",\"email\":\"spisiak@stud.uniza.sk\"}]}],\"date\":\"2025-05-10T00:00:00.000Z\",\"virtual\":true,\"participants\":[{\"id\":1,\"firstName\":\"Vladimírasdasd\",\"lastName\":\"Valent\",\"email\":\"spisiak@stud.uniza.sk\"}]},{\"id\":1331,\"title\":\"asd\",\"description\":\"\",\"startDate\":\"2025-05-10T14:22:00.000Z\",\"endDate\":null,\"repeatUntil\":null,\"repeatInterval\":1,\"hasStartDate\":true,\"hasStartTime\":true,\"hasEndTime\":false,\"location\":\"\",\"capacity\":null,\"mainImage\":null,\"createdAt\":\"2025-05-01T17:57:12.829Z\",\"attendancyLimit\":null,\"allowRecurringAttendance\":true,\"joinDaysBeforeStart\":null,\"organizerId\":1,\"categories\":[],\"eventDays\":[{\"id\":4454,\"eventId\":1331,\"week\":0,\"dayId\":3,\"eventChangeId\":null,\"day\":{\"id\":3,\"name\":\"Streda\"},\"eventChange\":null,\"users\":[{\"id\":1,\"firstName\":\"Vladimírasdasd\",\"lastName\":\"Valent\",\"email\":\"spisiak@stud.uniza.sk\"}]},{\"id\":4455,\"eventId\":1331,\"week\":0,\"dayId\":6,\"eventChangeId\":null,\"day\":{\"id\":6,\"name\":\"Sobota\"},\"eventChange\":null,\"users\":[{\"id\":1,\"firstName\":\"Vladimírasdasd\",\"lastName\":\"Valent\",\"email\":\"spisiak@stud.uniza.sk\"}]}],\"organizer\":{\"id\":1,\"firstName\":\"Vladimírasdasd\",\"lastName\":\"Valent\",\"email\":\"spisiak@stud.uniza.sk\"},\"moderators\":[{\"id\":1040,\"userId\":1,\"eventId\":1331,\"canEditEvent\":true,\"canManageParticipants\":false,\"canManageAttendees\":false,\"canManageModerators\":false,\"canRepostEvent\":false,\"user\":{\"id\":1,\"firstName\":\"Vladimírasdasd\",\"lastName\":\"Valent\",\"email\":\"spisiak@stud.uniza.sk\"}}],\"eventOccurrences\":[{\"id\":1369,\"eventId\":1331,\"date\":\"2025-05-03T00:00:00.000Z\",\"eventDayId\":4455,\"eventChangeId\":null,\"eventChange\":null,\"eventDay\":{\"id\":4455,\"eventId\":1331,\"week\":0,\"dayId\":6,\"eventChangeId\":null,\"eventChange\":null},\"participants\":[{\"id\":1,\"firstName\":\"Vladimírasdasd\",\"lastName\":\"Valent\",\"email\":\"spisiak@stud.uniza.sk\"}]}],\"date\":\"2025-05-10T00:00:00.000Z\",\"virtual\":true,\"participants\":[{\"id\":1,\"firstName\":\"Vladimírasdasd\",\"lastName\":\"Valent\",\"email\":\"spisiak@stud.uniza.sk\"}]},{\"id\":1330,\"title\":\"asd\",\"description\":\"\",\"startDate\":\"2025-05-14T14:22:00.000Z\",\"endDate\":null,\"repeatUntil\":null,\"repeatInterval\":1,\"hasStartDate\":true,\"hasStartTime\":true,\"hasEndTime\":false,\"location\":\"\",\"capacity\":null,\"mainImage\":null,\"createdAt\":\"2025-05-01T17:57:06.728Z\",\"attendancyLimit\":null,\"allowRecurringAttendance\":true,\"joinDaysBeforeStart\":null,\"organizerId\":1,\"categories\":[],\"eventDays\":[{\"id\":4452,\"eventId\":1330,\"week\":0,\"dayId\":3,\"eventChangeId\":null,\"day\":{\"id\":3,\"name\":\"Streda\"},\"eventChange\":null,\"users\":[]},{\"id\":4453,\"eventId\":1330,\"week\":0,\"dayId\":6,\"eventChangeId\":null,\"day\":{\"id\":6,\"name\":\"Sobota\"},\"eventChange\":null,\"users\":[{\"id\":1,\"firstName\":\"Vladimírasdasd\",\"lastName\":\"Valent\",\"email\":\"spisiak@stud.uniza.sk\"}]}],\"organizer\":{\"id\":1,\"firstName\":\"Vladimírasdasd\",\"lastName\":\"Valent\",\"email\":\"spisiak@stud.uniza.sk\"},\"moderators\":[{\"id\":1039,\"userId\":1,\"eventId\":1330,\"canEditEvent\":true,\"canManageParticipants\":false,\"canManageAttendees\":false,\"canManageModerators\":false,\"canRepostEvent\":false,\"user\":{\"id\":1,\"firstName\":\"Vladimírasdasd\",\"lastName\":\"Valent\",\"email\":\"spisiak@stud.uniza.sk\"}},{\"id\":1041,\"userId\":2,\"eventId\":1330,\"canEditEvent\":false,\"canManageParticipants\":false,\"canManageAttendees\":true,\"canManageModerators\":false,\"canRepostEvent\":false,\"user\":{\"id\":2,\"firstName\":\"Test\",\"lastName\":\"Test\",\"email\":\"teasdasdst@uniza.sk\"}}],\"eventOccurrences\":[{\"id\":1368,\"eventId\":1330,\"date\":\"2025-05-03T00:00:00.000Z\",\"eventDayId\":4453,\"eventChangeId\":null,\"eventChange\":null,\"eventDay\":{\"id\":4453,\"eventId\":1330,\"week\":0,\"dayId\":6,\"eventChangeId\":null,\"eventChange\":null},\"participants\":[{\"id\":1,\"firstName\":\"Vladimírasdasd\",\"lastName\":\"Valent\",\"email\":\"spisiak@stud.uniza.sk\"}]}],\"date\":\"2025-05-14T00:00:00.000Z\",\"virtual\":true,\"participants\":[]},{\"id\":1331,\"title\":\"asd\",\"description\":\"\",\"startDate\":\"2025-05-14T14:22:00.000Z\",\"endDate\":null,\"repeatUntil\":null,\"repeatInterval\":1,\"hasStartDate\":true,\"hasStartTime\":true,\"hasEndTime\":false,\"location\":\"\",\"capacity\":null,\"mainImage\":null,\"createdAt\":\"2025-05-01T17:57:12.829Z\",\"attendancyLimit\":null,\"allowRecurringAttendance\":true,\"joinDaysBeforeStart\":null,\"organizerId\":1,\"categories\":[],\"eventDays\":[{\"id\":4454,\"eventId\":1331,\"week\":0,\"dayId\":3,\"eventChangeId\":null,\"day\":{\"id\":3,\"name\":\"Streda\"},\"eventChange\":null,\"users\":[{\"id\":1,\"firstName\":\"Vladimírasdasd\",\"lastName\":\"Valent\",\"email\":\"spisiak@stud.uniza.sk\"}]},{\"id\":4455,\"eventId\":1331,\"week\":0,\"dayId\":6,\"eventChangeId\":null,\"day\":{\"id\":6,\"name\":\"Sobota\"},\"eventChange\":null,\"users\":[{\"id\":1,\"firstName\":\"Vladimírasdasd\",\"lastName\":\"Valent\",\"email\":\"spisiak@stud.uniza.sk\"}]}],\"organizer\":{\"id\":1,\"firstName\":\"Vladimírasdasd\",\"lastName\":\"Valent\",\"email\":\"spisiak@stud.uniza.sk\"},\"moderators\":[{\"id\":1040,\"userId\":1,\"eventId\":1331,\"canEditEvent\":true,\"canManageParticipants\":false,\"canManageAttendees\":false,\"canManageModerators\":false,\"canRepostEvent\":false,\"user\":{\"id\":1,\"firstName\":\"Vladimírasdasd\",\"lastName\":\"Valent\",\"email\":\"spisiak@stud.uniza.sk\"}}],\"eventOccurrences\":[{\"id\":1369,\"eventId\":1331,\"date\":\"2025-05-03T00:00:00.000Z\",\"eventDayId\":4455,\"eventChangeId\":null,\"eventChange\":null,\"eventDay\":{\"id\":4455,\"eventId\":1331,\"week\":0,\"dayId\":6,\"eventChangeId\":null,\"eventChange\":null},\"participants\":[{\"id\":1,\"firstName\":\"Vladimírasdasd\",\"lastName\":\"Valent\",\"email\":\"spisiak@stud.uniza.sk\"}]}],\"date\":\"2025-05-14T00:00:00.000Z\",\"virtual\":true,\"participants\":[{\"id\":1,\"firstName\":\"Vladimírasdasd\",\"lastName\":\"Valent\",\"email\":\"spisiak@stud.uniza.sk\"}]}]"
+}
+
+{
+  "time": "2025-05-01T20:13:49.462Z",
+  "method": "GET",
+  "url": "/api/events/get?startDate=2025-05-01&endDate=2025-05-15",
+  "status": 200,
+  "response": [
+    {
+      "id": 1328,
+      "title": "asd",
+      "description": "",
+      "startDate": "2025-05-02T00:00:00.000Z",
+      "endDate": null,
+      "repeatUntil": null,
+      "repeatInterval": null,
+      "hasStartDate": true,
+      "hasStartTime": false,
+      "hasEndTime": false,
+      "location": "asd",
+      "capacity": null,
+      "mainImage": null,
+      "createdAt": "2025-05-01T17:50:53.600Z",
+      "attendancyLimit": null,
+      "allowRecurringAttendance": false,
+      "joinDaysBeforeStart": null,
+      "organizerId": 1,
+      "categories": [
+        {
+          "id": 1,
+          "name": "WORKSHOP",
+          "label": "Workshop",
+          "icon": "🧪"
+        }
+      ],
+      "eventDays": [],
+      "organizer": {
+        "id": 1,
+        "firstName": "Vladimírasdasd",
+        "lastName": "Valent",
+        "email": "spisiak@stud.uniza.sk"
+      },
+      "moderators": [
+        {
+          "id": 1037,
+          "userId": 1,
+          "eventId": 1328,
+          "canEditEvent": true,
+          "canManageParticipants": false,
+          "canManageAttendees": false,
+          "canManageModerators": false,
+          "canRepostEvent": false,
+          "user": {
+            "id": 1,
+            "firstName": "Vladimírasdasd",
+            "lastName": "Valent",
+            "email": "spisiak@stud.uniza.sk"
+          }
+        }
+      ],
+      "eventOccurrences": [
+        {
+          "id": 1366,
+          "eventId": 1328,
+          "date": "2025-05-02T00:00:00.000Z",
+          "eventDayId": null,
+          "eventChangeId": null,
+          "eventChange": null,
+          "eventDay": null,
+          "participants": []
+        }
+      ],
+      "participants": [],
+      "date": "2025-05-02T00:00:00.000Z",
+      "virtual": false
+    },
+    {
+      "id": 1329,
+      "title": "asd",
+      "description": "",
+      "startDate": "2025-05-02T00:00:00.000Z",
+      "endDate": null,
+      "repeatUntil": null,
+      "repeatInterval": null,
+      "hasStartDate": true,
+      "hasStartTime": false,
+      "hasEndTime": false,
+      "location": "asd",
+      "capacity": null,
+      "mainImage": null,
+      "createdAt": "2025-05-01T17:51:03.112Z",
+      "attendancyLimit": null,
+      "allowRecurringAttendance": false,
+      "joinDaysBeforeStart": null,
+      "organizerId": 1,
+      "categories": [
+        {
+          "id": 1,
+          "name": "WORKSHOP",
+          "label": "Workshop",
+          "icon": "🧪"
+        }
+      ],
+      "eventDays": [],
+      "organizer": {
+        "id": 1,
+        "firstName": "Vladimírasdasd",
+        "lastName": "Valent",
+        "email": "spisiak@stud.uniza.sk"
+      },
+      "moderators": [
+        {
+          "id": 1038,
+          "userId": 1,
+          "eventId": 1329,
+          "canEditEvent": true,
+          "canManageParticipants": false,
+          "canManageAttendees": false,
+          "canManageModerators": false,
+          "canRepostEvent": false,
+          "user": {
+            "id": 1,
+            "firstName": "Vladimírasdasd",
+            "lastName": "Valent",
+            "email": "spisiak@stud.uniza.sk"
+          }
+        }
+      ],
+      "eventOccurrences": [
+        {
+          "id": 1367,
+          "eventId": 1329,
+          "date": "2025-05-02T00:00:00.000Z",
+          "eventDayId": null,
+          "eventChangeId": null,
+          "eventChange": null,
+          "eventDay": null,
+          "participants": []
+        }
+      ],
+      "participants": [],
+      "date": "2025-05-02T00:00:00.000Z",
+      "virtual": false
+    },
+    {
+      "id": 1332,
+      "title": "asd",
+      "description": "",
+      "startDate": "2025-05-02T00:00:00.000Z",
+      "endDate": null,
+      "repeatUntil": null,
+      "repeatInterval": null,
+      "hasStartDate": true,
+      "hasStartTime": false,
+      "hasEndTime": false,
+      "location": "",
+      "capacity": null,
+      "mainImage": null,
+      "createdAt": "2025-05-01T18:20:42.118Z",
+      "attendancyLimit": null,
+      "allowRecurringAttendance": false,
+      "joinDaysBeforeStart": null,
+      "organizerId": 1,
+      "categories": [],
+      "eventDays": [],
+      "organizer": {
+        "id": 1,
+        "firstName": "Vladimírasdasd",
+        "lastName": "Valent",
+        "email": "spisiak@stud.uniza.sk"
+      },
+      "moderators": [],
+      "eventOccurrences": [
+        {
+          "id": 1370,
+          "eventId": 1332,
+          "date": "2025-05-02T00:00:00.000Z",
+          "eventDayId": null,
+          "eventChangeId": null,
+          "eventChange": null,
+          "eventDay": null,
+          "participants": []
+        }
+      ],
+      "participants": [],
+      "date": "2025-05-02T00:00:00.000Z",
+      "virtual": false
+    },
+    {
+      "id": 1333,
+      "title": "asd",
+      "description": "",
+      "startDate": "2025-05-02T00:00:00.000Z",
+      "endDate": null,
+      "repeatUntil": null,
+      "repeatInterval": null,
+      "hasStartDate": true,
+      "hasStartTime": false,
+      "hasEndTime": false,
+      "location": "",
+      "capacity": null,
+      "mainImage": null,
+      "createdAt": "2025-05-01T18:22:25.072Z",
+      "attendancyLimit": null,
+      "allowRecurringAttendance": false,
+      "joinDaysBeforeStart": null,
+      "organizerId": 1,
+      "categories": [],
+      "eventDays": [],
+      "organizer": {
+        "id": 1,
+        "firstName": "Vladimírasdasd",
+        "lastName": "Valent",
+        "email": "spisiak@stud.uniza.sk"
+      },
+      "moderators": [],
+      "eventOccurrences": [
+        {
+          "id": 1371,
+          "eventId": 1333,
+          "date": "2025-05-02T00:00:00.000Z",
+          "eventDayId": null,
+          "eventChangeId": null,
+          "eventChange": null,
+          "eventDay": null,
+          "participants": []
+        }
+      ],
+      "participants": [],
+      "date": "2025-05-02T00:00:00.000Z",
+      "virtual": false
+    },
+    {
+      "id": 1334,
+      "title": "asd",
+      "description": "",
+      "startDate": "2025-05-02T00:00:00.000Z",
+      "endDate": "2025-05-01T23:59:00.000Z",
+      "repeatUntil": null,
+      "repeatInterval": null,
+      "hasStartDate": true,
+      "hasStartTime": false,
+      "hasEndTime": false,
+      "location": "",
+      "capacity": null,
+      "mainImage": "/uploads/events/event_main_1746124119194.png",
+      "createdAt": "2025-05-01T18:28:39.202Z",
+      "attendancyLimit": null,
+      "allowRecurringAttendance": false,
+      "joinDaysBeforeStart": null,
+      "organizerId": 1,
+      "categories": [],
+      "eventDays": [],
+      "organizer": {
+        "id": 1,
+        "firstName": "Vladimírasdasd",
+        "lastName": "Valent",
+        "email": "spisiak@stud.uniza.sk"
+      },
+      "moderators": [],
+      "eventOccurrences": [
+        {
+          "id": 1372,
+          "eventId": 1334,
+          "date": "2025-05-02T00:00:00.000Z",
+          "eventDayId": null,
+          "eventChangeId": null,
+          "eventChange": null,
+          "eventDay": null,
+          "participants": []
+        }
+      ],
+      "participants": [],
+      "date": "2025-05-02T00:00:00.000Z",
+      "virtual": false
+    },
+    {
+      "id": 1330,
+      "title": "asd",
+      "description": "",
+      "startDate": "2025-05-03T14:22:00.000Z",
+      "endDate": null,
+      "repeatUntil": null,
+      "repeatInterval": 1,
+      "hasStartDate": true,
+      "hasStartTime": true,
+      "hasEndTime": false,
+      "location": "",
+      "capacity": null,
+      "mainImage": null,
+      "createdAt": "2025-05-01T17:57:06.728Z",
+      "attendancyLimit": null,
+      "allowRecurringAttendance": true,
+      "joinDaysBeforeStart": null,
+      "organizerId": 1,
+      "categories": [],
+      "eventDays": [
+        {
+          "id": 4452,
+          "eventId": 1330,
+          "week": 0,
+          "dayId": 3,
+          "eventChangeId": null,
+          "day": {
+            "id": 3,
+            "name": "Streda"
+          },
+          "eventChange": null,
+          "users": []
+        },
+        {
+          "id": 4453,
+          "eventId": 1330,
+          "week": 0,
+          "dayId": 6,
+          "eventChangeId": null,
+          "day": {
+            "id": 6,
+            "name": "Sobota"
+          },
+          "eventChange": null,
+          "users": [
+            {
+              "id": 1,
+              "firstName": "Vladimírasdasd",
+              "lastName": "Valent",
+              "email": "spisiak@stud.uniza.sk"
+            }
+          ]
+        }
+      ],
+      "organizer": {
+        "id": 1,
+        "firstName": "Vladimírasdasd",
+        "lastName": "Valent",
+        "email": "spisiak@stud.uniza.sk"
+      },
+      "moderators": [
+        {
+          "id": 1039,
+          "userId": 1,
+          "eventId": 1330,
+          "canEditEvent": true,
+          "canManageParticipants": false,
+          "canManageAttendees": false,
+          "canManageModerators": false,
+          "canRepostEvent": false,
+          "user": {
+            "id": 1,
+            "firstName": "Vladimírasdasd",
+            "lastName": "Valent",
+            "email": "spisiak@stud.uniza.sk"
+          }
+        },
+        {
+          "id": 1041,
+          "userId": 2,
+          "eventId": 1330,
+          "canEditEvent": false,
+          "canManageParticipants": false,
+          "canManageAttendees": true,
+          "canManageModerators": false,
+          "canRepostEvent": false,
+          "user": {
+            "id": 2,
+            "firstName": "Test",
+            "lastName": "Test",
+            "email": "teasdasdst@uniza.sk"
+          }
+        }
+      ],
+      "eventOccurrences": [
+        {
+          "id": 1368,
+          "eventId": 1330,
+          "date": "2025-05-03T00:00:00.000Z",
+          "eventDayId": 4453,
+          "eventChangeId": null,
+          "eventChange": null,
+          "eventDay": {
+            "id": 4453,
+            "eventId": 1330,
+            "week": 0,
+            "dayId": 6,
+            "eventChangeId": null,
+            "eventChange": null
+          },
+          "participants": [
+            {
+              "id": 1,
+              "firstName": "Vladimírasdasd",
+              "lastName": "Valent",
+              "email": "spisiak@stud.uniza.sk"
+            }
+          ]
+        }
+      ],
+      "participants": [
+        {
+          "id": 1,
+          "firstName": "Vladimírasdasd",
+          "lastName": "Valent",
+          "email": "spisiak@stud.uniza.sk"
+        }
+      ],
+      "date": "2025-05-03T00:00:00.000Z",
+      "virtual": false
+    },
+    {
+      "id": 1331,
+      "title": "asd",
+      "description": "",
+      "startDate": "2025-05-03T14:22:00.000Z",
+      "endDate": null,
+      "repeatUntil": null,
+      "repeatInterval": 1,
+      "hasStartDate": true,
+      "hasStartTime": true,
+      "hasEndTime": false,
+      "location": "",
+      "capacity": null,
+      "mainImage": null,
+      "createdAt": "2025-05-01T17:57:12.829Z",
+      "attendancyLimit": null,
+      "allowRecurringAttendance": true,
+      "joinDaysBeforeStart": null,
+      "organizerId": 1,
+      "categories": [],
+      "eventDays": [
+        {
+          "id": 4454,
+          "eventId": 1331,
+          "week": 0,
+          "dayId": 3,
+          "eventChangeId": null,
+          "day": {
+            "id": 3,
+            "name": "Streda"
+          },
+          "eventChange": null,
+          "users": [
+            {
+              "id": 1,
+              "firstName": "Vladimírasdasd",
+              "lastName": "Valent",
+              "email": "spisiak@stud.uniza.sk"
+            }
+          ]
+        },
+        {
+          "id": 4455,
+          "eventId": 1331,
+          "week": 0,
+          "dayId": 6,
+          "eventChangeId": null,
+          "day": {
+            "id": 6,
+            "name": "Sobota"
+          },
+          "eventChange": null,
+          "users": [
+            {
+              "id": 1,
+              "firstName": "Vladimírasdasd",
+              "lastName": "Valent",
+              "email": "spisiak@stud.uniza.sk"
+            }
+          ]
+        }
+      ],
+      "organizer": {
+        "id": 1,
+        "firstName": "Vladimírasdasd",
+        "lastName": "Valent",
+        "email": "spisiak@stud.uniza.sk"
+      },
+      "moderators": [
+        {
+          "id": 1040,
+          "userId": 1,
+          "eventId": 1331,
+          "canEditEvent": true,
+          "canManageParticipants": false,
+          "canManageAttendees": false,
+          "canManageModerators": false,
+          "canRepostEvent": false,
+          "user": {
+            "id": 1,
+            "firstName": "Vladimírasdasd",
+            "lastName": "Valent",
+            "email": "spisiak@stud.uniza.sk"
+          }
+        }
+      ],
+      "eventOccurrences": [
+        {
+          "id": 1369,
+          "eventId": 1331,
+          "date": "2025-05-03T00:00:00.000Z",
+          "eventDayId": 4455,
+          "eventChangeId": null,
+          "eventChange": null,
+          "eventDay": {
+            "id": 4455,
+            "eventId": 1331,
+            "week": 0,
+            "dayId": 6,
+            "eventChangeId": null,
+            "eventChange": null
+          },
+          "participants": [
+            {
+              "id": 1,
+              "firstName": "Vladimírasdasd",
+              "lastName": "Valent",
+              "email": "spisiak@stud.uniza.sk"
+            }
+          ]
+        }
+      ],
+      "participants": [
+        {
+          "id": 1,
+          "firstName": "Vladimírasdasd",
+          "lastName": "Valent",
+          "email": "spisiak@stud.uniza.sk"
+        }
+      ],
+      "date": "2025-05-03T00:00:00.000Z",
+      "virtual": false
+    },
+    {
+      "id": 1330,
+      "title": "asd",
+      "description": "",
+      "startDate": "2025-05-07T14:22:00.000Z",
+      "endDate": null,
+      "repeatUntil": null,
+      "repeatInterval": 1,
+      "hasStartDate": true,
+      "hasStartTime": true,
+      "hasEndTime": false,
+      "location": "",
+      "capacity": null,
+      "mainImage": null,
+      "createdAt": "2025-05-01T17:57:06.728Z",
+      "attendancyLimit": null,
+      "allowRecurringAttendance": true,
+      "joinDaysBeforeStart": null,
+      "organizerId": 1,
+      "categories": [],
+      "eventDays": [
+        {
+          "id": 4452,
+          "eventId": 1330,
+          "week": 0,
+          "dayId": 3,
+          "eventChangeId": null,
+          "day": {
+            "id": 3,
+            "name": "Streda"
+          },
+          "eventChange": null,
+          "users": []
+        },
+        {
+          "id": 4453,
+          "eventId": 1330,
+          "week": 0,
+          "dayId": 6,
+          "eventChangeId": null,
+          "day": {
+            "id": 6,
+            "name": "Sobota"
+          },
+          "eventChange": null,
+          "users": [
+            {
+              "id": 1,
+              "firstName": "Vladimírasdasd",
+              "lastName": "Valent",
+              "email": "spisiak@stud.uniza.sk"
+            }
+          ]
+        }
+      ],
+      "organizer": {
+        "id": 1,
+        "firstName": "Vladimírasdasd",
+        "lastName": "Valent",
+        "email": "spisiak@stud.uniza.sk"
+      },
+      "moderators": [
+        {
+          "id": 1039,
+          "userId": 1,
+          "eventId": 1330,
+          "canEditEvent": true,
+          "canManageParticipants": false,
+          "canManageAttendees": false,
+          "canManageModerators": false,
+          "canRepostEvent": false,
+          "user": {
+            "id": 1,
+            "firstName": "Vladimírasdasd",
+            "lastName": "Valent",
+            "email": "spisiak@stud.uniza.sk"
+          }
+        },
+        {
+          "id": 1041,
+          "userId": 2,
+          "eventId": 1330,
+          "canEditEvent": false,
+          "canManageParticipants": false,
+          "canManageAttendees": true,
+          "canManageModerators": false,
+          "canRepostEvent": false,
+          "user": {
+            "id": 2,
+            "firstName": "Test",
+            "lastName": "Test",
+            "email": "teasdasdst@uniza.sk"
+          }
+        }
+      ],
+      "eventOccurrences": [
+        {
+          "id": 1368,
+          "eventId": 1330,
+          "date": "2025-05-03T00:00:00.000Z",
+          "eventDayId": 4453,
+          "eventChangeId": null,
+          "eventChange": null,
+          "eventDay": {
+            "id": 4453,
+            "eventId": 1330,
+            "week": 0,
+            "dayId": 6,
+            "eventChangeId": null,
+            "eventChange": null
+          },
+          "participants": [
+            {
+              "id": 1,
+              "firstName": "Vladimírasdasd",
+              "lastName": "Valent",
+              "email": "spisiak@stud.uniza.sk"
+            }
+          ]
+        }
+      ],
+      "date": "2025-05-07T00:00:00.000Z",
+      "virtual": true,
+      "participants": []
+    },
+    {
+      "id": 1331,
+      "title": "asd",
+      "description": "",
+      "startDate": "2025-05-07T14:22:00.000Z",
+      "endDate": null,
+      "repeatUntil": null,
+      "repeatInterval": 1,
+      "hasStartDate": true,
+      "hasStartTime": true,
+      "hasEndTime": false,
+      "location": "",
+      "capacity": null,
+      "mainImage": null,
+      "createdAt": "2025-05-01T17:57:12.829Z",
+      "attendancyLimit": null,
+      "allowRecurringAttendance": true,
+      "joinDaysBeforeStart": null,
+      "organizerId": 1,
+      "categories": [],
+      "eventDays": [
+        {
+          "id": 4454,
+          "eventId": 1331,
+          "week": 0,
+          "dayId": 3,
+          "eventChangeId": null,
+          "day": {
+            "id": 3,
+            "name": "Streda"
+          },
+          "eventChange": null,
+          "users": [
+            {
+              "id": 1,
+              "firstName": "Vladimírasdasd",
+              "lastName": "Valent",
+              "email": "spisiak@stud.uniza.sk"
+            }
+          ]
+        },
+        {
+          "id": 4455,
+          "eventId": 1331,
+          "week": 0,
+          "dayId": 6,
+          "eventChangeId": null,
+          "day": {
+            "id": 6,
+            "name": "Sobota"
+          },
+          "eventChange": null,
+          "users": [
+            {
+              "id": 1,
+              "firstName": "Vladimírasdasd",
+              "lastName": "Valent",
+              "email": "spisiak@stud.uniza.sk"
+            }
+          ]
+        }
+      ],
+      "organizer": {
+        "id": 1,
+        "firstName": "Vladimírasdasd",
+        "lastName": "Valent",
+        "email": "spisiak@stud.uniza.sk"
+      },
+      "moderators": [
+        {
+          "id": 1040,
+          "userId": 1,
+          "eventId": 1331,
+          "canEditEvent": true,
+          "canManageParticipants": false,
+          "canManageAttendees": false,
+          "canManageModerators": false,
+          "canRepostEvent": false,
+          "user": {
+            "id": 1,
+            "firstName": "Vladimírasdasd",
+            "lastName": "Valent",
+            "email": "spisiak@stud.uniza.sk"
+          }
+        }
+      ],
+      "eventOccurrences": [
+        {
+          "id": 1369,
+          "eventId": 1331,
+          "date": "2025-05-03T00:00:00.000Z",
+          "eventDayId": 4455,
+          "eventChangeId": null,
+          "eventChange": null,
+          "eventDay": {
+            "id": 4455,
+            "eventId": 1331,
+            "week": 0,
+            "dayId": 6,
+            "eventChangeId": null,
+            "eventChange": null
+          },
+          "participants": [
+            {
+              "id": 1,
+              "firstName": "Vladimírasdasd",
+              "lastName": "Valent",
+              "email": "spisiak@stud.uniza.sk"
+            }
+          ]
+        }
+      ],
+      "date": "2025-05-07T00:00:00.000Z",
+      "virtual": true,
+      "participants": [
+        {
+          "id": 1,
+          "firstName": "Vladimírasdasd",
+          "lastName": "Valent",
+          "email": "spisiak@stud.uniza.sk"
+        }
+      ]
+    },
+    {
+      "id": 1335,
+      "title": "asdasd",
+      "description": null,
+      "startDate": "2025-05-09T00:00:00.000Z",
+      "endDate": "2025-05-08T23:59:00.000Z",
+      "repeatUntil": null,
+      "repeatInterval": null,
+      "hasStartDate": true,
+      "hasStartTime": false,
+      "hasEndTime": false,
+      "location": null,
+      "capacity": null,
+      "mainImage": null,
+      "createdAt": "2025-05-01T20:04:06.426Z",
+      "attendancyLimit": null,
+      "allowRecurringAttendance": false,
+      "joinDaysBeforeStart": null,
+      "organizerId": 1,
+      "categories": [],
+      "eventDays": [],
+      "organizer": {
+        "id": 1,
+        "firstName": "Vladimírasdasd",
+        "lastName": "Valent",
+        "email": "spisiak@stud.uniza.sk"
+      },
+      "moderators": [],
+      "eventOccurrences": [
+        {
+          "id": 1373,
+          "eventId": 1335,
+          "date": "2025-05-09T00:00:00.000Z",
+          "eventDayId": null,
+          "eventChangeId": null,
+          "eventChange": null,
+          "eventDay": null,
+          "participants": []
+        }
+      ],
+      "participants": [],
+      "date": "2025-05-09T00:00:00.000Z",
+      "virtual": false
+    },
+    {
+      "id": 1330,
+      "title": "asd",
+      "description": "",
+      "startDate": "2025-05-10T14:22:00.000Z",
+      "endDate": null,
+      "repeatUntil": null,
+      "repeatInterval": 1,
+      "hasStartDate": true,
+      "hasStartTime": true,
+      "hasEndTime": false,
+      "location": "",
+      "capacity": null,
+      "mainImage": null,
+      "createdAt": "2025-05-01T17:57:06.728Z",
+      "attendancyLimit": null,
+      "allowRecurringAttendance": true,
+      "joinDaysBeforeStart": null,
+      "organizerId": 1,
+      "categories": [],
+      "eventDays": [
+        {
+          "id": 4452,
+          "eventId": 1330,
+          "week": 0,
+          "dayId": 3,
+          "eventChangeId": null,
+          "day": {
+            "id": 3,
+            "name": "Streda"
+          },
+          "eventChange": null,
+          "users": []
+        },
+        {
+          "id": 4453,
+          "eventId": 1330,
+          "week": 0,
+          "dayId": 6,
+          "eventChangeId": null,
+          "day": {
+            "id": 6,
+            "name": "Sobota"
+          },
+          "eventChange": null,
+          "users": [
+            {
+              "id": 1,
+              "firstName": "Vladimírasdasd",
+              "lastName": "Valent",
+              "email": "spisiak@stud.uniza.sk"
+            }
+          ]
+        }
+      ],
+      "organizer": {
+        "id": 1,
+        "firstName": "Vladimírasdasd",
+        "lastName": "Valent",
+        "email": "spisiak@stud.uniza.sk"
+      },
+      "moderators": [
+        {
+          "id": 1039,
+          "userId": 1,
+          "eventId": 1330,
+          "canEditEvent": true,
+          "canManageParticipants": false,
+          "canManageAttendees": false,
+          "canManageModerators": false,
+          "canRepostEvent": false,
+          "user": {
+            "id": 1,
+            "firstName": "Vladimírasdasd",
+            "lastName": "Valent",
+            "email": "spisiak@stud.uniza.sk"
+          }
+        },
+        {
+          "id": 1041,
+          "userId": 2,
+          "eventId": 1330,
+          "canEditEvent": false,
+          "canManageParticipants": false,
+          "canManageAttendees": true,
+          "canManageModerators": false,
+          "canRepostEvent": false,
+          "user": {
+            "id": 2,
+            "firstName": "Test",
+            "lastName": "Test",
+            "email": "teasdasdst@uniza.sk"
+          }
+        }
+      ],
+      "eventOccurrences": [
+        {
+          "id": 1368,
+          "eventId": 1330,
+          "date": "2025-05-03T00:00:00.000Z",
+          "eventDayId": 4453,
+          "eventChangeId": null,
+          "eventChange": null,
+          "eventDay": {
+            "id": 4453,
+            "eventId": 1330,
+            "week": 0,
+            "dayId": 6,
+            "eventChangeId": null,
+            "eventChange": null
+          },
+          "participants": [
+            {
+              "id": 1,
+              "firstName": "Vladimírasdasd",
+              "lastName": "Valent",
+              "email": "spisiak@stud.uniza.sk"
+            }
+          ]
+        }
+      ],
+      "date": "2025-05-10T00:00:00.000Z",
+      "virtual": true,
+      "participants": [
+        {
+          "id": 1,
+          "firstName": "Vladimírasdasd",
+          "lastName": "Valent",
+          "email": "spisiak@stud.uniza.sk"
+        }
+      ]
+    },
+    {
+      "id": 1331,
+      "title": "asd",
+      "description": "",
+      "startDate": "2025-05-10T14:22:00.000Z",
+      "endDate": null,
+      "repeatUntil": null,
+      "repeatInterval": 1,
+      "hasStartDate": true,
+      "hasStartTime": true,
+      "hasEndTime": false,
+      "location": "",
+      "capacity": null,
+      "mainImage": null,
+      "createdAt": "2025-05-01T17:57:12.829Z",
+      "attendancyLimit": null,
+      "allowRecurringAttendance": true,
+      "joinDaysBeforeStart": null,
+      "organizerId": 1,
+      "categories": [],
+      "eventDays": [
+        {
+          "id": 4454,
+          "eventId": 1331,
+          "week": 0,
+          "dayId": 3,
+          "eventChangeId": null,
+          "day": {
+            "id": 3,
+            "name": "Streda"
+          },
+          "eventChange": null,
+          "users": [
+            {
+              "id": 1,
+              "firstName": "Vladimírasdasd",
+              "lastName": "Valent",
+              "email": "spisiak@stud.uniza.sk"
+            }
+          ]
+        },
+        {
+          "id": 4455,
+          "eventId": 1331,
+          "week": 0,
+          "dayId": 6,
+          "eventChangeId": null,
+          "day": {
+            "id": 6,
+            "name": "Sobota"
+          },
+          "eventChange": null,
+          "users": [
+            {
+              "id": 1,
+              "firstName": "Vladimírasdasd",
+              "lastName": "Valent",
+              "email": "spisiak@stud.uniza.sk"
+            }
+          ]
+        }
+      ],
+      "organizer": {
+        "id": 1,
+        "firstName": "Vladimírasdasd",
+        "lastName": "Valent",
+        "email": "spisiak@stud.uniza.sk"
+      },
+      "moderators": [
+        {
+          "id": 1040,
+          "userId": 1,
+          "eventId": 1331,
+          "canEditEvent": true,
+          "canManageParticipants": false,
+          "canManageAttendees": false,
+          "canManageModerators": false,
+          "canRepostEvent": false,
+          "user": {
+            "id": 1,
+            "firstName": "Vladimírasdasd",
+            "lastName": "Valent",
+            "email": "spisiak@stud.uniza.sk"
+          }
+        }
+      ],
+      "eventOccurrences": [
+        {
+          "id": 1369,
+          "eventId": 1331,
+          "date": "2025-05-03T00:00:00.000Z",
+          "eventDayId": 4455,
+          "eventChangeId": null,
+          "eventChange": null,
+          "eventDay": {
+            "id": 4455,
+            "eventId": 1331,
+            "week": 0,
+            "dayId": 6,
+            "eventChangeId": null,
+            "eventChange": null
+          },
+          "participants": [
+            {
+              "id": 1,
+              "firstName": "Vladimírasdasd",
+              "lastName": "Valent",
+              "email": "spisiak@stud.uniza.sk"
+            }
+          ]
+        }
+      ],
+      "date": "2025-05-10T00:00:00.000Z",
+      "virtual": true,
+      "participants": [
+        {
+          "id": 1,
+          "firstName": "Vladimírasdasd",
+          "lastName": "Valent",
+          "email": "spisiak@stud.uniza.sk"
+        }
+      ]
+    },
+    {
+      "id": 1330,
+      "title": "asd",
+      "description": "",
+      "startDate": "2025-05-14T14:22:00.000Z",
+      "endDate": null,
+      "repeatUntil": null,
+      "repeatInterval": 1,
+      "hasStartDate": true,
+      "hasStartTime": true,
+      "hasEndTime": false,
+      "location": "",
+      "capacity": null,
+      "mainImage": null,
+      "createdAt": "2025-05-01T17:57:06.728Z",
+      "attendancyLimit": null,
+      "allowRecurringAttendance": true,
+      "joinDaysBeforeStart": null,
+      "organizerId": 1,
+      "categories": [],
+      "eventDays": [
+        {
+          "id": 4452,
+          "eventId": 1330,
+          "week": 0,
+          "dayId": 3,
+          "eventChangeId": null,
+          "day": {
+            "id": 3,
+            "name": "Streda"
+          },
+          "eventChange": null,
+          "users": []
+        },
+        {
+          "id": 4453,
+          "eventId": 1330,
+          "week": 0,
+          "dayId": 6,
+          "eventChangeId": null,
+          "day": {
+            "id": 6,
+            "name": "Sobota"
+          },
+          "eventChange": null,
+          "users": [
+            {
+              "id": 1,
+              "firstName": "Vladimírasdasd",
+              "lastName": "Valent",
+              "email": "spisiak@stud.uniza.sk"
+            }
+          ]
+        }
+      ],
+      "organizer": {
+        "id": 1,
+        "firstName": "Vladimírasdasd",
+        "lastName": "Valent",
+        "email": "spisiak@stud.uniza.sk"
+      },
+      "moderators": [
+        {
+          "id": 1039,
+          "userId": 1,
+          "eventId": 1330,
+          "canEditEvent": true,
+          "canManageParticipants": false,
+          "canManageAttendees": false,
+          "canManageModerators": false,
+          "canRepostEvent": false,
+          "user": {
+            "id": 1,
+            "firstName": "Vladimírasdasd",
+            "lastName": "Valent",
+            "email": "spisiak@stud.uniza.sk"
+          }
+        },
+        {
+          "id": 1041,
+          "userId": 2,
+          "eventId": 1330,
+          "canEditEvent": false,
+          "canManageParticipants": false,
+          "canManageAttendees": true,
+          "canManageModerators": false,
+          "canRepostEvent": false,
+          "user": {
+            "id": 2,
+            "firstName": "Test",
+            "lastName": "Test",
+            "email": "teasdasdst@uniza.sk"
+          }
+        }
+      ],
+      "eventOccurrences": [
+        {
+          "id": 1368,
+          "eventId": 1330,
+          "date": "2025-05-03T00:00:00.000Z",
+          "eventDayId": 4453,
+          "eventChangeId": null,
+          "eventChange": null,
+          "eventDay": {
+            "id": 4453,
+            "eventId": 1330,
+            "week": 0,
+            "dayId": 6,
+            "eventChangeId": null,
+            "eventChange": null
+          },
+          "participants": [
+            {
+              "id": 1,
+              "firstName": "Vladimírasdasd",
+              "lastName": "Valent",
+              "email": "spisiak@stud.uniza.sk"
+            }
+          ]
+        }
+      ],
+      "date": "2025-05-14T00:00:00.000Z",
+      "virtual": true,
+      "participants": []
+    },
+    {
+      "id": 1331,
+      "title": "asd",
+      "description": "",
+      "startDate": "2025-05-14T14:22:00.000Z",
+      "endDate": null,
+      "repeatUntil": null,
+      "repeatInterval": 1,
+      "hasStartDate": true,
+      "hasStartTime": true,
+      "hasEndTime": false,
+      "location": "",
+      "capacity": null,
+      "mainImage": null,
+      "createdAt": "2025-05-01T17:57:12.829Z",
+      "attendancyLimit": null,
+      "allowRecurringAttendance": true,
+      "joinDaysBeforeStart": null,
+      "organizerId": 1,
+      "categories": [],
+      "eventDays": [
+        {
+          "id": 4454,
+          "eventId": 1331,
+          "week": 0,
+          "dayId": 3,
+          "eventChangeId": null,
+          "day": {
+            "id": 3,
+            "name": "Streda"
+          },
+          "eventChange": null,
+          "users": [
+            {
+              "id": 1,
+              "firstName": "Vladimírasdasd",
+              "lastName": "Valent",
+              "email": "spisiak@stud.uniza.sk"
+            }
+          ]
+        },
+        {
+          "id": 4455,
+          "eventId": 1331,
+          "week": 0,
+          "dayId": 6,
+          "eventChangeId": null,
+          "day": {
+            "id": 6,
+            "name": "Sobota"
+          },
+          "eventChange": null,
+          "users": [
+            {
+              "id": 1,
+              "firstName": "Vladimírasdasd",
+              "lastName": "Valent",
+              "email": "spisiak@stud.uniza.sk"
+            }
+          ]
+        }
+      ],
+      "organizer": {
+        "id": 1,
+        "firstName": "Vladimírasdasd",
+        "lastName": "Valent",
+        "email": "spisiak@stud.uniza.sk"
+      },
+      "moderators": [
+        {
+          "id": 1040,
+          "userId": 1,
+          "eventId": 1331,
+          "canEditEvent": true,
+          "canManageParticipants": false,
+          "canManageAttendees": false,
+          "canManageModerators": false,
+          "canRepostEvent": false,
+          "user": {
+            "id": 1,
+            "firstName": "Vladimírasdasd",
+            "lastName": "Valent",
+            "email": "spisiak@stud.uniza.sk"
+          }
+        }
+      ],
+      "eventOccurrences": [
+        {
+          "id": 1369,
+          "eventId": 1331,
+          "date": "2025-05-03T00:00:00.000Z",
+          "eventDayId": 4455,
+          "eventChangeId": null,
+          "eventChange": null,
+          "eventDay": {
+            "id": 4455,
+            "eventId": 1331,
+            "week": 0,
+            "dayId": 6,
+            "eventChangeId": null,
+            "eventChange": null
+          },
+          "participants": [
+            {
+              "id": 1,
+              "firstName": "Vladimírasdasd",
+              "lastName": "Valent",
+              "email": "spisiak@stud.uniza.sk"
+            }
+          ]
+        }
+      ],
+      "date": "2025-05-14T00:00:00.000Z",
+      "virtual": true,
+      "participants": [
+        {
+          "id": 1,
+          "firstName": "Vladimírasdasd",
+          "lastName": "Valent",
+          "email": "spisiak@stud.uniza.sk"
+        }
+      ]
+    }
+  ]
+}
+
