@@ -1,6 +1,7 @@
 // components/CategoryMultiSelect/CategoryMultiSelect.js
 import { useEffect, useState } from "react";
 import Select from "react-select";
+import styles from "./CategoryMultiSelect.module.scss";
 
 const CategoryMultiSelect = ({ selectedIds, onChange }) => {
   const [options, setOptions] = useState([]);
@@ -34,14 +35,16 @@ const CategoryMultiSelect = ({ selectedIds, onChange }) => {
   }, []);
 
   return (
-    <Select
-      isMulti
-      isLoading={loading}
-      options={options}
-      value={options.filter((o) => selectedIds.includes(o.value))}
-      onChange={(selected) => onChange(selected.map((s) => s.value))}
-      classNamePrefix="react-select"
-    />
+    <div className="mt-1 mb-1">
+      <Select
+        isMulti
+        isLoading={loading}
+        options={options}
+        value={options.filter((o) => selectedIds.includes(o.value))}
+        onChange={(selected) => onChange(selected.map((s) => s.value))}
+        classNamePrefix="react-select"
+      />
+    </div>
   );
 };
 

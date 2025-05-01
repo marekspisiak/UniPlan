@@ -18,7 +18,7 @@ import { responseLogger } from "./utils/logs.js";
 
 dotenv.config();
 const app = express();
-app.use(responseLogger);
+//app.use(responseLogger);
 app.use(cors());
 app.use(express.json());
 

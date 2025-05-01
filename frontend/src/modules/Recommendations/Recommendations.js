@@ -20,6 +20,7 @@ import { Plus } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { recommendationsFilterSchema } from "../../validation/schemas";
+import { ValidatedField } from "../../components/ValidateComponents/ValidateComponents";
 
 const Recommendations = () => {
   const { user } = useAuth();
@@ -33,36 +34,55 @@ const Recommendations = () => {
   const sidebarRef = useRef(null);
 
   const userInterestsIds = user.interests.map((interest) => interest.id);
+  const {
+    register,
+    handleSubmit,
+    watch,
+    setValue,
+    reset,
+    getValues,
+    formState: { errors },
+  } = useForm({
+    resolver: zodResolver(recommendationsFilterSchema),
+    defaultValues: {
+      search: "",
+      searchLocation: "",
+      onlyAvailable: false,
+      onlyRecommended: false,
+      useMyInterests: true,
+      selectedCategories: [],
+      allCategories: false,
+      onlySingle: false,
+      onlyRecurring: false,
+      daysOfWeek: [],
+      startDate: getCurrentUTCDate().toISOString().split("T")[0],
+      endDate: new Date(
+        getCurrentUTCDate().getTime() + 14 * 24 * 60 * 60 * 1000
+      )
+        .toISOString()
+        .split("T")[0],
+      startTime: "",
+      endTime: "",
+      manage: false,
+      myEvents: false,
+    },
+  });
 
-  const defaultFilter = {
-    search: "",
-    searchLocation: "",
-    onlyAvailable: false,
-    onlyRecommended: false,
-    useMyInterests: true,
-    selectedCategories: [],
-    allCategories: false,
-    onlySingle: false,
-    onlyRecurring: false,
-    daysOfWeek: [],
-    startDate: getCurrentUTCDate().toISOString().split("T")[0],
-    endDate: new Date(getCurrentUTCDate().getTime() + 14 * 24 * 60 * 60 * 1000)
-      .toISOString()
-      .split("T")[0],
-
-    startTime: "",
-    endTime: "",
-    manage: false,
-    myEvents: false,
-  };
-  const [filters, setFilters] = useState(defaultFilter);
+  const startDate = watch("startDate");
+  const endDate = watch("endDate");
+  const onlyRecommended = watch("onlyRecommended");
+  const startTime = watch("startTime");
+  const useMyInterests = watch("useMyInterests");
+  const selectedCategories = watch("selectedCategories");
 
   useEffect(() => {
-    if (
-      filters.onlyRecommended &&
-      onlyRecommendedRef.current &&
-      sidebarRef.current
-    ) {
+    if (endDate && endDate < startDate) {
+      setValue("endDate", startDate);
+    }
+  }, [startDate]);
+
+  useEffect(() => {
+    if (onlyRecommended && onlyRecommendedRef.current && sidebarRef.current) {
       const sidebar = sidebarRef.current;
       const target = onlyRecommendedRef.current;
 
@@ -76,7 +96,7 @@ const Recommendations = () => {
         behavior: "smooth",
       });
     }
-  }, [filters.onlyRecommended]);
+  }, [onlyRecommended]);
 
   const loadMoreEvents = () => {
     const itemsPerPage = 10; // Po koľko kusov chceš naraz pridávať
@@ -96,6 +116,7 @@ const Recommendations = () => {
   const fetchEvents = async () => {
     try {
       setLoading(true);
+      const filters = getValues();
       const token = localStorage.getItem("token");
 
       const query = new URLSearchParams();
@@ -154,8 +175,7 @@ const Recommendations = () => {
     fetchEvents();
   }, []);
 
-  const handleSearch = (e) => {
-    e.preventDefault();
+  const onSubmit = (e) => {
     fetchEvents();
     if (window.innerWidth <= 768) {
       setShowFilters(false);
@@ -163,13 +183,14 @@ const Recommendations = () => {
     window.scrollTo(0, 0);
   };
 
+  const daysOfWeek = watch("daysOfWeek") || [];
+
   const toggleDay = (day) => {
-    setFilters((prev) => ({
-      ...prev,
-      daysOfWeek: prev.daysOfWeek.includes(day)
-        ? prev.daysOfWeek.filter((d) => d !== day)
-        : [...prev.daysOfWeek, day],
-    }));
+    const updated = daysOfWeek.includes(day)
+      ? daysOfWeek.filter((d) => d !== day)
+      : [...daysOfWeek, day];
+
+    setValue("daysOfWeek", updated);
   };
 
   return (
@@ -188,69 +209,58 @@ const Recommendations = () => {
       <div className={styles.mainContent}>
         <Collapse in={showFilters || window.innerWidth > 768}>
           <div ref={sidebarRef} className={styles.sidebar}>
-            <div className="fs-2 fw-bold mb-3">Vyhľadať</div>
-            <Form onSubmit={handleSearch} className={styles.filters}>
+            <div className="fs-3 fw-bold mb-3">Vyhľadať</div>
+            <Form onSubmit={handleSubmit(onSubmit)} className={styles.filters}>
               {/* Sekcia: Vyhľadávanie */}
               <div className={styles.filterSection}>
-                <Form.Control
+                <ValidatedField
                   type="text"
+                  name="search"
                   placeholder="Hľadať podľa názvu..."
-                  value={filters.search}
-                  onChange={(e) =>
-                    setFilters({ ...filters, search: e.target.value })
-                  }
+                  register={register}
+                  errors={errors}
                 />
-                <Form.Control
+                <ValidatedField
                   type="text"
+                  name="searchLocation"
                   placeholder="Hľadať podľa polohy"
-                  value={filters.searchLocation}
-                  onChange={(e) =>
-                    setFilters({ ...filters, searchLocation: e.target.value })
-                  }
+                  register={register}
+                  errors={errors}
                 />
               </div>
 
               {/* Sekcia: Dátum + čas */}
               <div className={styles.dateTimeGrid}>
-                <Form.Control
+                <ValidatedField
                   type="date"
-                  value={filters.startDate}
-                  required
-                  onChange={(e) => {
-                    const newStartDate = e.target.value;
-                    setFilters((prev) => ({
-                      ...prev,
-                      startDate: newStartDate,
-                      endDate:
-                        prev.endDate && prev.endDate < newStartDate
-                          ? newStartDate
-                          : prev.endDate,
-                    }));
-                  }}
+                  name="startDate"
+                  label="Dátum od"
+                  register={register}
+                  errors={errors}
+                  clean
                 />
-                <Form.Control
+
+                <ValidatedField
                   type="date"
-                  value={filters.endDate}
-                  required
-                  min={filters.startDate}
-                  onChange={(e) =>
-                    setFilters({ ...filters, endDate: e.target.value })
-                  }
+                  name="endDate"
+                  label="Dátum do"
+                  register={register}
+                  errors={errors}
+                  min={startDate}
+                  clean
                 />
-                <Form.Control
+                <ValidatedField
                   type="time"
-                  value={filters.startTime}
-                  onChange={(e) =>
-                    setFilters({ ...filters, startTime: e.target.value })
-                  }
+                  name="startTime"
+                  register={register}
+                  errors={errors}
                 />
-                <Form.Control
+                <ValidatedField
                   type="time"
-                  value={filters.endTime}
-                  min={filters.startTime}
-                  onChange={(e) =>
-                    setFilters({ ...filters, endTime: e.target.value })
-                  }
+                  name="endTime"
+                  register={register}
+                  errors={errors}
+                  min={startTime}
                 />
               </div>
 
@@ -278,7 +288,7 @@ const Recommendations = () => {
                       key={index}
                       type="checkbox"
                       label={day}
-                      checked={filters.daysOfWeek.includes(index + 1)}
+                      checked={daysOfWeek.includes(index + 1)}
                       onChange={() => toggleDay(index + 1)}
                     />
                   ))}
@@ -287,104 +297,106 @@ const Recommendations = () => {
 
               {/* Sekcia: Ďalšie filtre */}
               <div className={styles.filterSection}>
-                <Form.Check
+                <ValidatedField
+                  clean
                   type="checkbox"
+                  name="onlyRecommended"
                   label="Filtrovať podľa záľub alebo vlastného výberu"
-                  checked={filters.onlyRecommended}
-                  onChange={(e) =>
-                    setFilters((prev) => ({
-                      ...prev,
-                      onlyRecommended: e.target.checked,
-                      useMyInterests: e.target.checked
-                        ? prev.useMyInterests
-                        : true,
-                      selectedCategories: e.target.checked
-                        ? prev.selectedCategories
-                        : [],
-                    }))
-                  }
+                  checked={onlyRecommended}
+                  onChange={(e) => {
+                    const checked = e.target.checked;
+                    setValue("onlyRecommended", checked);
+                    setValue("useMyInterests", checked ? useMyInterests : true);
+                    setValue(
+                      "selectedCategories",
+                      checked ? selectedCategories : []
+                    );
+                  }}
+                  register={register}
+                  errors={errors}
                 />
-                {filters.onlyRecommended && (
+                {onlyRecommended && (
                   <div ref={onlyRecommendedRef}>
-                    <Form.Check
+                    <ValidatedField
+                      clean
                       type="checkbox"
                       label="Použiť moje záujmy"
-                      checked={filters.useMyInterests}
-                      onChange={(e) =>
-                        setFilters((prev) => ({
-                          ...prev,
-                          useMyInterests: e.target.checked,
-                          selectedCategories: e.target.checked
-                            ? prev.selectedCategories
-                            : [],
-                        }))
-                      }
+                      name="useMyInterests"
+                      checked={useMyInterests}
+                      onChange={(e) => {
+                        const checked = e.target.checked;
+                        setValue("useMyInterests", checked);
+                        setValue(
+                          "selectedCategories",
+                          checked ? selectedCategories : []
+                        );
+                      }}
+                      register={register}
+                      errors={errors}
                     />
 
-                    {!filters.useMyInterests && (
+                    {!useMyInterests && (
                       <CategoryMultiSelect
-                        selectedIds={filters.selectedCategories}
+                        selectedIds={selectedCategories}
                         onChange={(newSelected) =>
-                          setFilters({
-                            ...filters,
-                            selectedCategories: newSelected,
-                          })
+                          setValue("selectedCategories", newSelected)
                         }
                       />
                     )}
 
-                    <Form.Check
+                    <ValidatedField
+                      clean
                       type="checkbox"
                       label="Všetky kategórie musia sedieť"
-                      checked={filters.allCategories}
-                      onChange={(e) =>
-                        setFilters({
-                          ...filters,
-                          allCategories: e.target.checked,
-                        })
-                      }
+                      name="allCategories"
+                      register={register}
+                      errors={errors}
                     />
                   </div>
                 )}
-                <Form.Check
+                <ValidatedField
+                  clean
                   type="checkbox"
                   label="Moje eventy"
-                  checked={filters.myEvents}
-                  onChange={(e) =>
-                    setFilters({ ...filters, myEvents: e.target.checked })
-                  }
+                  name="myEvents"
+                  register={register}
+                  errors={errors}
                 />
-                <Form.Check
+
+                <ValidatedField
+                  clean
                   type="checkbox"
                   label="Má voľnú kapacitu"
-                  checked={filters.onlyAvailable}
-                  onChange={(e) =>
-                    setFilters({ ...filters, onlyAvailable: e.target.checked })
-                  }
+                  name="onlyAvailable"
+                  register={register}
+                  errors={errors}
                 />
-                <Form.Check
+
+                <ValidatedField
+                  clean
                   type="checkbox"
                   label="Jednorazové"
-                  checked={filters.onlySingle}
-                  onChange={(e) =>
-                    setFilters({ ...filters, onlySingle: e.target.checked })
-                  }
+                  name="onlySingle"
+                  register={register}
+                  errors={errors}
                 />
-                <Form.Check
+
+                <ValidatedField
+                  clean
                   type="checkbox"
                   label="Opakované"
-                  checked={filters.onlyRecurring}
-                  onChange={(e) =>
-                    setFilters({ ...filters, onlyRecurring: e.target.checked })
-                  }
+                  name="onlyRecurring"
+                  register={register}
+                  errors={errors}
                 />
-                <Form.Check
+
+                <ValidatedField
+                  clean
                   type="checkbox"
                   label="Spravované"
-                  checked={filters.manage}
-                  onChange={(e) =>
-                    setFilters({ ...filters, manage: e.target.checked })
-                  }
+                  name="manage"
+                  register={register}
+                  errors={errors}
                 />
               </div>
 
@@ -394,7 +406,7 @@ const Recommendations = () => {
                 <Button
                   variant="outline-secondary"
                   size="sm"
-                  onClick={() => setFilters(defaultFilter)}
+                  onClick={() => reset()}
                 >
                   Resetovať filtre
                 </Button>

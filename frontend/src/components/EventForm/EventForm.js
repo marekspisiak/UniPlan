@@ -11,10 +11,7 @@ import ModeratorSelector from "../ModeratorSelector/ModeratorSelector";
 import Toast from "../Toast/Toast";
 import styles from "./EventForm.module.scss";
 import { Link } from "react-router-dom";
-import {
-  ValidateCheck,
-  ValidatedControl,
-} from "../ValidateComponents/ValidateComponents";
+import { ValidatedField } from "../ValidateComponents/ValidateComponents";
 import { createUTCDate, getTodayLocalDate } from "../../utils/dateUtils";
 
 const EventForm = ({
@@ -168,7 +165,7 @@ const EventForm = ({
       <Form onSubmit={handleSubmit(onInternalSubmit, onError)} noValidate>
         {/* Názov */}
         {children}
-        <ValidatedControl
+        <ValidatedField
           type="text"
           name="title"
           label="Názov"
@@ -176,7 +173,7 @@ const EventForm = ({
           errors={errors}
         />
 
-        <ValidatedControl
+        <ValidatedField
           type="text"
           name="location"
           label="Miesto"
@@ -184,7 +181,7 @@ const EventForm = ({
           errors={errors}
         />
 
-        <ValidatedControl
+        <ValidatedField
           type="number"
           name="capacity"
           label="Kapacita"
@@ -193,7 +190,7 @@ const EventForm = ({
         />
 
         {/* Popis */}
-        <ValidatedControl
+        <ValidatedField
           rows={3}
           as="textarea"
           name="description"
@@ -204,7 +201,7 @@ const EventForm = ({
 
         {/* Dátum */}
         {(!scope || scope === "occurrence" || scope === "event") && (
-          <ValidatedControl
+          <ValidatedField
             type="date"
             name="startDate"
             label={
@@ -219,14 +216,14 @@ const EventForm = ({
         )}
 
         {/* Časy */}
-        <ValidatedControl
+        <ValidatedField
           type="time"
           name="startTime"
           label="Čas začiatku"
           register={register}
           errors={errors}
         />
-        <ValidatedControl
+        <ValidatedField
           type="time"
           name="endTime"
           label="Čas konca"
@@ -260,7 +257,7 @@ const EventForm = ({
 
             {repeat && (
               <>
-                <ValidatedControl
+                <ValidatedField
                   type="date"
                   name="repeatUntil"
                   label="Opakovať do"
@@ -269,7 +266,7 @@ const EventForm = ({
                   min={minDate}
                 />
 
-                <ValidatedControl
+                <ValidatedField
                   type="number"
                   name="repeatInterval"
                   label="Interval opakovania (v týždňoch)"
@@ -297,7 +294,7 @@ const EventForm = ({
                   </Form.Group>
                 ))}
 
-                <ValidateCheck
+                <ValidatedField
                   type="checkbox"
                   name="allowRecurringAttendance"
                   label="Povoliť pravidelnú účasť"
@@ -307,7 +304,7 @@ const EventForm = ({
                 />
 
                 {allowRecurringAttendance && (
-                  <ValidatedControl
+                  <ValidatedField
                     type="number"
                     name="attendancyLimit"
                     label="Max počet dní pre pravidelné prihlásenie na jeden cyklus"
@@ -321,7 +318,7 @@ const EventForm = ({
         )}
         {console.log(scope)}
 
-        <ValidatedControl
+        <ValidatedField
           type="number"
           name="capacity"
           label="Kapacita"
@@ -330,7 +327,7 @@ const EventForm = ({
         />
 
         {/* Kapacita */}
-        <ValidatedControl
+        <ValidatedField
           type="number"
           name="joinDaysBeforeStart"
           label="Koľko dní pred začiatkom sa možno prihlásiť"

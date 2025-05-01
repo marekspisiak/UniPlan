@@ -8,7 +8,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import ImageUploader from "../ImageUploader/ImageUploader";
 import { getEditProfileSchema } from "../../validation/schemas";
-import { ValidatedControl } from "../ValidateComponents/ValidateComponents";
+import { ValidatedField } from "../ValidateComponents/ValidateComponents";
 
 const EditProfileCard = ({ setIsEditing }) => {
   const { user, logout, loadUser } = useAuth();
@@ -112,7 +112,7 @@ const EditProfileCard = ({ setIsEditing }) => {
       {message && <Toast success={message} onClose={() => setMessage("")} />}
 
       <Form onSubmit={handleSubmit(onSubmit)} noValidate>
-        <ValidatedControl
+        <ValidatedField
           type="text"
           name="firstName"
           label="Meno"
@@ -120,7 +120,7 @@ const EditProfileCard = ({ setIsEditing }) => {
           errors={errors}
         />
 
-        <ValidatedControl
+        <ValidatedField
           type="text"
           name="lastName"
           label="Priezvisko"
@@ -128,7 +128,7 @@ const EditProfileCard = ({ setIsEditing }) => {
           errors={errors}
         />
 
-        <ValidatedControl
+        <ValidatedField
           type="email"
           name="email"
           label="Email"
@@ -138,7 +138,7 @@ const EditProfileCard = ({ setIsEditing }) => {
 
         {email !== user.email && (
           <>
-            <ValidatedControl
+            <ValidatedField
               type="email"
               name="confirmEmail"
               label="Potvrď nový email"

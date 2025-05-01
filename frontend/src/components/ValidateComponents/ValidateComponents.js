@@ -1,29 +1,58 @@
 import { Form } from "react-bootstrap";
 
-export const ValidatedControl = ({
+export const ValidatedField = ({
   name,
   label,
+  type = "text",
   register,
   errors,
+  clean = false,
+  controllClassName,
   ...props
-}) => (
-  <Form.Group className="mb-3">
-    <Form.Label>{label}</Form.Label>
-    <Form.Control isInvalid={!!errors[name]} {...register(name)} {...props} />
-    <FormError errors={errors} name={name} />
-  </Form.Group>
-);
-export const ValidateCheck = ({ name, label, register, errors, ...props }) => (
-  <Form.Group className="mb-3">
-    <Form.Check
-      label={label}
-      isInvalid={!!errors[name]}
-      {...register(name)}
-      {...props}
-    />
-    <FormError errors={errors} name={name} />
-  </Form.Group>
-);
+}) => {
+  const isInvalid = !!errors[name];
+  const error = <FormError errors={errors} name={name} />;
+
+  // Special case: checkbox / radio
+  if (type === "checkbox" || type === "radio") {
+    return (
+      <Form.Group className={clean ? "" : "mb-3"}>
+        <Form.Check
+          type={type}
+          label={label}
+          isInvalid={isInvalid}
+          {...register(name)}
+          {...props}
+        />
+        {error}
+      </Form.Group>
+    );
+  }
+
+  // Inlined control without label/group
+  const control = (
+    <>
+      <Form.Control
+        type={type}
+        isInvalid={isInvalid}
+        className={controllClassName}
+        {...register(name)}
+        {...props}
+      />
+      {error}
+    </>
+  );
+
+  // Wrap in Form.Group only if label exists
+  return label ? (
+    <Form.Group className={clean ? "" : "mb-3"}>
+      <Form.Label>{label}</Form.Label>
+      {control}
+    </Form.Group>
+  ) : (
+    control
+  );
+};
 
 export const FormError = ({ errors, name }) => {
   return (

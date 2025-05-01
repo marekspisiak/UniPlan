@@ -34,7 +34,7 @@
   top: 70px;
   align-self: flex-start;
   background: #f8f9fa;
-  padding: 0.5rem;
+  padding: 0.8rem;
   height: fit-content;
   overflow: auto;
   border-radius: 0.5rem;
@@ -45,6 +45,11 @@
     width: 100%;
     background: #eef2f7; // trochu jemnejšia farba na mobile
   }
+}
+.sidebar.compact input,
+.sidebar.compact select {
+  padding: 0.25rem 0.5rem;
+  font-size: 0.9rem;
 }
 
 .filters {
@@ -101,7 +106,7 @@
   width: 100%; // veľmi dôležité
 }
 
-.dateTimeGrid input {
+.dateTimeGrid > div {
   width: 100%; // natiahnuť inputy aby sa prispôsobili rodičovi
   min-width: 0; // odstrániť defaultné minimum čo robí problém
 }

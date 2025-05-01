@@ -89,7 +89,7 @@ export const createEvent = async (req, res) => {
           startDate: startDateTime,
           endDate: endDateTime,
           repeatUntil,
-          repeatInterval,
+          repeatInterval: repeatInterval ?? 0,
           location,
           capacity,
           attendancyLimit,
