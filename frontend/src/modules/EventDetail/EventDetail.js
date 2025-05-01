@@ -178,10 +178,7 @@ const EventDetail = ({ eventId: parEventId, date: parDate, refetch }) => {
   if (error) return <Alert variant="danger">{error}</Alert>;
   if (loading || !event)
     return (
-      <Container
-        className="d-flex justify-content-center align-items-center w-100"
-        style={{ minHeight: "50vh" }}
-      >
+      <Container className="d-flex justify-content-center align-items-center w-100">
         <Spinner animation="border" />
       </Container>
     );

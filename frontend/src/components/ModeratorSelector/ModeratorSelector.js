@@ -60,7 +60,7 @@ const ModeratorSelector = ({ selected = [], onChange }) => {
     const newUser = { ...user, ...defaultPermissions };
     onChange([...selected, newUser]);
     setSelectedDetails([...selectedDetails, newUser]);
-    setResults((prev) => prev.filter((u) => u.id !== user.id));
+    setResults([]);
     setQuery("");
     setShowResults(false);
   };
@@ -103,16 +103,18 @@ const ModeratorSelector = ({ selected = [], onChange }) => {
                 className={styles.resultItem}
                 onClick={() => handleAdd(user)}
               >
-                <div>
+                <div className="d-flex align-items-center">
                   <img
                     src={user.profileImageUrl}
                     alt="avatar"
                     className={styles.avatar}
                   />
-                  <strong>
-                    {user.firstName} {user.lastName}
-                  </strong>
-                  <span>({user.email})</span>
+                  <div className="d-flex flex-column align-items-start">
+                    <strong>
+                      {user.firstName} {user.lastName}
+                    </strong>
+                    <span>({user.email})</span>
+                  </div>
                 </div>
               </li>
             ))}
@@ -136,13 +138,19 @@ const ModeratorSelector = ({ selected = [], onChange }) => {
             <tbody>
               {selectedDetails.map((user) => (
                 <tr key={user.id}>
-                  <td className={styles.nameCell}>
-                    <img
-                      src={user.profileImageUrl}
-                      alt="avatar"
-                      className={styles.avatarSmall}
-                    />
-                    {user.firstName} {user.lastName}
+                  <td>
+                    <div className="d-flex align-items-center justify-contend-center">
+                      <img
+                        src={user.profileImageUrl}
+                        alt="avatar"
+                        className={styles.avatarSmall}
+                      />
+
+                      <div className="d-flex flex-column align-items-start">
+                        <div className={styles.flexItem}>{user.firstName}</div>
+                        <div className={styles.flexItem}>{user.lastName}</div>
+                      </div>
+                    </div>
                   </td>
                   {[
                     "canEditEvent",
