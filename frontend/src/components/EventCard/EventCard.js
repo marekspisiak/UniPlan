@@ -6,6 +6,7 @@ import {
   formatDateUTC,
   formatTimeUTC,
   formatDateSlovak,
+  formatDateWithWeekday,
 } from "../../utils/dateUtils";
 import CategoryList from "../CategoryList/CategoryList";
 import {

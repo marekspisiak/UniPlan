@@ -31,6 +31,7 @@ const EventForm = ({
   const [daysFromAPI, setDaysFromAPI] = useState([]);
   const [success, setSuccess] = useState(null);
   const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(false);
 
   const {
     register,
@@ -135,7 +136,9 @@ const EventForm = ({
             ).toISOString()
           : null,
       };
+      setLoading(true);
       await onSubmit(payload);
+      setLoading(false);
       setSuccess(successMessage);
       mainImageRef.current?.clear();
       galleryRef.current?.clear();
@@ -179,7 +182,7 @@ const EventForm = ({
         />
 
         {/* Dátum */}
-        {(!scope || scope === "occurrence") && (
+        {(!scope || scope === "occurrence" || scope === "event") && (
           <ValidatedControl
             type="date"
             name="startDate"
@@ -190,6 +193,7 @@ const EventForm = ({
             }
             register={register}
             errors={errors}
+            disabled={scope === "event"}
           />
         )}
 
@@ -375,7 +379,12 @@ const EventForm = ({
           </>
         )}
 
-        <Button type="submit" variant="primary" className="w-100">
+        <Button
+          type="submit"
+          variant="primary"
+          className="w-100"
+          disabled={loading}
+        >
           {submitLabel}
         </Button>
 
@@ -383,7 +392,12 @@ const EventForm = ({
           to={id && date ? `/event/${id}/${date}` : "/"}
           className="text-decoration-none"
         >
-          <Button type="button" variant="danger" className="w-100 mt-2">
+          <Button
+            type="button"
+            variant="danger"
+            className="w-100 mt-2"
+            disabled={loading}
+          >
             Zrušiť
           </Button>
         </Link>

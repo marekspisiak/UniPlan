@@ -23,6 +23,7 @@ import ModeratorSelector from "../../components/ModeratorSelector/ModeratorSelec
 import UserList from "../../components/UserList/UserList";
 import {
   formatDateSlovak,
+  formatDateWithWeekday,
   getCurrentUTCDate,
   normalizeDate,
   toUTCZeroTime,
@@ -519,15 +520,10 @@ const EventDetail = ({ eventId: parEventId, date: parDate, refetch }) => {
             {console.log(subscribers.length, capacity)}
 
             <div className="d-flex gap-1">
-              {subscribers.length < capacity || !capacity ? (
-                <Button variant="secondary" onClick={() => setShowPopup(true)}>
-                  Manažovať pravidelné
-                </Button>
-              ) : (
-                <Button variant="secondary" disabled>
-                  Plný počet odberateľov
-                </Button>
-              )}
+              <Button variant="secondary" onClick={() => setShowPopup(true)}>
+                Manažovať pravidelné
+              </Button>
+
               {room && <JoinRoomButton room={{ ...room, title }} />}
             </div>
           </div>

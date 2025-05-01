@@ -35,8 +35,24 @@ export const createUTCDate = (dateString, timeString) => {
 export const formatDateSlovak = (dateString) => {
   if (!dateString) return "";
 
-  const [year, month, day] = dateString.split("-");
-  return `${parseInt(day)}. ${parseInt(month)}. ${year}`;
+  const [year, month, day] = dateString.split("-").map(Number);
+  if (!year || !month || !day) return "";
+
+  const weekdays = [
+    "nedeľa",
+    "pondelok",
+    "utorok",
+    "streda",
+    "štvrtok",
+    "piatok",
+    "sobota",
+  ];
+
+  // Vytvor UTC dátum bez posunu
+  const utcDate = new Date(Date.UTC(year, month - 1, day));
+  const weekday = weekdays[utcDate.getUTCDay()];
+
+  return `${day}. ${month}. ${year} (${weekday})`;
 };
 
 export const getCurrentUTCDate = () => {
