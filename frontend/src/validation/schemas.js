@@ -187,21 +187,48 @@ export const getEditProfileSchema = (originalEmail) =>
         });
       }
     });
-export const recommendationsFilterSchema = z.object({
-  search: z.string().optional(),
-  searchLocation: z.string().optional(),
-  onlyAvailable: z.boolean(),
-  onlyRecommended: z.boolean(),
-  useMyInterests: z.boolean(),
-  selectedCategories: z.array(z.number()),
-  allCategories: z.boolean(),
-  onlySingle: z.boolean(),
-  onlyRecurring: z.boolean(),
-  manage: z.boolean(),
-  myEvents: z.boolean(),
-  startDate: z.string().min(1, "Dátum je povinný"),
-  endDate: z.string().min(1, "Dátum je povinný"),
-  startTime: z.string().optional(),
-  endTime: z.string().optional(),
-  daysOfWeek: z.array(z.number()),
-});
+
+export const recommendationsFilterSchema = z
+  .object({
+    search: z
+      .string()
+      .max(80, "Hľadaný text môže mať najviac 80 znakov")
+      .optional(),
+    searchLocation: z
+      .string()
+      .max(120, "Miesto môže mať najviac 120 znakov")
+      .optional(),
+    onlyAvailable: z.boolean(),
+    onlyRecommended: z.boolean(),
+    useMyInterests: z.boolean(),
+    selectedCategories: z.array(z.number()),
+    allCategories: z.boolean(),
+    onlySingle: z.boolean(),
+    onlyRecurring: z.boolean(),
+    manage: z.boolean(),
+    myEvents: z.boolean(),
+    startDate: z.string().min(1, "Dátum je povinný"),
+    endDate: z.string().min(1, "Dátum je povinný"),
+    startTime: z.string().optional(),
+    endTime: z.string().optional(),
+    daysOfWeek: z.array(z.number()),
+  })
+  .superRefine((data, ctx) => {
+    // Dátumová kontrola
+    if (data.startDate && data.endDate && data.startDate > data.endDate) {
+      ctx.addIssue({
+        path: ["startDate"],
+        code: "custom",
+        message: "Dátum začiatku nemôže byť po dátume konca.",
+      });
+    }
+
+    // Časová kontrola
+    if (data.startTime && data.endTime && data.startTime > data.endTime) {
+      ctx.addIssue({
+        path: ["startTime"],
+        code: "custom",
+        message: "Čas začiatku nemôže byť po čase konca.",
+      });
+    }
+  });

@@ -9,7 +9,6 @@ const ChatModal = ({ show, onHide, children }) => {
       onHide={onHide}
       centered
       size="lg"
-      backdrop="static"
       keyboard={true}
       dialogClassName={styles.modalDialog} // Použi modul
       contentClassName={styles.modalContent} // ✨ aj content
