@@ -46,17 +46,17 @@ const EditEvent = ({ eventId, date }) => {
         if (!res.ok)
           throw new Error(data.message || "Chyba pri načítaní eventu");
 
-        const newData = { ...data, ...resolveEventData(data, scope) };
+        const newData = resolveEventData(data, scope);
+        console.log(newData);
 
         const cleanedData = {};
-
-        console.log(data);
 
         for (const key in newData) {
           if (Object.prototype.hasOwnProperty.call(newData, key)) {
             cleanedData[key] = isEmpty(newData[key]) ? "" : newData[key];
           }
         }
+        console.log(cleanedData);
         setInitialData({
           ...cleanedData,
 
@@ -184,8 +184,10 @@ const EditEvent = ({ eventId, date }) => {
           console.log(form[key]);
         }
       }
-
+      console.log(initialData);
       console.log(filtered);
+      console.log(filtered.endTime);
+      console.log(form.endTime ? "true" : "false");
       console.log(form);
 
       const entries = {
@@ -197,9 +199,17 @@ const EditEvent = ({ eventId, date }) => {
         repeatInterval:
           initialData.repeatInterval === "" ? 0 : initialData.repeatInterval,
         mainImageChanged: form.mainImageChanged,
+        hasStartDate: Boolean(form.startDate && form.startDate.trim() !== ""),
+        hasStartTime: Boolean(form.startTime && form.startTime.trim() !== ""),
+        hasEndTime: Boolean(form.endTime && form.endTime.trim() !== ""),
+        ...(filtered.startDate !== undefined ||
+        filtered.startTime !== undefined ||
+        filtered.endTime !== undefined
+          ? { startDateTime: form.startDateTime, endDateTime: form.endDateTime }
+          : {}),
       };
+
       console.log(entries);
-      console.log(form);
 
       Object.entries(entries).forEach(([key, value]) => {
         if (key === "categoryIds") {

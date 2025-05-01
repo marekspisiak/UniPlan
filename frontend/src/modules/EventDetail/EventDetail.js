@@ -110,7 +110,8 @@ const EventDetail = ({ eventId: parEventId, date: parDate, refetch }) => {
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.message || "Chyba pri načítaní eventu");
-      const newData = { ...data, ...resolveEventData(data) };
+      console.log(data);
+      const newData = resolveEventData(data);
       setEventCapacity(data?.capacity);
 
       setEvent({
@@ -298,6 +299,7 @@ const EventDetail = ({ eventId: parEventId, date: parDate, refetch }) => {
           eventId={event.id}
           capacity={eventCapacity}
           fetchEvent={fetchEvent}
+          attendancyLimit={event.attendancyLimit}
         />
       </Popup>
       <Popup isOpen={editModerators} onClose={() => setEditModerators(false)}>

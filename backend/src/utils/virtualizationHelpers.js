@@ -76,8 +76,6 @@ export const getVirtualDates = (
   //wweekoffset je offset od zaciatku cyklu do danej udalosti
   const weekOffset = getStartCycleOffset(event, targetDate);
 
-  console.log(weekOffset);
-
   //ziska maximalný počet týždňov do konca opakovania
   const repeatUntil = event.repeatUntil ? new Date(event.repeatUntil) : null;
   const now = getCurrentUTCDate();
@@ -88,7 +86,6 @@ export const getVirtualDates = (
     : weekOffset + 52;
 
   const baseDate = getCustomStartOfWeek(event.startDate);
-  console.log(baseDate);
 
   for (let i = weekOffset; i < maxWeeks; i += event.repeatInterval || 1) {
     for (const day of event.eventDays || []) {
@@ -182,7 +179,11 @@ export const getAllVirtualEvents = (
   );
   getVirtualDates(event, now, (candidate, dayId, day) => {
     if (!existingDates.has(candidate.toISOString())) {
-      const changedEvent = applyChangesData(event, [day.eventChange]);
+      const changedEvent = applyChangesData(
+        event,
+        [day.eventChange],
+        candidate
+      );
       dates.push({
         ...changedEvent,
         date: candidate,

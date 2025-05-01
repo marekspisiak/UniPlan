@@ -15,7 +15,7 @@ import {
   ValidateCheck,
   ValidatedControl,
 } from "../ValidateComponents/ValidateComponents";
-import { getTodayLocalDate } from "../../utils/dateUtils";
+import { createUTCDate, getTodayLocalDate } from "../../utils/dateUtils";
 
 const EventForm = ({
   initialData = null,
@@ -117,14 +117,23 @@ const EventForm = ({
       const payload = {
         ...data,
         moderators: data.moderators.map((mod) => ({ ...mod, id: mod.id })),
-        startDateTime:
-          data.startDate && data.startTime
-            ? `${data.startDate}T${data.startTime}`
-            : null,
-        endDateTime:
-          data.startDate && data.endTime
-            ? `${data.startDate}T${data.endTime}`
-            : null,
+        startDateTime: data.startDate
+          ? createUTCDate(
+              data.startDate,
+              data.startTime && data.startTime.trim() !== ""
+                ? data.startTime
+                : "00:01"
+            ).toISOString()
+          : null,
+
+        endDateTime: data.startDate
+          ? createUTCDate(
+              data.startDate,
+              data.endTime && data.endTime.trim() !== ""
+                ? data.endTime
+                : "00:01"
+            ).toISOString()
+          : null,
       };
       await onSubmit(payload);
       setSuccess(successMessage);

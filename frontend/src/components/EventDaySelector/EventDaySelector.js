@@ -1,16 +1,7 @@
 import React, { useState, useEffect } from "react";
 import styles from "./EventDaySelector.module.scss";
 import { useAuth } from "../../context/AuthContext";
-import {
-  Button,
-  Spinner,
-  Table,
-  Container,
-  Row,
-  Col,
-  Card,
-  Form,
-} from "react-bootstrap";
+import { Button, Spinner, Table, Container, Card, Form } from "react-bootstrap";
 import Toast from "../Toast/Toast";
 import { Users } from "lucide-react";
 
@@ -19,6 +10,7 @@ const EventDaySelector = ({
   eventDays,
   capacity: eventCapacity,
   fetchEvent,
+  attendancyLimit,
 }) => {
   const { user } = useAuth();
   const [selected, setSelected] = useState([]);
@@ -68,11 +60,14 @@ const EventDaySelector = ({
     }
   };
 
+  const reachedLimit = attendancyLimit && selected.length >= attendancyLimit;
+
   return (
     <Container className="my-4">
-      <Card className="">
+      <Card>
         <Card.Body className="border-none">
           <Card.Title>Vyber dni, na ktoré sa chceš prihlásiť</Card.Title>
+
           <div className="table-responsive">
             <Table hover bordered className="align-middle mt-3">
               <thead className="table-light">
@@ -95,6 +90,10 @@ const EventDaySelector = ({
                     const isFull =
                       maxCapacity !== null && currentCount >= maxCapacity;
 
+                    const isSelected = selected.includes(ed.id);
+                    const shouldDisable =
+                      isFull || (reachedLimit && !isSelected);
+
                     return (
                       <tr key={ed.id}>
                         <td>{`${ed.day.name} (Týždeň ${ed.week + 1})`}</td>
@@ -108,9 +107,9 @@ const EventDaySelector = ({
                         <td>
                           <Form.Check
                             type="checkbox"
-                            checked={selected.includes(ed.id)}
+                            checked={isSelected}
                             onChange={() => toggle(ed.id)}
-                            disabled={isFull}
+                            disabled={shouldDisable}
                           />
                         </td>
                       </tr>
@@ -119,6 +118,13 @@ const EventDaySelector = ({
               </tbody>
             </Table>
           </div>
+
+          {attendancyLimit && (
+            <p className="text-muted mt-2">
+              Môžeš sa prihlásiť maximálne na <strong>{attendancyLimit}</strong>{" "}
+              dní. Vybrané: <strong>{selected.length}</strong>
+            </p>
+          )}
 
           {error && <Toast error={error} onClose={() => setError("")} />}
           {message && (

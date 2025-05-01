@@ -677,9 +677,10 @@ export const getAllEvents = async (req, res) => {
           {
             ...event,
             participants: occ.participants,
-            startDate: mergeDateAndTime(event.startDate, occ.date),
+            // startDate: mergeDateAndTime(event.startDate, occ.date),
           },
-          [occ?.eventChange, occ?.eventDay?.eventChange]
+          [occ?.eventChange, occ?.eventDay?.eventChange],
+          occ.date
         );
 
         if (!doesEventMatchFilters(changedEvent, { ...req.query, userId })) {
@@ -696,15 +697,17 @@ export const getAllEvents = async (req, res) => {
 
       console.log(endDate);
       if (isRecurring) {
+        console.log(event);
         const virtualEvents = getAllVirtualEvents(event, startDate, endDate);
 
         for (const event of virtualEvents) {
           const changedEvent = applyChangesData(
             {
               ...event,
-              startDate: mergeDateAndTime(event.startDate, event.date),
+              // startDate: mergeDateAndTime(event.startDate, event.date),
             },
-            [event?.eventDay?.eventChange]
+            [event?.eventDay?.eventChange],
+            event.date
           );
           if (!doesEventMatchFilters(changedEvent, { ...req.query, userId })) {
             continue;
@@ -727,6 +730,7 @@ export const getAllEvents = async (req, res) => {
 
     res.json(instances);
   } catch (err) {
+    console.warn(err);
     return res.status(500).json({ message: "Nepodarilo sa načítať eventy" });
   }
 };
@@ -773,8 +777,8 @@ export const applyChanges = async (
   return applyChangesData(
     event,
     [occurrence?.eventChange, eventDay?.eventChange],
-    fieldsToOverride,
-    { startDate: targetDate }
+    targetDate,
+    fieldsToOverride
   );
 };
 
@@ -1077,6 +1081,24 @@ export const attendEventDays = async (req, res) => {
         },
       });
 
+      if (event.attendancyLimit) {
+        // Zisti, na ktorých dňoch je už pripojený
+        const currentlyConnected = allEventDays.filter((ed) =>
+          ed.users.some((u) => u.id === userId)
+        );
+
+        // Výsledný cieľový stav po zmene bude to, čo je v eventDayIds
+        const finalCount = eventDayIds.length;
+
+        // Ale pozor – ak už bol na niektoré z týchto pripojený, nerátajú sa ako nové
+        // Limit sa aplikuje na CELKOVÝ počet dní po zmene
+        if (finalCount > event.attendancyLimit) {
+          throw new Error(
+            `Nemôžeš byť prihlásený na viac ako ${event.attendancyLimit} dní tohto eventu.`
+          );
+        }
+      }
+
       const toConnect = eventDayIds;
       const toDisconnect = allEventDays
         .filter(
@@ -1264,9 +1286,7 @@ function buildEventChangePayload(
   // Spracovanie dátumu
   newData.startDate = computedStartDate;
 
-  if (newDataRaw.endTime) {
-    newData.endDate = computedEndDate;
-  }
+  newData.endDate = computedEndDate;
 
   // Ostatné polia
   setSmart("title", newDataRaw.title, original.title);
@@ -1417,7 +1437,18 @@ export const editEvent = async (req, res) => {
       startTime,
       endTime,
       repeatInterval,
+
+      startDateTime: computedStartDate,
+      endDateTime: computedEndDate,
     } = req.body;
+
+    console.log(computedStartDate);
+    console.log(computedEndDate);
+
+    const hasStartTime = req.body?.hasStartTime === "true";
+    const hasEndTime = req.body?.hasEndTime === "true";
+
+    const hasStartDate = req.body?.hasStartDate === "true";
 
     const capacity = resolveInt(req.body.capacity);
     console.log(capacity);
@@ -1447,31 +1478,31 @@ export const editEvent = async (req, res) => {
       return value === "" ? false : true;
     }
 
-    let computedStartDate;
-    let computedEndDate;
-    let hasStartDate = checkValue(startDate);
-    let hasStartTime = checkValue(startTime);
-    let hasEndTime = checkValue(endTime);
+    // let computedStartDate;
+    // let computedEndDate;
+    // let hasStartDate = checkValue(startDate);
+    // let hasStartTime = checkValue(startTime);
+    // let hasEndTime = checkValue(endTime);
 
-    // Manuálna konštrukcia dátumu v lokálnom čase bez UTC posunu
-    if (hasStartDate || hasStartTime) {
-      if (hasStartTime) {
-        computedStartDate = createUTCDate(startDate, startTime);
-      } else {
-        computedStartDate = createUTCDate(startDate);
-      }
-    } else {
-      computedStartDate = targetDate;
-    }
+    // // Manuálna konštrukcia dátumu v lokálnom čase bez UTC posunu
+    // if (hasStartDate || hasStartTime) {
+    //   if (hasStartTime) {
+    //     computedStartDate = createUTCDate(startDate, startTime);
+    //   } else {
+    //     computedStartDate = createUTCDate(startDate);
+    //   }
+    // } else {
+    //   computedStartDate = targetDate;
+    // }
 
-    if (hasEndTime && hasStartDate) {
-      computedEndDate = createUTCDate(startDate, endTime);
-    } else if (hasEndTime) {
-      computedEndDate = mergeDateAndTime(
-        createUTCDate(null, endTime),
-        targetDate
-      );
-    }
+    // if (hasEndTime && hasStartDate) {
+    //   computedEndDate = createUTCDate(startDate, endTime);
+    // } else if (hasEndTime) {
+    //   computedEndDate = mergeDateAndTime(
+    //     createUTCDate(null, endTime),
+    //     targetDate
+    //   );
+    // }
     await prisma.$transaction(async (tx) => {
       if (scope === "event") {
         deletedImageUrls = await updateEventImages({
@@ -1641,8 +1672,8 @@ export const editEvent = async (req, res) => {
           });
         }
 
-        if (!eventId || !computedStartDate) {
-          throw new AppError("Chýba eventId alebo dátum.", 400);
+        if (!eventId) {
+          throw new AppError("Chýba eventId.", 400);
         }
         // Skús nájsť existujúcu occurrence pre daný event a dátum
         let occurrence = await tx.eventOccurrence.findFirst({
@@ -1655,6 +1686,7 @@ export const editEvent = async (req, res) => {
             eventChange: true,
           },
         });
+        console.log("nenaclo");
 
         // Ak neexistuje, vytvor ju
         if (!occurrence) {
@@ -1741,6 +1773,7 @@ export const editEvent = async (req, res) => {
   } catch (err) {
     const message = err.message || "Nepodarilo sa editovať event";
     const status = err.statusCode || 500;
+    console.warn(message);
 
     return res.status(status).json(message);
   }

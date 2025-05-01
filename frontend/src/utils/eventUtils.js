@@ -1,4 +1,4 @@
-import { createUTCDate } from "./dateUtils";
+import { createUTCDate, mergeDateAndTime } from "./dateUtils";
 
 export const resolveEventData = (event, scope = null) => {
   const fieldsToOverride = [
@@ -11,6 +11,8 @@ export const resolveEventData = (event, scope = null) => {
     "hasEndTime",
     "hasStartDate",
     "hasStartTime",
+    "startDate",
+    "endDate",
   ];
 
   let sources = [];
@@ -24,47 +26,32 @@ export const resolveEventData = (event, scope = null) => {
     sources = ["eventChange", "eventChangeDay"];
   }
 
-  const result = {};
-  result.startDate = new Date(event.startDate).toISOString().slice(0, 10);
+  const result = { ...event };
 
-  result.startTime = event.hasStartTime
-    ? new Date(event.startDate).toISOString().slice(11, 16)
-    : "";
+  if (scope !== "event") {
+    for (const key of fieldsToOverride) {
+      for (const sourceKey of sources) {
+        const data = event?.[sourceKey];
 
-  result.endTime = event.hasEndTime
-    ? new Date(event.endDate).toISOString().slice(11, 16)
-    : "";
+        console.log(result.startDate);
 
-  if (scope === "event") {
-    return result;
-  }
+        if (data?.[key] != null) {
+          result[key] = data[key];
 
-  for (const key of fieldsToOverride) {
-    for (const sourceKey of sources) {
-      const data = event?.[sourceKey];
-
-      console.log(result.startDate);
-
-      if (data?.[key] != null) {
-        console.log(data[key]);
-        console.log(key);
-        if (key === "hasStartTime" && data[key]) {
-          result.startTime = new Date(data.startDate)
-            .toISOString()
-            .slice(11, 16);
-        } else if (key === "hasEndTime" && data[key]) {
-          result.endTime = new Date(data.endDate).toISOString().slice(11, 16);
-        } else if (key === "hasStartDate" && data[key]) {
-          result.startDate = new Date(data.startDate)
-            .toISOString()
-            .slice(0, 10);
+          break;
         }
-        result[key] = data[key];
-
-        break;
       }
     }
   }
+
+  result.startTime = result?.hasStartTime
+    ? result.startDate.split("T")[1]?.substring(0, 5)
+    : "";
+  result.endTime =
+    result?.hasEndTime && result.endDate
+      ? result.endDate.split("T")[1]?.substring(0, 5)
+      : "";
+  result.startDate = result?.hasStartDate ? result.startDate.split("T")[0] : "";
 
   console.log(result);
 
