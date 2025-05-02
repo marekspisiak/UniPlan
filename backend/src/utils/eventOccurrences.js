@@ -24,8 +24,8 @@ export const shouldCreateOccurrence = (event, nextDate) => {
   }
 };
 
-export const createOccurrenceIfNeeded = async (eventId) => {
-  const event = await prisma.event.findUnique({
+export const createOccurrenceIfNeeded = async (tx, eventId) => {
+  const event = await tx.event.findUnique({
     where: { id: eventId },
     include: {
       eventDays: {
@@ -33,17 +33,18 @@ export const createOccurrenceIfNeeded = async (eventId) => {
       },
     },
   });
+  console.log(event);
 
   if (!event) return null;
 
-  return await createOccurrenceIfNeededFromEvent(event);
+  return await createOccurrenceIfNeededFromEvent(tx, event);
 };
 
-export const createOccurrenceIfNeededFromEvent = async (event) => {
+export const createOccurrenceIfNeededFromEvent = async (tx, event) => {
   const nextDate = getNextEventDate(event);
   const eventDayId = getEventDayId(event);
 
-  const occurrence = await prisma.eventOccurrence.findFirst({
+  const occurrence = await tx.eventOccurrence.findFirst({
     where: {
       eventId: event.id,
       date: nextDate,
@@ -52,7 +53,7 @@ export const createOccurrenceIfNeededFromEvent = async (event) => {
 
   if (!occurrence) {
     return await createOccurrence(
-      prisma,
+      tx,
       event.id,
       normalizeDate(nextDate || event.startDate),
       eventDayId || null

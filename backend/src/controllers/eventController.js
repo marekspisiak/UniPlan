@@ -61,7 +61,6 @@ export const createEvent = async (req, res) => {
       moderators,
       categoryIds,
     } = data;
-    console.log(startDateTime);
 
     const userId = req.user.id;
 
@@ -81,7 +80,7 @@ export const createEvent = async (req, res) => {
       );
     }
 
-    const newEvent = await prisma.$transaction(async (tx) => {
+    await prisma.$transaction(async (tx) => {
       const newEvent = await tx.event.create({
         data: {
           title,
@@ -161,12 +160,19 @@ export const createEvent = async (req, res) => {
           }
         }
       }
-      return newEvent;
+
+      await createOccurrenceIfNeeded(tx, newEvent.id);
+      res.status(201).json({ id: newEvent.id });
     });
 
-    await createOccurrenceIfNeeded(newEvent.id);
-
-    res.status(201).json({ id: newEvent.id });
+    try {
+      for (const relPath of deletedImageUrls) {
+        const absPath = path.join(".", relPath);
+        fs.unlink(absPath).catch((err) => {
+          console.warn("⚠️ Nepodarilo sa zmazať:", absPath, err.message);
+        });
+      }
+    } catch {}
   } catch (err) {
     const message = err.message || "Nepodarilo sa vytvoriť event.";
     const status = err.statusCode || 500;
