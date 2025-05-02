@@ -22,20 +22,20 @@ model EmailVerificationToken {
 
 model Category {
   id           Int              @id @default(autoincrement())
-  name         String           @unique
-  label        String
-  icon         String?
+  name         String           @unique @db.VarChar(30)
+  label        String           @db.VarChar(50)
+  icon         String?          @db.VarChar(10)
   events       Event[]          @relation("EventCategories")
   users        User[]           @relation("UserInterests")
 }
 
 model User {
   id                   Int                      @id @default(autoincrement())
-  email                String                   @unique
-  password             String
+  email                String                   @unique @db.VarChar(254)
+  password             String                   @db.VarChar(100)
   createdAt            DateTime                 @default(now())
-  firstName            String
-  lastName             String
+  firstName            String                   @db.VarChar(50)
+  lastName             String                   @db.VarChar(70)
   lastVerifiedAt       DateTime?
   verificationTokens   EmailVerificationToken[]
   events               Event[]                  @relation("UserEvents")
@@ -137,8 +137,8 @@ eventChange   EventChange? @relation("OccurrenceToChange", fields: [eventChangeI
 }
 
 model Day {
-  id        Int         @id @default(autoincrement())
-  name      String      @unique
+  id        Int         @id 
+  name      String      @unique @db.VarChar(15)
   eventDays EventDay[]  @relation("DayToEventDays")
 }
 
@@ -185,7 +185,7 @@ model Message {
   id        Int      @id @default(autoincrement())
   roomId    Int
   userId    Int
-  text      String
+  text      String   @db.VarChar(1000)
   createdAt DateTime @default(now())
   user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   room      Room     @relation(fields: [roomId], references: [id], onDelete: Cascade)

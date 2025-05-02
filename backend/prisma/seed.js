@@ -31,6 +31,16 @@ const categories = [
   { name: "CELEBRATION", label: "Oslava / Výročie", icon: "🥳" },
 ];
 
+const days = [
+  { id: 1, name: "Pondelok" },
+  { id: 2, name: "Utorok" },
+  { id: 3, name: "Streda" },
+  { id: 4, name: "Štvrtok" },
+  { id: 5, name: "Piatok" },
+  { id: 6, name: "Sobota" },
+  { id: 7, name: "Nedeľa" },
+];
+
 const seed = async () => {
   for (const cat of categories) {
     await prisma.category.upsert({
@@ -41,6 +51,17 @@ const seed = async () => {
   }
 
   console.log("✅ Všetky kategórie boli vložené");
+
+  for (const day of days) {
+    await prisma.day.upsert({
+      where: { id: day.id },
+      update: {},
+      create: day,
+    });
+  }
+
+  console.log("✅ Všetky dni v týždni boli vložené");
+
   process.exit();
 };
 

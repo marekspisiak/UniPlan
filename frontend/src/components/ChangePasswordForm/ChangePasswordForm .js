@@ -7,17 +7,7 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { ValidatedField } from "../ValidateComponents/ValidateComponents";
-
-const schema = z
-  .object({
-    currentPassword: z.string().min(1, "Zadaj aktuálne heslo"),
-    newPassword: z.string().min(6, "Heslo musí mať aspoň 6 znakov"),
-    confirmPassword: z.string().min(1, "Potvrď nové heslo"),
-  })
-  .refine((data) => data.newPassword === data.confirmPassword, {
-    path: ["confirmPassword"],
-    message: "Nové heslá sa nezhodujú.",
-  });
+import { changePasswordSchema } from "../../validation/schemas";
 
 const ChangePasswordForm = ({ setIsChangingPassword }) => {
   const { logout } = useAuth();
@@ -30,7 +20,7 @@ const ChangePasswordForm = ({ setIsChangingPassword }) => {
     formState: { errors, isSubmitting },
     reset,
   } = useForm({
-    resolver: zodResolver(schema),
+    resolver: zodResolver(changePasswordSchema),
   });
 
   const onSubmit = async (data) => {
