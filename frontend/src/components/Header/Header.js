@@ -4,6 +4,8 @@ import clsx from "clsx"; // voliteľné, ale elegantné spojenie classNames (mô
 import { Link } from "react-router-dom";
 
 const Header = ({ minimal = false }) => {
+  console.log(minimal);
+  console.log();
   return (
     <header className={clsx(styles.header, minimal && styles.minimal)}>
       <div className={styles.content}>
@@ -12,7 +14,7 @@ const Header = ({ minimal = false }) => {
         </Link>
 
         {!minimal && (
-          <div className={`d-none d-md-block ${styles.right}`}>
+          <div className={` ${styles.right}`}>
             <UserMenu />
           </div>
         )}

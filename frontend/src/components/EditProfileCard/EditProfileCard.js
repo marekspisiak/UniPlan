@@ -13,6 +13,7 @@ import { ValidatedField } from "../ValidateComponents/ValidateComponents";
 const EditProfileCard = ({ setIsEditing }) => {
   const { user, logout, loadUser } = useAuth();
   const mainImageRef = useRef();
+  console.log(user);
 
   const [message, setMessage] = useState(null);
   const [error, setError] = useState(null);
@@ -33,6 +34,7 @@ const EditProfileCard = ({ setIsEditing }) => {
       email: user?.email || "",
       confirmEmail: "",
       interests: user?.interests?.map((i) => i.id) || [],
+      mainImageChanged: false,
     },
   });
 
@@ -46,7 +48,7 @@ const EditProfileCard = ({ setIsEditing }) => {
   const interests = watch("interests");
 
   useEffect(() => {
-    setValue("mainImage", user?.photo ? [user.photo] : []);
+    setValue("mainImage", user?.profileImageUrl ? [user.profileImageUrl] : []);
   }, [user, setValue]);
 
   const onSubmit = async (form) => {
@@ -62,6 +64,7 @@ const EditProfileCard = ({ setIsEditing }) => {
       const formData = new FormData();
       formData.append("firstName", form.firstName);
       formData.append("lastName", form.lastName);
+      formData.append("mainImageChanged", form.mainImageChanged);
       if (form.email !== user.email) {
         formData.append("email", form.email);
       }

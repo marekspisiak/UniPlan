@@ -3,7 +3,6 @@ import { protect, protectVerified } from "../middleware/authMiddleware.js";
 import {
   getUserProfile,
   updateUserInterests,
-  updateProfilePhoto,
   updateProfile,
   searchUsers,
   changePassword,
@@ -36,19 +35,7 @@ router.get("/me", protect, (req, res) => {
 });
 
 router.put("/me/interests", protectVerified, updateUserInterests);
-router.put(
-  "/upload-photo",
-  protectVerified,
-  uploadUserPicture.single("photo"),
-  updateProfilePhoto
-);
-
-router.put(
-  "/profile",
-  protectVerified,
-  uploadUserPicture.single("photo"),
-  updateProfile
-);
+router.put("/profile", protectVerified, uploadUserPicture, updateProfile);
 router.get("/search", protectVerified, searchUsers);
 router.put("/change-password", protectVerified, changePassword);
 router.get("/:id", protectVerified, getUserProfile);

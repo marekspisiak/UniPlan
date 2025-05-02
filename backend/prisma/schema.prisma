@@ -47,6 +47,7 @@ model User {
   updatedEventChanges  EventChange[]            @relation("UpdatedBy")
   roomMembers          RoomMember[]
   messages             Message[]
+  profileImageUrl      String?   
   role                 Role     @default(USER)
 }
 

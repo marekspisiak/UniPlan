@@ -13,6 +13,10 @@ const UserAvatar = ({
   const [loading, setLoading] = useState(!providedUser);
 
   useEffect(() => {
+    setUser(providedUser);
+  }, [providedUser]);
+
+  useEffect(() => {
     const fetchUser = async () => {
       if (!providedUser && userId) {
         try {
@@ -53,8 +57,8 @@ const UserAvatar = ({
 
   const avatarImg = (
     <img
-      src={`/uploads/profile/user_${user.id}.png`}
-      alt="Avatar"
+      src={user.profileImageUrl || "/assets/default-avatar.png"}
+      alt="avatar"
       className={`${styles.avatar} ${sizeClass}`}
     />
   );

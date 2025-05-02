@@ -7,6 +7,17 @@ const RoomContext = createContext();
 export const RoomProvider = ({ children }) => {
   const [rooms, setRooms] = useState([]);
   const { user, socket } = useAuth();
+  const [newMessage, setNewMessage] = useState(false);
+
+  useEffect(() => {
+    const hasNewMessage = rooms.some((room) => {
+      const messageTime = new Date(room.lastMessageTime);
+      const seenTime = new Date(room.lastSeen);
+      return messageTime > seenTime;
+    });
+
+    setNewMessage(hasNewMessage);
+  }, [rooms]);
 
   const fetchRooms = async () => {
     try {
@@ -100,6 +111,7 @@ export const RoomProvider = ({ children }) => {
         rooms,
         reloadRooms,
         markRoomAsOpened,
+        newMessage,
       }}
     >
       {children}

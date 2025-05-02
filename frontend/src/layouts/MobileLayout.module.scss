@@ -9,6 +9,8 @@
   padding-top: 56px; // výška headeru na desktop
   padding-bottom: 0; // predvolené - na desktope žiadny mobile navbar
 
+  margin: 0 26px;
+
   @media (max-width: 768px) {
     padding-top: 48px; // výška headeru na mobile (ak je iná)
     padding-bottom: 56px; // výška mobile navbaru

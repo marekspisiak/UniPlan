@@ -20,7 +20,7 @@ import { useAuth } from "../../context/AuthContext";
 import Chat from "../../components/Chat/Chat";
 
 const Home = () => {
-  const isMobile = useMediaQuery({ maxWidth: 767 });
+  const isMobile = useMediaQuery({ maxWidth: 768 });
   const { id: eventId } = useParams();
   const [isOpen, setIsOpen] = useState(true);
   const Navigate = useNavigate();
@@ -57,6 +57,7 @@ const Home = () => {
           <Plus size={24} />
         </button>
       </Link>
+
       <MainLayout
         center={
           <>

@@ -127,7 +127,11 @@ const zResolvedIntFromFormData = z.preprocess((val) => {
 }, z.number().optional());
 
 export const baseEventFormSchema = z.object({
-  title: z.string().max(80, "Názov môže mať najviac 80 znakov").optional(),
+  title: z
+    .string()
+    .min(1, "Názov nesmie byť prázdny")
+    .max(80, "Názov môže mať najviac 80 znakov")
+    .optional(),
   description: z
     .string()
     .max(700, "Popis môže mať najviac 700 znakov")

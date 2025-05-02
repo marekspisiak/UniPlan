@@ -65,3 +65,45 @@
   position: sticky;
   top: 60px;
 }
+
+.chatButton {
+  width: 60px;
+  height: 60px;
+  background-color: #007bff;
+  color: white;
+  border-radius: 50%;
+  border: none;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 32px;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  transition: background-color 0.3s, transform 0.2s;
+  z-index: 500;
+
+  &:hover {
+    background-color: #0056b3;
+    transform: scale(1.05);
+  }
+}
+.popupContentWrapper {
+  height: 90vh !important;
+}
+
+.chatButtonWrapper {
+  position: fixed;
+  bottom: 100px;
+  right: 24px;
+}
+
+.chatButtonNotification {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 8px;
+  height: 8px;
+  background-color: red;
+  border-radius: 50%;
+  pointer-events: none;
+}

@@ -39,7 +39,15 @@ export function chatHandlers(io, socket) {
         text,
       },
       include: {
-        user: true,
+        user: {
+          select: {
+            id: true,
+            firstName: true,
+            lastName: true,
+            email: true,
+            profileImageUrl: true,
+          },
+        },
       },
     });
     io.to(`room-${roomId}`).emit("newMessage", {
@@ -53,6 +61,7 @@ export function chatHandlers(io, socket) {
         email: message.user.email,
         firstName: message.user.firstName,
         lastName: message.user.lastName,
+        profileImageUrl: message.user.profileImageUrl,
       },
     });
   });

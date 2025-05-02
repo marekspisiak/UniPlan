@@ -22,6 +22,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { recommendationsFilterSchema } from "../../validation/schemas";
 import { ValidatedField } from "../../components/ValidateComponents/ValidateComponents";
 import LoadingButton from "../../components/LoadingButton/LoadingButton";
+import { useMediaQuery } from "react-responsive";
 
 const Recommendations = () => {
   const { user } = useAuth();
@@ -33,6 +34,8 @@ const Recommendations = () => {
   const [showFilters, setShowFilters] = useState(false);
   const onlyRecommendedRef = useRef(null);
   const sidebarRef = useRef(null);
+  // const isTablet = useMediaQuery({ maxWidth: 768 });
+  const isMobile = useMediaQuery({ maxWidth: 768 });
 
   const userInterestsIds = user.interests.map((interest) => interest.id);
   const {
@@ -178,7 +181,7 @@ const Recommendations = () => {
 
   const onSubmit = (e) => {
     fetchEvents();
-    if (window.innerWidth <= 768) {
+    if (isMobile) {
       setShowFilters(false);
     }
     window.scrollTo(0, 0);
@@ -208,7 +211,7 @@ const Recommendations = () => {
       </div>
 
       <div className={styles.mainContent}>
-        <Collapse in={showFilters || window.innerWidth > 768}>
+        <Collapse in={showFilters || !isMobile}>
           <div ref={sidebarRef} className={styles.sidebar}>
             <div className="fs-3 fw-bold mb-3">Vyhľadať</div>
             <Form onSubmit={handleSubmit(onSubmit)} className={styles.filters}>

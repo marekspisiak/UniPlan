@@ -12,6 +12,7 @@ const ProfileCard = ({ userId, setIsEditing, setIsChangingPassword }) => {
 
   useEffect(() => {
     const loadProfile = async () => {
+      console.log("nacitavam");
       try {
         const res = await fetch(`/api/user/${userId}`, {
           headers: {
@@ -29,7 +30,7 @@ const ProfileCard = ({ userId, setIsEditing, setIsChangingPassword }) => {
     };
 
     loadProfile();
-  }, [userId]);
+  }, []);
 
   if (error) return <Alert variant="danger">{error}</Alert>;
   if (!profile)
@@ -47,7 +48,7 @@ const ProfileCard = ({ userId, setIsEditing, setIsChangingPassword }) => {
   return (
     <Card className={styles.card}>
       <img
-        src={`/uploads/profile/user_${profile.id}.png`}
+        src={profile.profileImageUrl || "/assets/default-avatar.png"}
         alt="Profil"
         className={styles.avatar}
       />

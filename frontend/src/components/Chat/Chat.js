@@ -166,7 +166,7 @@ const Chat = ({ roomId }) => {
                   "Používateľ",
             text: msg.text,
             date: new Date(msg.createdAt),
-            avatar: `/uploads/profile/user_${msg.user?.id}.png`,
+            avatar: `${msg.user?.profileImageUrl}`,
           }))}
         />
         <div ref={messagesEndRef} />

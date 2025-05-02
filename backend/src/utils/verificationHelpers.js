@@ -5,6 +5,7 @@ import prisma from "../../prisma/client.js";
 import jwt from "jsonwebtoken";
 
 export const createAndSendVerificationEmail = async (
+  tx = prisma,
   userId,
   userEmail,
   lastVerifiedAt = null

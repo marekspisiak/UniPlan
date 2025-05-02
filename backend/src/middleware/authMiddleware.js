@@ -25,12 +25,10 @@ export const protect = async (req, res, next) => {
     }
 
     // Dynamicky vytvorený link na profilovú fotku
-    const profileImageUrl = `http://localhost:5000/uploads/profile/user_${user.id}.png`;
 
     req.user = {
       ...user,
       requiresVerification: needsReverification(user),
-      profileImageUrl,
     };
 
     next();

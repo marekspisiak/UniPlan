@@ -9,7 +9,7 @@ const storage = multer.diskStorage({
     cb(null, uploadPath);
   },
   filename: (req, file, cb) => {
-    const filename = `user_${req.user.id}.png`; // Vždy .png
+    const filename = `user_${req.user.id}_${Date.now()}.png`;
     cb(null, filename);
   },
 });
@@ -26,4 +26,4 @@ export const uploadUserPicture = multer({
   storage,
   fileFilter,
   limits: { fileSize: 5 * 1024 * 1024 }, // max 5MB
-});
+}).single("photo");
