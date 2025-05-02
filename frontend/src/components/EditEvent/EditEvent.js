@@ -179,7 +179,6 @@ const EditEvent = ({ eventId, date }) => {
         console.log(key in form);
 
         if (key in form && form[key] !== initialData[key]) {
-          console.log("pridavam", key);
           filtered[key] = form[key];
           console.log(form[key]);
         }
@@ -203,7 +202,13 @@ const EditEvent = ({ eventId, date }) => {
         ...(filtered.startDate !== undefined ||
         filtered.startTime !== undefined ||
         filtered.endTime !== undefined
-          ? { startDateTime: form.startDateTime, endDateTime: form.endDateTime }
+          ? {
+              startDateTime: form.startDateTime,
+              endDateTime: form.endDateTime,
+              hasEndTime: form.hasEndTime,
+              hasStartTime: form.hasStartTime,
+              hasStartDate: form.hasStartDate,
+            }
           : {}),
       };
 

@@ -13,6 +13,7 @@ import styles from "./EventForm.module.scss";
 import { Link } from "react-router-dom";
 import { ValidatedField } from "../ValidateComponents/ValidateComponents";
 import { createUTCDate, getTodayLocalDate } from "../../utils/dateUtils";
+import LoadingButton from "../LoadingButton/LoadingButton";
 
 const EventForm = ({
   initialData = null,
@@ -90,6 +91,13 @@ const EventForm = ({
   const { id, date } = getValues(); // alebo const values = getValues()
   console.log(date);
   console.log(id);
+  useEffect(() => {
+    if (repeat) {
+      setValue("repeatInterval", 1);
+    } else {
+      setValue("repeatInterval", "");
+    }
+  }, [repeat]);
 
   const today = getTodayLocalDate();
   const minDate = startDate && startDate > today ? startDate : today;
@@ -390,14 +398,14 @@ const EventForm = ({
           </>
         )}
 
-        <Button
+        <LoadingButton
           type="submit"
           variant="primary"
           className="w-100"
-          disabled={loading}
+          loading={loading}
         >
           {submitLabel}
-        </Button>
+        </LoadingButton>
 
         <Link
           to={id && date ? `/event/${id}/${date}` : "/"}

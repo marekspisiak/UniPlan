@@ -28,7 +28,6 @@ import {
 
 export const createEvent = async (req, res) => {
   try {
-    console.log(req.body);
     const parsed = eventCreateSchema.safeParse(req.body);
 
     if (!parsed.success) {
@@ -62,6 +61,7 @@ export const createEvent = async (req, res) => {
       moderators,
       categoryIds,
     } = data;
+    console.log(startDateTime);
 
     const userId = req.user.id;
 
@@ -735,8 +735,10 @@ export const getAllEvents = async (req, res) => {
 
     res.json(instances);
   } catch (err) {
+    const message = err.message || "Nepodarilo sa načítať eventy";
+    const status = err.statusCode || 500;
     console.warn(err);
-    return res.status(500).json({ message: "Nepodarilo sa načítať eventy" });
+    return res.status(status).json(message);
   }
 };
 
@@ -848,7 +850,7 @@ export const joinEvent = async (req, res) => {
         const eventDayId = getEventDayId(event, targetDate);
 
         if (!validDate) {
-          throw new Error("Event sa v daný deň nekoná.");
+          throw new AppError("Event sa v daný deň nekoná.", 404);
         }
 
         occurrence = await createOccurrence(
@@ -864,16 +866,16 @@ export const joinEvent = async (req, res) => {
         (p) => p.id === userId
       );
       if (alreadyJoined) {
-        throw new Error("Už si prihlásený na tento event.");
+        throw new AppError("Už si prihlásený na tento event.", 409);
       }
 
       // 2.3. Skontroluj kapacitu
       if (event.capacity && occurrence.participants.length >= event.capacity) {
-        throw new Error("Kapacita eventu je naplnená.");
+        throw new AppError("Kapacita eventu je naplnená.", 409);
       }
 
       if (!canJoinEventToday(event.startDate, event.joinDaysBeforeStart)) {
-        throw new Error("Neda sa este prihlasit");
+        throw new AppError("Neda sa ešte prihlásiť.", 403);
       }
 
       // 2.4. Pridaj používateľa
@@ -892,9 +894,10 @@ export const joinEvent = async (req, res) => {
 
     return res.json({ message: "Úspešne prihlásený na event." });
   } catch (err) {
-    return res
-      .status(500)
-      .json({ message: "Nepodarilo sa prihlásiť na event" });
+    const message = err.message || "Nepodarilo sa prihlásiť na event";
+    const status = err.statusCode || 500;
+    console.warn(err);
+    return res.status(status).json(message);
   }
 };
 
@@ -1004,9 +1007,10 @@ export const getEventByDate = async (req, res) => {
       participants: eventDay?.users || [],
     });
   } catch (err) {
-    console.log(err.message);
-
-    return res.status(500).json({ message: "Nepodarilo sa načítať event" });
+    const message = err.message || "Nepodarilo sa načítať event";
+    const status = err.statusCode || 500;
+    console.warn(err);
+    return res.status(status).json(message);
   }
 };
 
@@ -1028,7 +1032,7 @@ export const leaveEvent = async (req, res) => {
       });
 
       if (!event) {
-        throw new Error("Event neexistuje.");
+        throw new Error("Event neexistuje.", 404);
       }
 
       let occurrence = event.eventOccurrences[0];
@@ -1062,9 +1066,10 @@ export const leaveEvent = async (req, res) => {
 
     return res.status(200).json({ message: "Úspešne odhlásený z eventu." });
   } catch (err) {
-    return res
-      .status(500)
-      .json({ message: "Nepodarilo sa odhlásiť z eventu." });
+    const message = err.message || "Nepodarilo sa odhlásiť z eventu.";
+    const status = err.statusCode || 500;
+    console.warn(err);
+    return res.status(status).json(message);
   }
 };
 
@@ -1109,8 +1114,9 @@ export const attendEventDays = async (req, res) => {
         // Ale pozor – ak už bol na niektoré z týchto pripojený, nerátajú sa ako nové
         // Limit sa aplikuje na CELKOVÝ počet dní po zmene
         if (finalCount > event.attendancyLimit) {
-          throw new Error(
-            `Nemôžeš byť prihlásený na viac ako ${event.attendancyLimit} dní tohto eventu.`
+          throw new AppError(
+            `Nemôžeš byť prihlásený na viac ako ${event.attendancyLimit} dní tohto eventu.`,
+            409
           );
         }
       }
@@ -1129,7 +1135,7 @@ export const attendEventDays = async (req, res) => {
         const day = allEventDays.find((d) => d.id === dayId);
 
         if (!day) {
-          throw new Error(`Deň s ID ${dayId} neexistuje.`);
+          throw new AppError(`Deň s ID ${dayId} neexistuje.`, 404);
         }
 
         const isAlreadyRegistered = day.users.some((u) => u.id === userId);
@@ -1140,7 +1146,7 @@ export const attendEventDays = async (req, res) => {
           event.capacity &&
           currentCount >= (day?.eventChange?.capacity || event.capacity)
         ) {
-          throw new Error(`Kapacita pre deň ${dayId} je naplnená.`);
+          throw new AppError(`Kapacita pre deň ${dayId} je naplnená.`, 409);
         }
       }
 
@@ -1263,9 +1269,10 @@ export const attendEventDays = async (req, res) => {
       message: "Účasť na dňoch a budúcich eventoch bola aktualizovaná.",
     });
   } catch (err) {
-    return res
-      .status(500)
-      .json({ message: "Nepodarilo sa prihlásiť na event." });
+    const message = err.message || "Nepodarilo sa prihlásiť opakované";
+    const status = err.statusCode || 500;
+    console.warn(err);
+    return res.status(status).json(message);
   }
 };
 
@@ -1411,23 +1418,6 @@ async function updateEventImages({
   return deletedImageUrls;
 }
 
-const resolveInt = (value) => {
-  if (value === "") {
-    return 0;
-  }
-  if (value === undefined) {
-    return value;
-  }
-  return parseInt(value);
-};
-
-class AppError extends Error {
-  constructor(message, statusCode = 400) {
-    super(message);
-    this.statusCode = statusCode;
-  }
-}
-
 export const editEvent = async (req, res) => {
   try {
     // validateEventData(req.body, true);
@@ -1467,6 +1457,8 @@ export const editEvent = async (req, res) => {
       mainImageChanged,
       previousMainImage,
     } = validated;
+
+    console.log(startDateTime);
 
     const eventId = parseInt(req.params.id);
     const userId = req.user.id;
@@ -1875,11 +1867,12 @@ export const updateEventModerators = async (req, res) => {
       });
     });
 
-    res.status(200).json("Updated");
+    res.status(200).json({ message: "Updated" });
   } catch (error) {
-    return res
-      .status(500)
-      .json({ message: "Nepodarilo sa updatovať  moderatorov." });
+    const message = err.message || "Nepodarilo sa updatovať  moderatorov.";
+    const status = err.statusCode || 500;
+    console.warn(err);
+    return res.status(status).json(message);
   }
 };
 
@@ -1887,7 +1880,7 @@ export const deleteRecurringAttendance = async (req, res) => {
   const { id: eventIdParam, eventDayId, userId } = req.params;
 
   if (!eventDayId || !userId) {
-    return res.status(400).json({ error: "Missing eventDayId or userId" });
+    return res.status(400).json({ error: "Chýba ID dňa alebo ID používateľa" });
   }
 
   try {
@@ -1904,9 +1897,10 @@ export const deleteRecurringAttendance = async (req, res) => {
       .status(200)
       .json({ message: "User removed from recurring attendance." });
   } catch (error) {
-    return res
-      .status(500)
-      .json({ message: "Nepodarilo sa updatovať vymazat opakovane" });
+    const message = err.message || "Nepodarilo sa updatovať vymazat opakovane";
+    const status = err.statusCode || 500;
+    console.warn(err);
+    return res.status(status).json(message);
   }
 };
 
@@ -1914,7 +1908,9 @@ export const deleteSingleAttendance = async (req, res) => {
   const { id: eventIdParam, occurrenceId, userId } = req.params;
 
   if (!occurrenceId || !userId) {
-    return res.status(400).json({ error: "Missing occurrenceId or userId" });
+    return res
+      .status(400)
+      .json({ error: "Chýba ID výskytu alebo ID používateľa " });
   }
 
   try {
@@ -1927,11 +1923,12 @@ export const deleteSingleAttendance = async (req, res) => {
       },
     });
 
-    res.status(200).json({ message: "User removed from single attendance." });
+    res.status(200).json({ message: "Používateľ odstránený z dochádzky" });
   } catch (error) {
-    return res
-      .status(500)
-      .json({ message: "Nepodarilo sa updatovať vymazat." });
+    const message = err.message || "Nepodarilo sa updatovať vymazat.";
+    const status = err.statusCode || 500;
+    console.warn(err);
+    return res.status(status).json(message);
   }
 };
 
@@ -1954,7 +1951,10 @@ export const deleteEvent = async (req, res) => {
     });
 
     return res.status(200).json({ message: "Event bol úspešne vymazaný." });
-  } catch (error) {
-    return res.status(500).json({ message: "Chyba pri mazaní eventu." });
+  } catch (err) {
+    const message = err.message || "Chyba pri mazaní eventu.";
+    const status = err.statusCode || 500;
+    console.warn(err);
+    return res.status(status).json(message);
   }
 };

@@ -114,8 +114,12 @@ const utcDateString = () =>
       { message: "Musí byť platný UTC ISO dátum (napr. 2025-05-01T12:00:00Z)" }
     );
 const zBooleanFromFormData = () =>
-  z.preprocess((val) => val === "true", z.boolean().optional());
-
+  z.preprocess((val) => {
+    if (val === undefined) return undefined;
+    if (val === "true") return true;
+    if (val === "false") return false;
+    return val; // fallback – ak príde niečo iné
+  }, z.boolean().optional());
 const zResolvedIntFromFormData = z.preprocess((val) => {
   if (val === "") return 0;
   if (val === undefined) return undefined;
@@ -282,7 +286,7 @@ export const eventEditSchema = baseEventFormSchema
 
     // ✅ Ak je scope = "event", niektoré polia musia byť neprázdne
     if (data.scope === "event") {
-      if (!data.hasStartTime) {
+      if (!data.hasStartTime && data.startDateTime) {
         ctx.addIssue({
           path: ["hasStartTime"],
           code: "custom",

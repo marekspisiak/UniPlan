@@ -109,6 +109,16 @@ export const eventFormSchema = z
   })
   .superRefine((data, ctx) => {
     const today = new Date().toISOString().split("T")[0];
+    if (
+      data.repeat &&
+      (data.repeatInterval <= 0 || data.repeatInterval === "")
+    ) {
+      ctx.addIssue({
+        path: ["repeatInterval"],
+        code: "custom",
+        message: "Interval opakovania musi byt aspon 1.",
+      });
+    }
 
     if (data.repeat && !data.startTime) {
       ctx.addIssue({

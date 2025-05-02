@@ -30,6 +30,7 @@ import {
 } from "../../utils/dateUtils";
 import CategoryList from "../../components/CategoryList/CategoryList";
 import JoinRoomButton from "../../components/JoinRoomButton/JoinRoomButton";
+import LoadingButton from "../../components/LoadingButton/LoadingButton";
 
 const EventDetail = ({ eventId: parEventId, date: parDate, refetch }) => {
   let { eventId, date } = useParams();
@@ -45,6 +46,7 @@ const EventDetail = ({ eventId: parEventId, date: parDate, refetch }) => {
   const [editUsers, setEditUsers] = useState(false);
   const [editAttendees, setEditAttendees] = useState(false);
   const [eventCapacity, setEventCapacity] = useState(null);
+  const [firstLoad, setFirstLoad] = useState(false);
 
   eventId = parEventId || eventId;
   date = parDate || date;
@@ -128,6 +130,8 @@ const EventDetail = ({ eventId: parEventId, date: parDate, refetch }) => {
             : newData.joinDaysBeforeStart,
       });
 
+      setFirstLoad(true);
+
       setEditModeratorsValue(
         newData.moderators.map((item) => ({
           ...item,
@@ -176,7 +180,7 @@ const EventDetail = ({ eventId: parEventId, date: parDate, refetch }) => {
   };
 
   if (error) return <Alert variant="danger">{error}</Alert>;
-  if (loading || !event)
+  if (!firstLoad && (loading || !event))
     return (
       <Container className="d-flex justify-content-center align-items-center w-100">
         <Spinner animation="border" />
@@ -472,13 +476,21 @@ const EventDetail = ({ eventId: parEventId, date: parDate, refetch }) => {
 
           {canJoin ? (
             isParticipant ? (
-              <Button variant="danger" onClick={() => postAction("leave")}>
+              <LoadingButton
+                variant="danger"
+                onClick={() => postAction("leave")}
+                loading={loading}
+              >
                 Odhlásiť sa
-              </Button>
+              </LoadingButton>
             ) : available > 0 || !capacity ? (
-              <Button variant="primary" onClick={() => postAction("join")}>
+              <LoadingButton
+                variant="primary"
+                onClick={() => postAction("join")}
+                loading={loading}
+              >
                 Prihlásiť sa
-              </Button>
+              </LoadingButton>
             ) : (
               <Button variant="secondary" disabled>
                 Už nie sú voľné miesta
