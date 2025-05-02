@@ -40,11 +40,16 @@ const Home = () => {
         <EventDetail eventId={parseInt(eventId)} />
       </Popup>
     ) : null;
-
+  const renderChatModal = () => (
+    <ChatModal show={!!openedRoomId} onHide={closeChat}>
+      {openedRoomId && <Chat roomId={openedRoomId} userId={user.id} />}
+    </ChatModal>
+  );
   if (isMobile) {
     return (
       <MobileLayout>
         {renderPopup()}
+        {renderChatModal()}
         <Recommendations />
       </MobileLayout>
     );
@@ -72,10 +77,7 @@ const Home = () => {
                 openChat(room); // cez hook
               }}
             />
-            {console.log(openedRoomId)}
-            <ChatModal show={!!openedRoomId} onHide={closeChat}>
-              {openedRoomId && <Chat roomId={openedRoomId} userId={user.id} />}
-            </ChatModal>
+            {renderChatModal()}
           </>
         }
       />

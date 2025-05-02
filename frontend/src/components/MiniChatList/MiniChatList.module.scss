@@ -6,6 +6,9 @@
   height: 100%;
   position: sticky;
   top: 0;
+  @media (max-width: 768px) {
+    margin: 25px 0;
+  }
 }
 
 .chatItemWrapper {

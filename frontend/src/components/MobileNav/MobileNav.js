@@ -3,10 +3,12 @@ import styles from "./MobileNav.module.scss";
 import { useProfileLink } from "../../hooks/useProfileLink";
 import { useAuth } from "../../context/AuthContext";
 import { Plus } from "lucide-react";
+import { useRoomContext } from "../../context/RoomContext";
 
 const MobileNav = () => {
   const { logout } = useAuth();
   const getProfileLink = useProfileLink();
+  const { newMessage } = useRoomContext();
   return (
     <nav className={styles.mobileNav}>
       <NavLink
@@ -24,7 +26,12 @@ const MobileNav = () => {
           `${styles.navIcon} ${isActive ? styles.active : ""}`
         }
       >
-        💬
+        <div className={styles.chatButtonWrapper}>
+          <div style={{ position: "relative" }}>
+            {newMessage && <span className={styles.chatButtonNotification} />}
+            <div>💬</div>
+          </div>
+        </div>
       </NavLink>
       <NavLink to="/create-event">
         <button className={styles.createButton}>

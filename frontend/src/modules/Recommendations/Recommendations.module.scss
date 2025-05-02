@@ -5,9 +5,10 @@
 
 .mobileFiltersToggle {
   display: none;
-  margin-bottom: 1rem;
+  margin-bottom: 3px;
   position: sticky;
   top: 48px;
+
   z-index: 100;
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
@@ -50,8 +51,10 @@
   @media (max-width: 768px) {
     position: fixed;
     top: 88px;
-    left: 5px;
-    width: 100%;
+    left: 50%;
+    transform: translate(-50%);
+
+    width: 95vw;
     height: 80vh;
     z-index: 10;
   }

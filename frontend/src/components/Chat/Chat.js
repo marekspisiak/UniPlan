@@ -154,7 +154,7 @@ const Chat = ({ roomId }) => {
         )}
 
         <MessageList
-          className="message-list"
+          className={styles.messageList}
           lockable
           dataSource={messages.map((msg) => ({
             position: msg.userId === user.id ? "right" : "left",

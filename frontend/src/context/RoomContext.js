@@ -84,6 +84,7 @@ export const RoomProvider = ({ children }) => {
 
   const markRoomAsOpened = async (roomId) => {
     console.log("nastavujem videne");
+
     setRooms((prevRooms) =>
       prevRooms.map((room) =>
         room.id === roomId

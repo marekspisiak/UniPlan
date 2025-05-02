@@ -43,3 +43,29 @@
   text-align: center;
   font-size: 1.1rem;
 }
+
+@mixin function-button {
+  width: 60px;
+  height: 60px;
+  background-color: #007bff;
+  color: white;
+  border-radius: 50%;
+  border: none;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 32px;
+  cursor: pointer;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  transition: background-color 0.3s, transform 0.2s;
+
+  &:hover {
+    background-color: #0056b3;
+    transform: scale(1.05);
+  }
+
+  @media (max-width: 1122px) {
+    height: 45px;
+    width: 45px;
+  }
+}
