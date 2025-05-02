@@ -7,11 +7,13 @@ import { useAuth } from "../../context/AuthContext";
 import styles from "./LoginForm.module.scss";
 import Toast from "../Toast/Toast";
 import { useState } from "react";
+import LoadingButton from "../LoadingButton/LoadingButton";
 
 const LoginForm = () => {
   const { loadUser } = useAuth();
   const navigate = useNavigate();
   const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(false);
 
   const {
     register,
@@ -23,6 +25,7 @@ const LoginForm = () => {
 
   const onSubmit = async (data) => {
     setError(null);
+    setLoading(true);
 
     try {
       const res = await fetch("/api/auth/login", {
@@ -47,6 +50,8 @@ const LoginForm = () => {
       }
     } catch (err) {
       setError(err.message);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -78,9 +83,14 @@ const LoginForm = () => {
         </Form.Control.Feedback>
       </Form.Group>
 
-      <Button variant="primary" type="submit" className="w-100">
+      <LoadingButton
+        variant="primary"
+        type="submit"
+        className="w-100"
+        loading={loading}
+      >
         Prihlásiť sa
-      </Button>
+      </LoadingButton>
 
       <div className={`text-center mt-3 ${styles.footer}`}>
         <span>Nemáte účet? </span>

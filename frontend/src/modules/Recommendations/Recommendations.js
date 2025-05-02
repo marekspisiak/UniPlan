@@ -21,6 +21,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { recommendationsFilterSchema } from "../../validation/schemas";
 import { ValidatedField } from "../../components/ValidateComponents/ValidateComponents";
+import LoadingButton from "../../components/LoadingButton/LoadingButton";
 
 const Recommendations = () => {
   const { user } = useAuth();
@@ -410,7 +411,9 @@ const Recommendations = () => {
                 >
                   Resetovať filtre
                 </Button>
-                <Button type="submit">Vyhľadať</Button>
+                <LoadingButton type="submit" loading={loading}>
+                  Vyhľadať
+                </LoadingButton>
               </div>
             </Form>
           </div>
