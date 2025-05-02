@@ -6,8 +6,9 @@ const schoolEmail = z
   .email("Neplatný email")
   .refine(
     (email) => {
-      const domain = email.split("@")[1]?.toLowerCase();
-      return domain === "uniza.sk" || domain.endsWith(".uniza.sk");
+      const parts = email.split("@");
+      const domain = parts[1]?.toLowerCase();
+      return domain && (domain === "uniza.sk" || domain.endsWith(".uniza.sk"));
     },
     { message: "Použi školský email (uniza.sk)" }
   );

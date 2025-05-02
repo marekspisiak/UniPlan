@@ -6,11 +6,13 @@ import { registerSchema } from "../../validation/schemas";
 import styles from "./RegisterForm.module.scss";
 import Toast from "../Toast/Toast";
 import { useState } from "react";
+import LoadingButton from "../LoadingButton/LoadingButton";
 
 const RegisterForm = () => {
   const navigate = useNavigate();
   const [message, setMessage] = useState(null);
   const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(false);
 
   const {
     register,
@@ -18,11 +20,18 @@ const RegisterForm = () => {
     formState: { errors },
   } = useForm({
     resolver: zodResolver(registerSchema),
+    defaultValues: {
+      firstName: "",
+      lastName: "",
+      email: "",
+      password: "",
+    },
   });
 
   const onSubmit = async (data) => {
     setMessage(null);
     setError(null);
+    setLoading(true);
 
     console.log("fetchujem");
 
@@ -43,6 +52,8 @@ const RegisterForm = () => {
       navigate("/email-info");
     } catch (err) {
       setError(err.message);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -100,9 +111,14 @@ const RegisterForm = () => {
           </Form.Control.Feedback>
         </Form.Group>
 
-        <Button variant="primary" type="submit" className="w-100">
+        <LoadingButton
+          variant="primary"
+          type="submit"
+          className="w-100"
+          loading={loading}
+        >
           Registrovať sa
-        </Button>
+        </LoadingButton>
 
         <div className="text-center mt-3">
           <span>Už máte účet? </span>
