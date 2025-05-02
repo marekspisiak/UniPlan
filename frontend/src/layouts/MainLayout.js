@@ -11,7 +11,7 @@ import Popup from "../components/Popup/Popup";
 import { useRoomContext } from "../context/RoomContext";
 
 const MainLayout = ({ left, center, right }) => {
-  const tablet = useMediaQuery({ maxWidth: 1100 });
+  const tablet = useMediaQuery({ maxWidth: 1122 });
   const [isOpen, setIsOpen] = useState(false);
   const { newMessage } = useRoomContext();
 

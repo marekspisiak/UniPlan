@@ -199,12 +199,17 @@ const Recommendations = () => {
 
   return (
     <div className={styles.recommendations}>
-      <div className={styles.mobileFiltersToggle}>
+      <div className={`${styles.mobileFiltersToggle}`}>
         <Button
           className={styles.searchButton}
           variant="primary"
           size="sm"
-          onClick={() => setShowFilters((prev) => !prev)}
+          onClick={() => {
+            setShowFilters((prev) => !prev);
+
+            showFilters &&
+              sidebarRef.current.scrollTo({ top: 0, behavior: "smooth" });
+          }}
         >
           {showFilters ? "Skryť filtre" : "Zobraziť filtre"}
         </Button>
@@ -216,6 +221,7 @@ const Recommendations = () => {
             <div className="fs-3 fw-bold mb-3">Vyhľadať</div>
             <Form onSubmit={handleSubmit(onSubmit)} className={styles.filters}>
               {/* Sekcia: Vyhľadávanie */}
+
               <div className={styles.filterSection}>
                 <ValidatedField
                   type="text"
