@@ -1,3 +1,8 @@
+@use "../styles/colors" as *;
+@use "../styles/variables" as *;
+@use "../styles/typography" as *;
+@use "../styles/mixins" as mixins;
+
 .layout {
   display: flex;
   flex-direction: column;
@@ -18,7 +23,7 @@
 }
 
 .mainLayout {
-  padding-top: 2rem;
+  padding-top: $space-xl;
 }
 
 .leftPanel,
@@ -39,7 +44,7 @@
     bottom: 0;
     width: 100%;
     background: white;
-    border-top: 1px solid #ddd;
+    border-top: 1px solid $color-border-muted;
     z-index: 1000;
   }
 }

@@ -1,23 +1,25 @@
-@import "../../styles/variables";
-@import "../../styles/mixins";
+@use "../../styles/colors" as *;
+@use "../../styles/variables" as *;
+@use "../../styles/typography" as *;
+@use "../../styles/mixins" as mixins;
 
 .upcomingEvents {
-  background-color: $white;
+  background-color: $color-white;
 }
 
 .title {
   font-weight: bold;
-  color: $primary-color;
+  color: $color-primary;
   margin-bottom: 10px;
   text-align: center;
-  font-size: 1.1rem;
+  font-size: $font-size-md;
 }
 
 .item {
-  font-size: 0.9rem;
-  color: $text-color;
-  padding: 0.5rem;
-  @include hover-light;
+  font-size: $font-size-sm;
+  color: $color-text;
+  padding: $space-sm;
+  @include mixins.hover-light;
 }
 
 .eventTitle {
@@ -26,5 +28,5 @@
 
 .eventDatetime {
   font-size: 0.8rem;
-  color: $secondary-color;
+  color: $color-primary-light;
 }

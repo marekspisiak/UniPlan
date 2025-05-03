@@ -1,0 +1,71 @@
+@use "../../styles/colors" as *;
+@use "../../styles/variables" as *;
+@use "../../styles/typography" as *;
+@use "../../styles/mixins" as mixins;
+
+.header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 56px;
+  background-color: white;
+  border-bottom: 1px solid $color-border;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 1rem;
+
+  // Mobilná verzia pre šírky *menšie ako 768px*
+  @media (max-width: 767px) {
+    height: 48px;
+  }
+}
+
+.content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 1rem;
+  width: 100%;
+  max-width: 1600px;
+}
+
+.logo {
+  font-weight: bold;
+  font-size: $font-size-md;
+  color: $color-primary;
+}
+
+// Skryť pravý panel len na mobiloch
+.right {
+  @media (max-width: 767px) {
+    display: none;
+  }
+}
+
+// Desktop štýly od 768px a vyššie
+@media (min-width: 767px) {
+  .header {
+    height: 56px;
+  }
+
+  .logo {
+    font-size: $font-size-lg;
+  }
+}
+
+.minimal {
+  border-bottom: none;
+  box-shadow: none;
+  justify-content: center;
+
+  .content {
+    justify-content: center;
+  }
+
+  .right {
+    display: none;
+  }
+}

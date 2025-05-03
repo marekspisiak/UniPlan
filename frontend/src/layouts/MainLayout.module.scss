@@ -1,4 +1,7 @@
-@import "../styles/mixins.scss";
+@use "../styles/colors" as *;
+@use "../styles/variables" as *;
+@use "../styles/typography" as *;
+@use "../styles/mixins" as mixins;
 
 .layout {
   display: flex;
@@ -23,7 +26,7 @@
 
 .leftPanel,
 .rightPanel {
-  padding: 1rem;
+  padding: $space-md;
 }
 
 .centered {
@@ -39,7 +42,7 @@
     bottom: 0;
     width: 100%;
     background: white;
-    border-top: 1px solid #ddd;
+    border-top: 1px solid $color-border-muted;
     z-index: 1000;
   }
 }
@@ -51,7 +54,7 @@
 }
 
 .chatButton {
-  @include function-button;
+  @include mixins.function-button;
 }
 .popupContentWrapper {
   height: 90vh !important;

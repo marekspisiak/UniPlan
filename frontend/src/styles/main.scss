@@ -1,9 +1,12 @@
-@import './reset';
-@import './variables';
-@import './mixins';
+@use "./reset";
+@use "./colors" as *;
+@use "./variables" as *;
+@use "./typography" as *;
+@use "./mixins" as *;
 
-/* Môžeš pridať aj globálne štýly sem */
 body {
-  font-family: $font-stack;
-  color: $text-color;
+  font-family: $font-family-base;
+  color: $color-text;
+  background-color: $color-bg-light;
+  margin: 0;
 }

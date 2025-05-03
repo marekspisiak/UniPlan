@@ -1,19 +1,14 @@
-// Farby
-$primary-color: #1b2a4e;
-$secondary-color: #6c757d;
-$accent-blue: #286baf;
-$accent-purple: #b336a4;
-$highlight-green: #29b673;
 
-$white: #ffffff;
-$text-color: #212529;
-$background-light: #f8f9fa;
+@use "./colors" as *;
+@use "./typography" as *;
 
-$border-color: #dee2e6;
+// SPACING SCALE
+$space-xs: 0.25rem;
+$space-sm: 0.5rem;
+$space-md: 1rem;
+$space-lg: 1.5rem;
+$space-xl: 2rem;
 
-// Font
-$font-stack: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-
-// Layout
-$border-radius: 0.5rem;
-$container-padding: 20px;
+// BORDERS
+$card-radius: 1rem;
+$card-shadow: 0 0 15px rgba(0, 0, 0, 0.08);

@@ -1,0 +1,78 @@
+@use "../styles/colors" as *;
+@use "../styles/variables" as *;
+@use "../styles/typography" as *;
+@use "../styles/mixins" as mixins;
+
+.layout {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.mainContent {
+  flex-grow: 1;
+  padding-top: 56px;
+  padding-bottom: 0;
+
+  @media (min-width: 1600px) {
+    width: 1600px;
+
+    margin: auto;
+  }
+}
+
+.mainLayout {
+}
+
+.leftPanel,
+.rightPanel {
+  padding: $space-md;
+}
+
+.centered {
+  margin: 0 auto;
+}
+
+.mobileNav {
+  display: none;
+
+  @media (max-width: 767px) {
+    display: flex;
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    background: white;
+    border-top: 1px solid $color-border-muted;
+    z-index: 1000;
+  }
+}
+
+.rightPanel {
+  height: 80vh;
+  position: sticky;
+  top: 60px;
+}
+
+.chatButton {
+  @include function-button;
+}
+.popupContentWrapper {
+  height: 90vh !important;
+}
+
+.chatButtonWrapper {
+  position: fixed;
+  bottom: 100px;
+  right: 24px;
+}
+
+.chatButtonNotification {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 8px;
+  height: 8px;
+  background-color: red;
+  border-radius: 50%;
+  pointer-events: none;
+}

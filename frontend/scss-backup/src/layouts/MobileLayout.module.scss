@@ -1,0 +1,50 @@
+@use "../../styles/colors" as *;
+@use "../../styles/variables" as *;
+@use "../../styles/typography" as *;
+@use "../../styles/mixins" as mixins;
+
+.layout {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.mainContent {
+  flex-grow: 1;
+  padding-top: 56px; // výška headeru na desktop
+  padding-bottom: 0; // predvolené - na desktope žiadny mobile navbar
+
+  margin: 0 15px;
+
+  @media (max-width: 767px) {
+    padding-top: 30px; // výška headeru na mobile (ak je iná)
+    padding-bottom: 56px; // výška mobile navbaru
+  }
+}
+
+.mainLayout {
+  padding-top: $space-xl;
+}
+
+.leftPanel,
+.centerPanel,
+.rightPanel {
+}
+
+.centered {
+  margin: 0 auto;
+}
+
+.mobileNav {
+  display: none;
+
+  @media (max-width: 767px) {
+    display: flex;
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    background: white;
+    border-top: 1px solid $color-border-muted;
+    z-index: 1000;
+  }
+}

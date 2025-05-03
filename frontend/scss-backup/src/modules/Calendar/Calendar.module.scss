@@ -1,0 +1,60 @@
+@use "../../styles/colors" as *;
+@use "../../styles/variables" as *;
+@use "../../styles/typography" as *;
+@use "../../styles/mixins" as mixins;
+
+.calendar {
+  background-color: $color-white;
+  margin-bottom: 20px;
+  max-width: 100%;
+  overflow: hidden;
+}
+
+.title {
+  font-weight: bold;
+  color: $color-primary;
+  margin-bottom: 15px;
+  text-align: center;
+  font-size: $font-size-md;
+
+  @media (max-width: 768px) {
+    font-size: $font-size-base;
+  }
+}
+
+.grid {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.weekdays,
+.dates {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 0.25rem;
+  text-align: center;
+}
+
+.day {
+  font-weight: 500;
+  color: $color-text;
+  font-size: $font-size-xs;
+  white-space: nowrap;
+}
+
+.date {
+  aspect-ratio: 1 / 1;
+  background-color: $color-bg-light;
+  border-radius: $card-radius;
+  font-size: clamp(0.7rem, 1.5vw, 0.95rem);
+  color: $color-text;
+  @include flex-center;
+  transition: background-color 0.2s ease;
+
+  &:hover {
+    background-color: $color-primary;
+    color: $color-white;
+    cursor: pointer;
+  }
+}

@@ -1,0 +1,20 @@
+@use "../../styles/colors" as *;
+@use "../../styles/variables" as *;
+@use "../../styles/typography" as *;
+@use "../../styles/mixins" as mixins;
+
+.eventForm {
+  background-color: $color-white;
+  border: 1px solid $color-border;
+  border-radius: $card-radius;
+  padding: $space-xl;
+  max-width: 40rem;
+  margin: 10px auto;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.05);
+}
+
+.heading {
+  text-align: center;
+  color: $color-primary;
+  margin-bottom: $space-lg;
+}

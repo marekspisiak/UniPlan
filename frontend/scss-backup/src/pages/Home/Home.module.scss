@@ -1,0 +1,15 @@
+@use "../../styles/colors" as *;
+@use "../../styles/variables" as *;
+@use "../../styles/typography" as *;
+@use "../../styles/mixins" as mixins;
+
+.createButton {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  @include function-button;
+
+  @media (min-width: 1600px) {
+    right: calc(50% - 780px); // Príklad: zarovnaj 720px od stredu
+  }
+}

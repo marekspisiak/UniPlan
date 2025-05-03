@@ -1,0 +1,23 @@
+@use "../../styles/colors" as *;
+@use "../../styles/variables" as *;
+@use "../../styles/typography" as *;
+@use "../../styles/mixins" as mixins;
+
+.wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background-color: $color-bg-light;
+  padding: $space-xl;
+  text-align: center;
+  width: 100vw;
+  margin: 0;
+  overflow-x: hidden;
+}
+
+.box {
+  @include card;
+  max-width: 420px;
+  width: 100%;
+}
