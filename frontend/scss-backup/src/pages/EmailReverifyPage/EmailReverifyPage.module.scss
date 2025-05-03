@@ -17,7 +17,8 @@
 }
 
 .box {
-  @include card;
+  @include mixins.card;
   max-width: 420px;
   width: 100%;
 }
+

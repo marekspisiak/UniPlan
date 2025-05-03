@@ -4,7 +4,7 @@ const path = require("path");
 // Nastav koreňový adresár svojho projektu
 const rootDir =
   "C:/Users/marek/OneDrive - Žilinská univerzita v Žiline/Bakalarka/aplikacia/frontend";
-const mergedFile = path.join(__dirname, "merged-modules-prefixed.scss");
+const mergedFile = path.join(__dirname, "merged-modules-final-clean.scss");
 
 // Priečinok pre zálohy
 const backupDir = path.join(__dirname, "scss-backup");

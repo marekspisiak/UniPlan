@@ -49,7 +49,7 @@
   border-radius: $card-radius;
   font-size: clamp(0.7rem, 1.5vw, 0.95rem);
   color: $color-text;
-  @include flex-center;
+  @include mixins.flex-center;
   transition: background-color 0.2s ease;
 
   &:hover {
@@ -58,3 +58,4 @@
     cursor: pointer;
   }
 }
+

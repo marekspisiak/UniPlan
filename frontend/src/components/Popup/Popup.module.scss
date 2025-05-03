@@ -33,7 +33,7 @@
   padding: $space-md;
   position: relative;
   max-width: 95vw;
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+  box-shadow: $shadow-xl;
   z-index: 1000;
 
   // >>> Pridávame animáciu tu
@@ -53,7 +53,7 @@
   font-size: 18px;
   font-weight: bold;
   cursor: pointer;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: $shadow-md;
   transition: all 0.2s ease;
   z-index: 1000;
 
@@ -69,6 +69,7 @@
 
   &:focus {
     outline: none;
-    box-shadow: 0 0 0 2px $color-primary-light;
+    box-shadow: $shadow-focus;
   }
 }
+

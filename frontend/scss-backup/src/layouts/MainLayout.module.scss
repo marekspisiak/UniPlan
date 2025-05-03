@@ -54,7 +54,7 @@
 }
 
 .chatButton {
-  @include function-button;
+  @include mixins.function-button;
 }
 .popupContentWrapper {
   height: 90vh !important;
@@ -76,3 +76,4 @@
   border-radius: 50%;
   pointer-events: none;
 }
+

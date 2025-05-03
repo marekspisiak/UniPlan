@@ -44,7 +44,7 @@
 .uploadBox {
   width: 100px;
   height: 100px;
-  border: 2px dashed #aaa;
+  border: 2px dashed $color-text-muted;
   border-radius: 8px;
   display: flex;
   align-items: center;
@@ -53,3 +53,4 @@
   font-size: 2rem;
   color: $color-text-muted;
 }
+

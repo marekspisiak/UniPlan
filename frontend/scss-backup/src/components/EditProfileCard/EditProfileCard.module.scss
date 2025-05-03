@@ -7,22 +7,11 @@
   max-width: 500px;
   margin: 10px auto;
   padding: $space-xl;
-  background-color: white;
+  background-color: $color-white;
   border-radius: 1rem;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  > *:first-child {
+    text-align: center;
+  }
 }
 
-.interestsGrid {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 1rem;
-}
-
-.interestLabel {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  background: $color-bg-light;
-  border-radius: 0.5rem;
-  padding: 0.5rem 1rem;
-}

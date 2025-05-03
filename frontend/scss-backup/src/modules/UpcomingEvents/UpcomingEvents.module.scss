@@ -19,7 +19,7 @@
   font-size: $font-size-sm;
   color: $color-text;
   padding: $space-sm;
-  @include hover-light;
+  @include mixins.hover-light;
 }
 
 .eventTitle {
@@ -30,3 +30,4 @@
   font-size: 0.8rem;
   color: $color-primary-light;
 }
+

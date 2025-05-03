@@ -13,7 +13,7 @@
 .tag {
   display: inline-flex;
   align-items: center;
-  background-color: #eef6fc;
+  background-color: $color-info-bg;
   color: $color-primary; // Bootstrap primary
   font-size: $font-size-xs;
   padding: 0.25rem 0.65rem;
@@ -35,3 +35,4 @@
   align-items: center;
   font-size: $font-size-xs;
 }
+

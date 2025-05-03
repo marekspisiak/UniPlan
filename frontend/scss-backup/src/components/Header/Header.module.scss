@@ -35,7 +35,7 @@
 .logo {
   font-weight: bold;
   font-size: $font-size-md;
-  color: $color-primary;
+  color: $color-text;
 }
 
 // Skryť pravý panel len na mobiloch
@@ -69,3 +69,4 @@
     display: none;
   }
 }
+

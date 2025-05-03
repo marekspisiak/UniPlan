@@ -26,10 +26,11 @@
   padding: $space-sm; // aby obsah nebol úplne nalepený
 
   &:hover {
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    box-shadow: $shadow-md;
     cursor: pointer;
   }
 }
 // .chatItemWrapper div {
 //   min-width: 158px;
 // }
+

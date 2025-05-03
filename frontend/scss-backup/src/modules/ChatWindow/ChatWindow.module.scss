@@ -18,7 +18,7 @@
 .chat {
   padding: 0.75rem 0.5rem;
   border-bottom: 1px solid $color-border;
-  @include hover-light;
+  @include mixins.hover-light;
 }
 
 .name {
@@ -37,3 +37,4 @@
   font-size: $font-size-xs;
   margin-top: $space-xs;
 }
+

@@ -1,18 +1,19 @@
-
 // _colors.scss
 
 // Base Neutrals
-$color-white: #ffffff;
-$color-bg-light: #f8f9fa;
-$color-surface: #f1f3f5;
+$color-white: #ffffff; // Absolute white for cards, modals, and clean areas
+$color-bg-light: #f8f9fa; // Light app background (e.g. page background)
+$color-surface: #e9ecef; // Surface layer (e.g. cards inside sections, nested blocks)
+
+$color-info-bg: #eef6fc;
 
 // Text
-$color-text: #212529;
-$color-text-muted: #6c757d;
+$color-text: #212529; // Main body text
+$color-text-muted: #6c757d; // Secondary / muted text
 
 // Borders
-$color-border: #dee2e6;
-$color-border-muted: #ced4da;
+$color-border: #dee2e6; // Default border (inputs, sections)
+$color-border-muted: #ced4da; // Subtle border
 
 // Primary (Blue)
 $color-primary: #0d6efd;

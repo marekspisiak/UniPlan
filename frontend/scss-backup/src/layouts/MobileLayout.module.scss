@@ -1,7 +1,7 @@
-@use "../../styles/colors" as *;
-@use "../../styles/variables" as *;
-@use "../../styles/typography" as *;
-@use "../../styles/mixins" as mixins;
+@use "../styles/colors" as *;
+@use "../styles/variables" as *;
+@use "../styles/typography" as *;
+@use "../styles/mixins" as mixins;
 
 .layout {
   display: flex;
@@ -48,3 +48,4 @@
     z-index: 1000;
   }
 }
+

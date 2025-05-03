@@ -1,0 +1,1954 @@
+// src\components\CategoryList\CategoryList.module.scss
+@use "../../styles/colors" as *;
+@use "../../styles/variables" as *;
+@use "../../styles/typography" as *;
+@use "../../styles/mixins" as mixins;
+
+.tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin-bottom: $space-sm;
+}
+
+.tag {
+  display: inline-flex;
+  align-items: center;
+  background-color: #eef6fc;
+  color: $color-primary; // Bootstrap primary
+  font-size: $font-size-xs;
+  padding: 0.25rem 0.65rem;
+  border-radius: 16px;
+  border: 1px solid $color-primary-light;
+  font-weight: 500;
+  white-space: nowrap;
+  line-height: 1;
+  transition: background-color 0.2s ease;
+
+  &:hover {
+    background-color: $color-primary-light;
+  }
+}
+
+.tagIcon {
+  margin-right: 6px;
+  display: inline-flex;
+  align-items: center;
+  font-size: $font-size-xs;
+}
+
+
+// src\components\CategoryMultiSelect\CategoryMultiSelect.module.scss
+@use "../../styles/colors" as *;
+@use "../../styles/variables" as *;
+@use "../../styles/typography" as *;
+@use "../../styles/mixins" as mixins;
+
+
+
+
+// src\components\ChangePasswordForm\ChangePasswordForm.module.scss
+@use "../../styles/colors" as *;
+@use "../../styles/variables" as *;
+@use "../../styles/typography" as *;
+@use "../../styles/mixins" as mixins;
+
+// styles/ChangePasswordForm.module.scss
+
+.changePasswordForm {
+  background: $color-white;
+  padding: $space-xl;
+  border-radius: 1rem;
+  box-shadow: $shadow-md;
+  width: 100%;
+  max-width: 500px;
+  margin: 10px auto;
+  text-align: center;
+
+  h5 {
+    font-weight: 600;
+    margin-bottom: $space-lg;
+  }
+
+  form {
+    display: flex;
+    flex-direction: column;
+    text-align: start;
+    gap: 1rem;
+
+    .formGroup {
+      text-align: left;
+    }
+
+    button {
+      margin-top: $space-md;
+      font-weight: 500;
+      font-size: $font-size-base;
+      padding: 0.6rem;
+      border-radius: 0.6rem;
+    }
+  }
+}
+
+
+// src\components\Chat\Chat.module.scss
+@use "../../styles/colors" as *;
+@use "../../styles/variables" as *;
+@use "../../styles/typography" as *;
+@use "../../styles/mixins" as mixins;
+
+.chatPage {
+  display: flex;
+  flex-direction: column;
+  height: 100%; // << miesto 80vh
+  background-color: $color-bg-light;
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.header {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: $space-sm;
+  background-color: white;
+  border-bottom: 1px solid $color-border;
+  z-index: 10;
+}
+
+.roomTitle {
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  font-weight: bold;
+  font-size: $font-size-md;
+}
+
+.messages {
+  flex: 1;
+  overflow-y: auto;
+  padding: $space-sm; // menej paddingu
+  background-color: $color-bg-light;
+}
+.inputArea {
+  padding: $space-sm;
+  border-top: 1px solid $color-border;
+  background-color: white;
+}
+.messageList {
+}
+
+
+// src\components\ChatModal\ChatModal.module.scss
+@use "../../styles/colors" as *;
+@use "../../styles/variables" as *;
+@use "../../styles/typography" as *;
+@use "../../styles/mixins" as mixins;
+
+.modalDialog {
+  height: 100%;
+  width: 100%;
+  margin: auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  padding: 10px;
+}
+.modalContent {
+  display: flex;
+  flex-direction: column;
+  height: 100%; // << výška na 100%
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.modalBody {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  padding: 0;
+}
+
+
+// src\components\ClickMenuWrapper\ClickMenuWrapper.module.scss
+@use "../../styles/colors" as *;
+@use "../../styles/variables" as *;
+@use "../../styles/typography" as *;
+@use "../../styles/mixins" as mixins;
+
+.menu {
+  position: absolute;
+  background-color: white;
+  border: 1px solid $color-border-muted;
+  border-radius: 8px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+  z-index: 9999;
+  padding: 0.25rem 0;
+
+  .menuItem {
+    padding: 0.5rem 1rem;
+    cursor: pointer;
+    font-size: $font-size-sm;
+    transition: background 0.2s ease;
+
+    &:hover {
+      background-color: $color-bg-light;
+    }
+  }
+}
+
+.wrapper {
+  display: inline-block;
+  cursor: pointer;
+}
+
+
+// src\components\CreateEvent\CreateEvent.module.scss
+@use "../../styles/colors" as *;
+@use "../../styles/variables" as *;
+@use "../../styles/typography" as *;
+@use "../../styles/mixins" as mixins;
+
+
+
+
+// src\components\EditEvent\EditEvent.module.scss
+@use "../../styles/colors" as *;
+@use "../../styles/variables" as *;
+@use "../../styles/typography" as *;
+@use "../../styles/mixins" as mixins;
+
+
+
+
+// src\components\EditProfileCard\EditProfileCard.module.scss
+@use "../../styles/colors" as *;
+@use "../../styles/variables" as *;
+@use "../../styles/typography" as *;
+@use "../../styles/mixins" as mixins;
+
+.editProfileCard {
+  max-width: 500px;
+  margin: 10px auto;
+  padding: $space-xl;
+  background-color: $color-white;
+  border-radius: 1rem;
+  box-shadow: $shadow-md;
+  > *:first-child {
+    text-align: center;
+  }
+}
+
+
+// src\components\EventCard\EventCard.module.scss
+@use "../../styles/colors" as *;
+@use "../../styles/variables" as *;
+@use "../../styles/typography" as *;
+@use "../../styles/mixins" as mixins;
+
+.card {
+  width: 100%; // toto už máš, je to správne!
+  padding: $space-md;
+  border-radius: 8px;
+  background: white;
+  box-shadow: $shadow-sm;
+  display: flex;
+  flex-direction: column;
+}
+
+.title {
+  text-transform: uppercase;
+  font-weight: bold;
+  font-size: $font-size-md;
+  color: $color-text;
+}
+
+.capacity {
+  font-weight: 500;
+  font-size: $font-size-sm;
+  color: $color-text;
+  display: flex;
+  align-items: center;
+}
+
+.infoRow {
+  font-size: 0.92rem;
+  color: $color-text;
+}
+
+
+// src\components\EventDaySelector\EventDaySelector.module.scss
+@use "../../styles/colors" as *;
+@use "../../styles/variables" as *;
+@use "../../styles/typography" as *;
+@use "../../styles/mixins" as mixins;
+
+.container {
+  margin-top: $space-xl;
+  margin-bottom: $space-xl;
+  padding: $space-xl;
+  border-radius: 12px;
+  background-color: $color-white;
+  box-shadow: $shadow-sm;
+}
+
+.title {
+  font-size: $font-size-lg;
+  font-weight: 600;
+  margin-bottom: $space-lg;
+}
+
+.tableWrapper {
+  margin-top: $space-md;
+  border-radius: 8px;
+  overflow: hidden;
+
+  :global(.table) {
+    margin-bottom: 0;
+  }
+
+  :global(thead) {
+    background-color: $color-bg-light;
+
+    th {
+      border-bottom: 2px solid $color-border;
+      font-weight: 600;
+      text-align: center;
+    }
+  }
+
+  :global(tbody) {
+    td {
+      vertical-align: middle;
+      text-align: center;
+
+      &:first-child {
+        text-align: left;
+      }
+
+      .users {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.25rem;
+        font-weight: 500;
+      }
+    }
+
+    tr {
+      transition: background-color 0.2s;
+
+      &:hover {
+        background-color: $color-surface;
+      }
+    }
+  }
+}
+
+.limitInfo {
+  font-size: $font-size-sm;
+  color: $color-text-muted;
+  margin-top: $space-md;
+
+  strong {
+    color: $color-text;
+  }
+}
+
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: $space-lg;
+}
+
+
+// src\components\EventForm\EventForm.module.scss
+@use "../../styles/colors" as *;
+@use "../../styles/variables" as *;
+@use "../../styles/typography" as *;
+@use "../../styles/mixins" as mixins;
+
+.eventForm {
+  background-color: $color-white;
+  border: 1px solid $color-border;
+  border-radius: $card-radius;
+  padding: $space-xl;
+  max-width: 40rem;
+  margin: 10px auto;
+  box-shadow: $shadow-lg;
+}
+
+.heading {
+  text-align: center;
+  color: $color-text;
+  margin-bottom: $space-lg;
+}
+
+
+// src\components\Footer\Footer.module.scss
+@use "../../styles/colors" as *;
+@use "../../styles/variables" as *;
+@use "../../styles/typography" as *;
+@use "../../styles/mixins" as mixins;
+
+.footer {
+  background-color: $color-bg-light;
+  border-top: 1px solid $color-border;
+  padding: 10px 0;
+  text-align: center;
+  font-size: $font-size-sm;
+  color: $color-text;
+  width: 100vw !important;
+  margin: 0px 0px;
+
+  @media (max-width: 767px) {
+    font-size: $font-size-xs;
+    padding: 8px 0;
+    margin-bottom: 55px;
+  }
+}
+
+
+// src\components\Header\Header.module.scss
+@use "../../styles/colors" as *;
+@use "../../styles/variables" as *;
+@use "../../styles/typography" as *;
+@use "../../styles/mixins" as mixins;
+
+.header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 56px;
+  background-color: white;
+  border-bottom: 1px solid $color-border;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 1rem;
+
+  // Mobilná verzia pre šírky *menšie ako 768px*
+  @media (max-width: 767px) {
+    height: 48px;
+  }
+}
+
+.content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 1rem;
+  width: 100%;
+  max-width: 1600px;
+}
+
+.logo {
+  font-weight: bold;
+  font-size: $font-size-md;
+  color: $color-text;
+}
+
+// Skryť pravý panel len na mobiloch
+.right {
+  @media (max-width: 767px) {
+    display: none;
+  }
+}
+
+// Desktop štýly od 768px a vyššie
+@media (min-width: 767px) {
+  .header {
+    height: 56px;
+  }
+
+  .logo {
+    font-size: $font-size-lg;
+  }
+}
+
+.minimal {
+  border-bottom: none;
+  box-shadow: none;
+  justify-content: center;
+
+  .content {
+    justify-content: center;
+  }
+
+  .right {
+    display: none;
+  }
+}
+
+
+// src\components\ImageUploader\ImageUploader.module.scss
+@use "../../styles/colors" as *;
+@use "../../styles/variables" as *;
+@use "../../styles/typography" as *;
+@use "../../styles/mixins" as mixins;
+
+.uploader {
+  margin-bottom: $space-md;
+}
+
+.previewWrapper {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.preview {
+  position: relative;
+  width: 100px;
+  height: 100px;
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 8px;
+    border: 1px solid $color-border;
+  }
+
+  button {
+    position: absolute;
+    top: -6px;
+    right: -6px;
+    background: $color-danger;
+    border: none;
+    color: white;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    font-size: 12px;
+    cursor: pointer;
+  }
+}
+
+.uploadBox {
+  width: 100px;
+  height: 100px;
+  border: 2px dashed #aaa;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 2rem;
+  color: $color-text-muted;
+}
+
+
+// src\components\JoinRoomButton\JoinRoomButton.module.scss
+@use "../../styles/colors" as *;
+@use "../../styles/variables" as *;
+@use "../../styles/typography" as *;
+@use "../../styles/mixins" as mixins;
+
+.chatButton {
+  background-color: $color-surface;
+  color: $color-text;
+  padding: 6px 12px;
+  border: 1px solid $color-border-muted;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: $font-size-sm;
+  font-weight: 500;
+  transition: background-color 0.2s;
+
+  &:hover {
+    background-color: $color-border-muted;
+  }
+}
+
+
+// src\components\LoginForm\LoginForm.module.scss
+@use "../../styles/colors" as *;
+@use "../../styles/variables" as *;
+@use "../../styles/typography" as *;
+@use "../../styles/mixins" as mixins;
+
+.footer {
+  text-align: center;
+  margin-top: $space-md;
+}
+
+.link {
+  color: $color-primary;
+  text-decoration: none;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+
+// src\components\MiniChatList\MiniChatList.module.scss
+@use "../../styles/colors" as *;
+@use "../../styles/variables" as *;
+@use "../../styles/typography" as *;
+@use "../../styles/mixins" as mixins;
+
+.chatList {
+  gap: 0.5rem;
+  flex: 1;
+  overflow-y: auto;
+  min-height: 0;
+  height: 100%;
+  position: sticky;
+  top: 0;
+  @media (max-width: 767px) {
+    margin: 25px 0;
+  }
+}
+
+.chatItemWrapper {
+  background-color: $color-white;
+  border: 1px solid $color-border;
+  border-radius: 8px;
+  overflow: hidden;
+  transition: box-shadow 0.2s;
+  min-height: 85px; // napríklad
+  padding: $space-sm; // aby obsah nebol úplne nalepený
+
+  &:hover {
+    box-shadow: $shadow-md;
+    cursor: pointer;
+  }
+}
+// .chatItemWrapper div {
+//   min-width: 158px;
+// }
+
+
+// src\components\MobileNav\MobileNav.module.scss
+@use "../../styles/colors" as *;
+@use "../../styles/variables" as *;
+@use "../../styles/typography" as *;
+@use "../../styles/mixins" as mixins;
+
+.mobileNav {
+  display: none;
+
+  @media (max-width: 767px) {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 56px;
+    background-color: white;
+    border-top: 1px solid $color-border;
+    z-index: 999;
+  }
+}
+
+.navIcon {
+  color: $color-text;
+  font-size: $font-size-xl;
+  text-decoration: none;
+
+  &.active {
+    color: $color-primary;
+  }
+}
+
+.active {
+  color: $color-primary;
+}
+
+.createButton {
+  width: 45px;
+  height: 45px;
+  background-color: $color-primary-hover;
+  color: white;
+  border-radius: 50%;
+  border: none;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 32px;
+  cursor: pointer;
+  box-shadow: $shadow-lg;
+  transition: background-color 0.3s, transform 0.2s;
+
+  &:hover {
+    background-color: $color-primary-hover;
+    transform: scale(1.05);
+  }
+}
+
+.chatButtonNotification {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 8px;
+  height: 8px;
+  background-color: red;
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+
+// src\components\ModeratorSelector\ModeratorSelector.module.scss
+@use "../../styles/colors" as *;
+@use "../../styles/variables" as *;
+@use "../../styles/typography" as *;
+@use "../../styles/mixins" as mixins;
+
+.container {
+  position: relative;
+  min-width: 350px;
+  min-height: 50px;
+}
+
+.searchContainer {
+  position: relative;
+}
+
+.searchInput {
+  width: 100%;
+  padding: $space-sm;
+  border: 1px solid $color-border;
+  border-radius: 6px;
+
+  &:focus {
+    outline: none;
+    border-color: $color-primary-hover;
+    box-shadow: $shadow-focus;
+  }
+}
+
+.results {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 100%;
+  max-height: 200px;
+  overflow-y: auto;
+  background-color: white;
+  border: 1px solid $color-border-muted;
+  border-radius: 6px;
+  z-index: 10;
+  box-shadow: $shadow-lg;
+  margin-top: 4px;
+  padding: 0px;
+
+  .resultItem {
+    padding: $space-sm;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    width: 100%;
+
+    &:hover {
+      background-color: $color-bg-light;
+    }
+  }
+}
+
+.avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-right: 8px;
+}
+
+.avatarSmall {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  margin-right: 6px;
+  object-fit: cover;
+}
+
+.selectedTable {
+  width: 100%;
+  border-collapse: collapse;
+
+  th,
+  td {
+    padding: $space-sm;
+    text-align: center;
+    border: 1px solid $color-border-muted;
+  }
+}
+
+.removeBtn {
+  background: none;
+  border: none;
+  color: red;
+  font-size: $font-size-md;
+  cursor: pointer;
+  transition: 0.2s;
+
+  &:hover {
+    transform: scale(1.2);
+  }
+}
+
+.tableScrollWrapper {
+  max-height: 300px; // nastav podľa potreby
+  overflow-y: auto;
+
+  margin-top: $space-md;
+}
+
+
+// src\components\Popup\Popup.module.scss
+@use "../../styles/colors" as *;
+@use "../../styles/variables" as *;
+@use "../../styles/typography" as *;
+@use "../../styles/mixins" as mixins;
+
+@keyframes popupFadeIn {
+  0% {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.popup {
+  background-color: $color-white;
+  border-radius: 12px;
+  padding: $space-md;
+  position: relative;
+  max-width: 95vw;
+  box-shadow: $shadow-xl;
+  z-index: 1000;
+
+  // >>> Pridávame animáciu tu
+  animation: popupFadeIn 0.3s ease-out;
+}
+
+.closeButton {
+  position: absolute;
+  top: -10px;
+  right: -10px;
+  width: 32px;
+  height: 32px;
+  background-color: $color-bg-light;
+  border: none;
+  border-radius: 50%;
+  color: $color-text;
+  font-size: 18px;
+  font-weight: bold;
+  cursor: pointer;
+  box-shadow: $shadow-md;
+  transition: all 0.2s ease;
+  z-index: 1000;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+
+  &:hover {
+    background-color: #e0e0e0;
+    transform: scale(1.05);
+  }
+
+  &:focus {
+    outline: none;
+    box-shadow: $shadow-focus;
+  }
+}
+
+
+// src\components\RegisterForm\RegisterForm.module.scss
+@use "../../styles/colors" as *;
+@use "../../styles/variables" as *;
+@use "../../styles/typography" as *;
+@use "../../styles/mixins" as mixins;
+
+.text-center {
+  text-align: center;
+}
+
+
+// src\components\Toast\Toast.module.scss
+@use "../../styles/colors" as *;
+@use "../../styles/variables" as *;
+@use "../../styles/typography" as *;
+@use "../../styles/mixins" as mixins;
+
+.toast {
+  position: fixed;
+  top: 1rem;
+  right: 1rem;
+  z-index: 50;
+  padding: 1rem 1.5rem;
+  border-radius: 1rem;
+  box-shadow: $shadow-lg;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: $font-size-base;
+  max-width: 300px;
+  margin-top: 3rem;
+  color: white;
+  background-color: $color-danger; // predvolená farba na error (ak by náhodou)
+
+  &.error {
+    background-color: $color-danger; // červená na chyby
+  }
+
+  &.success {
+    background-color: $color-success; // zelená na úspech (tailwind zelená)
+  }
+}
+
+.closeButton {
+  background: transparent;
+  border: none;
+  color: white;
+  cursor: pointer;
+  padding: 0;
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  &:hover {
+    opacity: 0.8;
+  }
+}
+
+
+// src\components\UserAvatar\UserAvatar.module.scss
+@use "../../styles/colors" as *;
+@use "../../styles/variables" as *;
+@use "../../styles/typography" as *;
+@use "../../styles/mixins" as mixins;
+
+.avatarWrapper {
+  position: relative;
+  display: inline-block;
+}
+
+.avatar {
+  border-radius: 50%;
+  object-fit: cover;
+
+  display: block;
+  transition: box-shadow 0.2s ease-in-out;
+
+  &.normal {
+    width: 48px;
+    height: 48px;
+  }
+
+  &.mini {
+    width: 24px;
+    height: 24px;
+  }
+}
+
+
+// src\components\UserAvatarList\UserAvatarList.module.scss
+@use "../../styles/colors" as *;
+@use "../../styles/variables" as *;
+@use "../../styles/typography" as *;
+@use "../../styles/mixins" as mixins;
+
+.avatarList {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+}
+
+.extra {
+  background-color: #eee;
+  color: $color-text;
+  font-size: 0.7rem;
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  border: 1px solid $color-border;
+
+  &:hover {
+    background-color: $color-border-muted;
+  }
+}
+
+
+// src\components\UserList\UserList.module.scss
+@use "../../styles/colors" as *;
+@use "../../styles/variables" as *;
+@use "../../styles/typography" as *;
+@use "../../styles/mixins" as mixins;
+
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  height: 80vh;
+  overflow-y: auto;
+  width: 100%;
+}
+
+.header {
+  text-align: center;
+  font-size: $font-size-lg;
+  font-weight: 600;
+  color: $color-text;
+  margin-bottom: $space-md;
+}
+
+.userItem {
+  padding: 0.5rem 0.75rem;
+  background-color: $color-bg-light;
+  border-radius: 8px;
+
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  gap: 1rem;
+  cursor: pointer;
+  width: 100%;
+}
+
+.name {
+  font-weight: 500;
+  font-size: $font-size-base;
+}
+
+.email {
+  font-size: $font-size-xs;
+  color: $color-text-muted;
+}
+
+
+// src\components\UserMenu\UserMenu.module.scss
+@use "../../styles/colors" as *;
+@use "../../styles/variables" as *;
+@use "../../styles/typography" as *;
+@use "../../styles/mixins" as mixins;
+
+.userMenu {
+  position: relative;
+}
+
+.avatarWrapper {
+  width: 40px;
+  height: 40px;
+  background-color: $color-bg-light;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+
+  &:hover {
+    background-color: $color-surface;
+  }
+}
+
+.dropdownMenu {
+  min-width: 160px;
+  font-size: $font-size-sm;
+}
+
+.logoutItem {
+  font-weight: 500 !important;
+  color: $color-danger !important;
+
+  &:hover {
+    background-color: $color-danger-light !important;
+    color: $color-danger !important;
+  }
+}
+
+
+// src\components\ViewProfileCard\ViewProfileCard.module.scss
+@use "../../styles/colors" as *;
+@use "../../styles/variables" as *;
+@use "../../styles/typography" as *;
+@use "../../styles/mixins" as mixins;
+
+.card {
+  max-width: 400px;
+  margin: 2rem auto;
+  padding: $space-xl;
+  border-radius: 16px;
+  box-shadow: $shadow-lg;
+  background-color: $color-white;
+  text-align: center;
+}
+
+.avatar {
+  width: 120px;
+  height: 120px;
+  object-fit: cover;
+  border-radius: 50%;
+  margin: 0 auto 1rem; // 🔧 zarovná obrázok horizontálne na stred
+  border: 2px solid $color-border-muted;
+  display: block; // 🔧 zabezpečí, že margin auto funguje
+}
+
+.name {
+  font-size: 1.4rem;
+  font-weight: 600;
+  margin-bottom: $space-xs;
+}
+
+.email {
+  font-size: $font-size-sm;
+  color: $color-text-muted;
+  margin-bottom: $space-md;
+}
+
+.interests {
+  margin-top: $space-md;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.5rem;
+
+  span {
+    background-color: $color-bg-light;
+    border-radius: 12px;
+    padding: 0.3rem 0.7rem;
+    font-size: 0.8rem;
+  }
+}
+
+.editButton {
+  margin-top: $space-lg;
+  width: 100%;
+}
+
+.interests {
+  margin-top: $space-md;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.5rem;
+
+  span {
+    background-color: $color-bg-light;
+    border-radius: 12px;
+    padding: 0.3rem 0.7rem;
+    font-size: 0.8rem;
+    color: $color-text;
+  }
+}
+
+
+// src\layouts\AuthLayout.module.scss
+@use "../styles/colors" as *;
+@use "../styles/variables" as *;
+@use "../styles/typography" as *;
+@use "../styles/mixins.scss" as mixins;
+
+.authLayout {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: $space-xl;
+  padding-top: 56px;
+  min-height: 100vh;
+  background-color: $color-bg-light;
+
+  @media (min-width: 767px) {
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    gap: 4rem;
+  }
+}
+
+.authLeft {
+  text-align: center;
+  margin-bottom: $space-xl;
+  padding: 0 1rem;
+
+  @media (min-width: 768px) {
+    max-width: 350px;
+    text-align: right;
+  }
+}
+
+.heading {
+  font-size: 2rem;
+  color: $color-primary;
+  margin-bottom: $space-sm;
+}
+
+.subtitle {
+  font-size: $font-size-base;
+  color: $color-text;
+}
+
+.authBox {
+  width: 100%;
+  max-width: 420px;
+  padding: $space-xl;
+  @include mixins.card;
+
+  @media (min-width: 768px) {
+    flex-shrink: 0;
+  }
+}
+
+
+// src\layouts\MainLayout.module.scss
+@use "../styles/colors" as *;
+@use "../styles/variables" as *;
+@use "../styles/typography" as *;
+@use "../styles/mixins" as mixins;
+
+.layout {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.mainContent {
+  flex-grow: 1;
+  padding-top: 56px;
+  padding-bottom: 0;
+
+  @media (min-width: 1600px) {
+    width: 1600px;
+
+    margin: auto;
+  }
+}
+
+.mainLayout {
+}
+
+.leftPanel,
+.rightPanel {
+  padding: $space-md;
+}
+
+.centered {
+  margin: 0 auto;
+}
+
+.mobileNav {
+  display: none;
+
+  @media (max-width: 767px) {
+    display: flex;
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    background: white;
+    border-top: 1px solid $color-border-muted;
+    z-index: 1000;
+  }
+}
+
+.rightPanel {
+  height: 80vh;
+  position: sticky;
+  top: 60px;
+}
+
+.chatButton {
+  @include mixins.function-button;
+}
+.popupContentWrapper {
+  height: 90vh !important;
+}
+
+.chatButtonWrapper {
+  position: fixed;
+  bottom: 100px;
+  right: 24px;
+}
+
+.chatButtonNotification {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 8px;
+  height: 8px;
+  background-color: red;
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+
+// src\layouts\MobileLayout.module.scss
+@use "../styles/colors" as *;
+@use "../styles/variables" as *;
+@use "../styles/typography" as *;
+@use "../styles/mixins" as mixins;
+
+.layout {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.mainContent {
+  flex-grow: 1;
+  padding-top: 56px; // výška headeru na desktop
+  padding-bottom: 0; // predvolené - na desktope žiadny mobile navbar
+
+  margin: 0 15px;
+
+  @media (max-width: 767px) {
+    padding-top: 30px; // výška headeru na mobile (ak je iná)
+    padding-bottom: 56px; // výška mobile navbaru
+  }
+}
+
+.mainLayout {
+  padding-top: $space-xl;
+}
+
+.leftPanel,
+.centerPanel,
+.rightPanel {
+}
+
+.centered {
+  margin: 0 auto;
+}
+
+.mobileNav {
+  display: none;
+
+  @media (max-width: 767px) {
+    display: flex;
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    background: white;
+    border-top: 1px solid $color-border-muted;
+    z-index: 1000;
+  }
+}
+
+
+// src\modules\Calendar\Calendar.module.scss
+@use "../../styles/colors" as *;
+@use "../../styles/variables" as *;
+@use "../../styles/typography" as *;
+@use "../../styles/mixins" as mixins;
+
+.calendar {
+  background-color: $color-white;
+  margin-bottom: 20px;
+  max-width: 100%;
+  overflow: hidden;
+}
+
+.title {
+  font-weight: bold;
+  color: $color-primary;
+  margin-bottom: 15px;
+  text-align: center;
+  font-size: $font-size-md;
+
+  @media (max-width: 768px) {
+    font-size: $font-size-base;
+  }
+}
+
+.grid {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.weekdays,
+.dates {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 0.25rem;
+  text-align: center;
+}
+
+.day {
+  font-weight: 500;
+  color: $color-text;
+  font-size: $font-size-xs;
+  white-space: nowrap;
+}
+
+.date {
+  aspect-ratio: 1 / 1;
+  background-color: $color-bg-light;
+  border-radius: $card-radius;
+  font-size: clamp(0.7rem, 1.5vw, 0.95rem);
+  color: $color-text;
+  @include mixins.flex-center;
+  transition: background-color 0.2s ease;
+
+  &:hover {
+    background-color: $color-primary;
+    color: $color-white;
+    cursor: pointer;
+  }
+}
+
+
+// src\modules\ChatWindow\ChatWindow.module.scss
+@use "../../styles/colors" as *;
+@use "../../styles/variables" as *;
+@use "../../styles/typography" as *;
+@use "../../styles/mixins" as mixins;
+
+.chatWindow {
+  background-color: $color-white;
+}
+
+.title {
+  font-weight: bold;
+  color: $color-primary;
+  margin-bottom: 10px;
+  text-align: center;
+  font-size: $font-size-md;
+}
+
+.chat {
+  padding: 0.75rem 0.5rem;
+  border-bottom: 1px solid $color-border;
+  @include mixins.hover-light;
+}
+
+.name {
+  font-weight: 500;
+  font-size: $font-size-sm;
+  color: $color-text;
+}
+
+.message {
+  font-size: $font-size-xs;
+  color: $color-primary-light;
+}
+
+.time {
+  text-align: right;
+  font-size: $font-size-xs;
+  margin-top: $space-xs;
+}
+
+
+// src\modules\EventDetail\EventDetail.module.scss
+@use "../../styles/colors" as *;
+@use "../../styles/variables" as *;
+@use "../../styles/typography" as *;
+@use "../../styles/mixins" as mixins;
+
+.eventDetails {
+  max-height: 90vh;
+  overflow-y: auto; // 👈 LEN zvislý scroll
+  overflow-x: hidden; // 👈 žiadny horizontálny scroll
+  overflow: auto;
+  min-width: 320px;
+  max-width: 720px;
+}
+
+.infoContainer {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 0.5rem; /* alebo iná hodnota podľa potreby */
+  width: 100%;
+  @media (max-width: 321px) {
+    flex-flow: column;
+    gap: 0rem;
+  }
+}
+
+.topContainer {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
+  width: 100%;
+  @media (max-width: 321px) {
+    flex-direction: column;
+    width: 250px;
+    align-items: start;
+    margin-bottom: 10px;
+    div {
+      margin: 0px !important;
+    }
+  }
+}
+
+.bottomContainer {
+  @media (max-width: 321px) {
+    width: 250px;
+    flex-flow: column;
+    gap: 0rem;
+    div {
+      flex-flow: column !important;
+      gap: 0px;
+      margin-top: 0px;
+    }
+  }
+}
+
+.header {
+  justify-content: space-between;
+  align-items: center;
+  height: 15vh;
+  max-height: 200px;
+  width: 100%;
+  position: relative;
+  display: flex;
+  align-items: bottom;
+  flex-direction: column-reverse;
+  border-radius: 2px;
+  overflow: hidden; // 👈 zabráni vytláčaniu
+}
+
+.mainImage {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: 1;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+.title {
+  color: black;
+  font-size: 2rem; // trošku menšie
+  font-weight: bold;
+  z-index: 2;
+
+  padding: 1px 0px;
+  max-width: 20rem;
+  max-width: 90%;
+}
+
+.title:first-letter {
+  text-transform: capitalize;
+}
+
+.organizatorName {
+  font-weight: 600;
+  font-size: $font-size-md;
+}
+.organizatorTag {
+  font-weight: 600;
+  font-size: 0.8rem;
+  color: $color-text;
+}
+
+.details {
+  font-size: $font-size-sm;
+  line-height: 1.6;
+  color: $color-text;
+  margin-bottom: $space-md;
+}
+
+.gallery {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin: 1rem 0;
+  justify-content: start;
+  overflow: hidden;
+}
+
+.galleryImageWrapper {
+  position: relative;
+  display: flex;
+  width: 50px;
+  height: 50px;
+  overflow: hidden;
+  border-radius: 8px;
+  box-shadow: $shadow-sm;
+}
+
+.galleryImage {
+  width: 50px;
+  height: 50px;
+  object-fit: cover;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+
+  &:hover {
+    transform: scale(1.5);
+  }
+}
+
+.copyButton {
+  background: none;
+  border: none;
+  font-size: $font-size-md;
+  cursor: pointer;
+  padding: $space-xs;
+  border-radius: 50%;
+  transition: background 0.2s;
+
+  &:hover {
+    background-color: $color-bg-light;
+  }
+}
+
+.redItem {
+  color: $color-danger; // Bootstrap "danger" červená, môžeš dať aj inú
+  font-weight: 500;
+
+  &:hover,
+  &:focus {
+    background-color: rgba(220, 53, 69, 0.1); // jemné červené pozadie pri hover
+    color: $color-danger;
+  }
+}
+
+
+// src\modules\Recommendations\ActivityCard.module.scss
+@use "../../styles/colors" as *;
+@use "../../styles/variables" as *;
+@use "../../styles/typography" as *;
+@use "../../styles/mixins" as mixins;
+
+.card {
+  border: 1px solid $color-border;
+  border-radius: $card-radius;
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.title {
+  font-weight: 600;
+  color: $color-primary;
+}
+
+.datetime {
+  font-size: $font-size-xs;
+  color: $color-primary-light;
+}
+
+.location {
+  font-size: $font-size-sm;
+  font-weight: 500;
+  color: $color-primary;
+  margin: 0.5rem 0;
+}
+
+.description {
+  font-size: $font-size-sm;
+  color: $color-text;
+}
+
+.button {
+  margin-top: 10px;
+}
+
+
+// src\modules\Recommendations\Recommendations.module.scss
+@use "../../styles/colors" as *;
+@use "../../styles/variables" as *;
+@use "../../styles/typography" as *;
+@use "../../styles/mixins" as mixins;
+
+.recommendations {
+  width: 100%;
+  padding: 1rem 0rem;
+}
+
+.mobileFiltersToggle {
+  display: none;
+  margin-bottom: 3px;
+  position: sticky;
+  top: 48px;
+
+  z-index: 100;
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  background-color: rgba(255, 255, 255, 0.6);
+  transition: backdrop-filter 0.3s ease, background-color 0.3s ease;
+
+  @media (max-width: 767px) {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+}
+.searchButton {
+  margin: 5px;
+}
+
+.mainContent {
+  display: flex;
+  gap: 1rem;
+  width: 100%;
+
+  @media (max-width: 767px) {
+    flex-direction: column;
+  }
+}
+
+.sidebar {
+  width: 300px;
+  flex-shrink: 0;
+  position: sticky;
+  top: 70px;
+  align-self: flex-start;
+  background: $color-bg-light;
+  padding: 0.8rem;
+  height: fit-content;
+  overflow: auto;
+  border-radius: 0.5rem;
+  max-height: calc(100vh - 100px);
+
+  @media (max-width: 767px) {
+    position: fixed;
+    top: 88px;
+    left: 50%;
+    transform: translate(-50%);
+
+    width: 95vw;
+    height: 80vh;
+    z-index: 10;
+  }
+}
+.sidebar.compact input,
+.sidebar.compact select {
+  padding: 0.25rem 0.5rem;
+  font-size: $font-size-sm;
+}
+
+.filters {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.filterRow {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.daysGrid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0.4rem;
+  margin-top: $space-sm;
+}
+
+.list {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  width: 100%;
+}
+
+.submitWrapper {
+  position: sticky;
+  bottom: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding-top: 10px;
+
+  background: $color-bg-light;
+  width: 100%;
+  height: 100%;
+}
+
+.filterSection {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-bottom: $space-md;
+}
+
+.dateTimeGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.5rem;
+  width: 100%; // veľmi dôležité
+}
+
+.dateTimeGrid > div {
+  width: 100%; // natiahnuť inputy aby sa prispôsobili rodičovi
+  min-width: 0; // odstrániť defaultné minimum čo robí problém
+}
+
+
+// src\modules\UpcomingEvents\UpcomingEvents.module.scss
+@use "../../styles/colors" as *;
+@use "../../styles/variables" as *;
+@use "../../styles/typography" as *;
+@use "../../styles/mixins" as mixins;
+
+.upcomingEvents {
+  background-color: $color-white;
+}
+
+.title {
+  font-weight: bold;
+  color: $color-primary;
+  margin-bottom: 10px;
+  text-align: center;
+  font-size: $font-size-md;
+}
+
+.item {
+  font-size: $font-size-sm;
+  color: $color-text;
+  padding: $space-sm;
+  @include mixins.hover-light;
+}
+
+.eventTitle {
+  font-weight: 500;
+}
+
+.eventDatetime {
+  font-size: 0.8rem;
+  color: $color-primary-light;
+}
+
+
+// src\pages\EmailInfoPage\EmailInfoPage.module.scss
+@use "../../styles/colors" as *;
+@use "../../styles/variables" as *;
+@use "../../styles/typography" as *;
+@use "../../styles/mixins" as mixins;
+
+
+
+
+// src\pages\EmailReverifyPage\EmailReverifyPage.module.scss
+@use "../../styles/colors" as *;
+@use "../../styles/variables" as *;
+@use "../../styles/typography" as *;
+@use "../../styles/mixins" as mixins;
+
+.wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background-color: $color-bg-light;
+  padding: $space-xl;
+  text-align: center;
+  width: 100vw;
+  margin: 0;
+  overflow-x: hidden;
+}
+
+.box {
+  @include mixins.card;
+  max-width: 420px;
+  width: 100%;
+}
+
+
+// src\pages\Home\Home.module.scss
+@use "../../styles/colors" as *;
+@use "../../styles/variables" as *;
+@use "../../styles/typography" as *;
+@use "../../styles/mixins" as mixins;
+
+.createButton {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  @include mixins.function-button;
+
+  @media (min-width: 1600px) {
+    right: calc(50% - 780px); // Príklad: zarovnaj 720px od stredu
+  }
+}
+
+
+// src\pages\ProfilePage\ProfilePage.module.scss
+@use "../../styles/colors" as *;
+@use "../../styles/variables" as *;
+@use "../../styles/typography" as *;
+@use "../../styles/mixins" as mixins;
+
+.profilePage {
+  padding: $space-md;
+}
+
+.heading {
+  color: $color-primary;
+  margin-bottom: $space-md;
+}
+
+.info {
+  font-size: $font-size-sm;
+
+  p {
+    margin-bottom: $space-sm;
+
+    strong {
+      color: $color-text;
+    }
+  }
+}
+
+
+// src\pages\RegisterPage\RegisterPage.module.scss
+@use "../../styles/colors" as *;
+@use "../../styles/variables" as *;
+@use "../../styles/typography" as *;
+@use "../../styles/mixins" as mixins;
+
+.heading {
+  color: $color-primary;
+  text-align: center;
+}
+
+
+// src\pages\VerifyEmailPage\VerifyEmailPage.module.scss
+@use "../../styles/colors" as *;
+@use "../../styles/variables" as *;
+@use "../../styles/typography" as *;
+@use "../../styles/mixins" as mixins;
+
+
+
+
+// src\routes\AppRouter.module.scss
