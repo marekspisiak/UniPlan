@@ -11,10 +11,11 @@
   z-index: 1000;
   display: flex;
   align-items: center;
+  justify-content: center;
   padding: 0 1rem;
 
   // Mobilná verzia pre šírky *menšie ako 768px*
-  @media (max-width: 768px) {
+  @media (max-width: 767px) {
     height: 48px;
   }
 }
@@ -25,6 +26,7 @@
   align-items: center;
   padding: 0 1rem;
   width: 100%;
+  max-width: 1600px;
 }
 
 .logo {
@@ -35,13 +37,13 @@
 
 // Skryť pravý panel len na mobiloch
 .right {
-  @media (max-width: 768px) {
+  @media (max-width: 767px) {
     display: none;
   }
 }
 
 // Desktop štýly od 768px a vyššie
-@media (min-width: 769px) {
+@media (min-width: 767px) {
   .header {
     height: 56px;
   }

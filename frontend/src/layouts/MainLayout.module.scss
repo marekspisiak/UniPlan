@@ -10,6 +10,12 @@
   flex-grow: 1;
   padding-top: 56px;
   padding-bottom: 0;
+
+  @media (min-width: 1600px) {
+    width: 1600px;
+
+    margin: auto;
+  }
 }
 
 .mainLayout {
@@ -27,7 +33,7 @@
 .mobileNav {
   display: none;
 
-  @media (max-width: 768px) {
+  @media (max-width: 767px) {
     display: flex;
     position: fixed;
     bottom: 0;

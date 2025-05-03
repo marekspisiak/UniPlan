@@ -30,7 +30,7 @@
 @mixin panel-padding {
   padding: 15px;
 
-  @media (max-width: 768px) {
+  @media (max-width: 767px) {
     padding: 10px 0;
   }
 }
@@ -58,7 +58,7 @@
   cursor: pointer;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
   transition: background-color 0.3s, transform 0.2s;
-
+  z-index: 100;
   &:hover {
     background-color: #0056b3;
     transform: scale(1.05);

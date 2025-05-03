@@ -189,14 +189,6 @@ const EventForm = ({
           errors={errors}
         />
 
-        <ValidatedField
-          type="number"
-          name="capacity"
-          label="Kapacita"
-          register={register}
-          errors={errors}
-        />
-
         {/* Popis */}
         <ValidatedField
           rows={3}

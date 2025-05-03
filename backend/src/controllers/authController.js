@@ -45,7 +45,9 @@ export const registerUser = async (req, res) => {
     const defaultImagePath = path.join("assets", "default-avatar.png");
     fs.copyFileSync(defaultImagePath, destinationPath);
 
-    await createAndSendVerificationEmail(user.id, user.email);
+    //tu pokracujem
+
+    await createAndSendVerificationEmail(prisma, user.id, user.email);
 
     res.status(201).json({
       message:

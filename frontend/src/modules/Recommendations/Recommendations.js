@@ -35,7 +35,7 @@ const Recommendations = () => {
   const onlyRecommendedRef = useRef(null);
   const sidebarRef = useRef(null);
   // const isTablet = useMediaQuery({ maxWidth: 768 });
-  const isMobile = useMediaQuery({ maxWidth: 768 });
+  const isMobile = useMediaQuery({ maxWidth: 767 });
 
   const userInterestsIds = user.interests.map((interest) => interest.id);
   const {
@@ -256,6 +256,7 @@ const Recommendations = () => {
                   label="Dátum do"
                   register={register}
                   errors={errors}
+                  x
                   min={startDate}
                   clean
                 />

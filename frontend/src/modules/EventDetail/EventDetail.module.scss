@@ -3,9 +3,51 @@
   overflow-y: auto; // 👈 LEN zvislý scroll
   overflow-x: hidden; // 👈 žiadny horizontálny scroll
   overflow: auto;
-  min-width: 50vw;
-  max-width: 720px;
   min-width: 320px;
+  max-width: 720px;
+}
+
+.infoContainer {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 0.5rem; /* alebo iná hodnota podľa potreby */
+  width: 100%;
+  @media (max-width: 321px) {
+    flex-flow: column;
+    gap: 0rem;
+  }
+}
+
+.topContainer {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  align-items: center;
+  width: 100%;
+  @media (max-width: 321px) {
+    flex-direction: column;
+    width: 250px;
+    align-items: start;
+    margin-bottom: 10px;
+    div {
+      margin: 0px !important;
+    }
+  }
+}
+
+.bottomContainer {
+  @media (max-width: 321px) {
+    width: 250px;
+    flex-flow: column;
+    gap: 0rem;
+    div {
+      flex-flow: column !important;
+      gap: 0px;
+      margin-top: 0px;
+    }
+  }
 }
 
 .header {

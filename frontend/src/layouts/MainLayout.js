@@ -9,11 +9,14 @@ import { MessageSquare, MessageCircle } from "lucide-react";
 import { useState } from "react";
 import Popup from "../components/Popup/Popup";
 import { useRoomContext } from "../context/RoomContext";
+import { useLocation } from "react-router-dom";
 
 const MainLayout = ({ left, center, right }) => {
   const tablet = useMediaQuery({ maxWidth: 1122 });
   const [isOpen, setIsOpen] = useState(false);
   const { newMessage } = useRoomContext();
+  const { pathname } = useLocation();
+  const isHomeOrEvent = pathname === "/" || pathname.startsWith("/event");
 
   return (
     <div className={styles.layout}>
@@ -46,7 +49,7 @@ const MainLayout = ({ left, center, right }) => {
         <Popup isOpen={isOpen} onClose={() => setIsOpen(false)}>
           <div className={styles.popupContentWrapper}>{right}</div>
         </Popup>
-        {tablet && (
+        {tablet && isHomeOrEvent && (
           <div className={styles.chatButtonWrapper}>
             <div style={{ position: "relative" }}>
               {newMessage && <span className={styles.chatButtonNotification} />}

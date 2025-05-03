@@ -11,7 +11,7 @@
 
   margin: 0 15px;
 
-  @media (max-width: 768px) {
+  @media (max-width: 767px) {
     padding-top: 30px; // výška headeru na mobile (ak je iná)
     padding-bottom: 56px; // výška mobile navbaru
   }
@@ -33,7 +33,7 @@
 .mobileNav {
   display: none;
 
-  @media (max-width: 768px) {
+  @media (max-width: 767px) {
     display: flex;
     position: fixed;
     bottom: 0;

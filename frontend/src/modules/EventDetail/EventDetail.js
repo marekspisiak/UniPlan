@@ -332,7 +332,7 @@ const EventDetail = ({ eventId: parEventId, date: parDate, refetch }) => {
           </PhotoProvider>
         </div>
       )}
-      <div className="d-flex flex-row justify-content-start align-items-center w-100">
+      <div className={styles.topContainer}>
         <div className={styles.title}>{title}</div>
         <OverlayTrigger
           placement="top"
@@ -391,7 +391,7 @@ const EventDetail = ({ eventId: parEventId, date: parDate, refetch }) => {
 
       <CategoryList categories={event.categories} />
 
-      <div className="d-flex fex-row justify-content-between align-items-start gap-2 w-100">
+      <div className={styles.infoContainer}>
         <div className={styles.details}>
           <div>
             <b>📍</b> {location}
@@ -452,94 +452,97 @@ const EventDetail = ({ eventId: parEventId, date: parDate, refetch }) => {
           </div>
         </PhotoProvider>
       )}
-
-      <div className="d-flex flex-row justify-content-between align-items-center gap-2 w-100 mt-3">
-        <div className="d-flex flex-column align-items-start gap-1">
-          {participants.length > 0 && (
-            <>
-              <UserAvatarList
-                users={participants}
-                size="mini"
-                interactive
-                maxVisible={4}
-                header="Účastníci"
-              />
-              <div className={styles.organizatorTag}>Účastníci</div>
-            </>
-          )}
-        </div>
-
-        <div className="d-flex flex-row justify-content-end align-items-center gap-3 w-100">
-          <div className={styles.spotsLeft}>
-            {capacity ? `Ostáva: ${available}` : ""}
+      <div className={styles.bottomContainer}>
+        <div className="d-flex flex-row justify-content-between align-items-center gap-2 w-100 mt-3">
+          <div className="d-flex flex-column align-items-start gap-1">
+            {participants.length > 0 && (
+              <>
+                <UserAvatarList
+                  users={participants}
+                  size="mini"
+                  interactive
+                  maxVisible={4}
+                  header="Účastníci"
+                />
+                <div className={styles.organizatorTag}>Účastníci</div>
+              </>
+            )}
           </div>
 
-          {canJoin ? (
-            isParticipant ? (
-              <LoadingButton
-                variant="danger"
-                onClick={() => postAction("leave")}
-                loading={loading}
-              >
-                Odhlásiť sa
-              </LoadingButton>
-            ) : available > 0 || !capacity ? (
-              <LoadingButton
-                variant="primary"
-                onClick={() => postAction("join")}
-                loading={loading}
-              >
-                Prihlásiť sa
-              </LoadingButton>
-            ) : (
-              <Button variant="secondary" disabled>
-                Už nie sú voľné miesta
-              </Button>
-            )
-          ) : (
-            <Button variant="secondary" disabled>
-              Za {daysUntilJoin} dní
-            </Button>
-          )}
-        </div>
-      </div>
-
-      <div className="d-flex flex-row justify-content-between align-items-center gap-2 w-100 mt-3">
-        <div className="d-flex flex-column align-items-start gap-1">
-          {subscribers.length > 0 && (
-            <>
-              <UserAvatarList
-                users={subscribers}
-                size="mini"
-                interactive
-                maxVisible={4}
-                header="Pravidelní uchádzači"
-              />
-              <div className={styles.organizatorTag}>Pravidelní uchádzači</div>
-            </>
-          )}
-        </div>
-        {allowRecurringAttendance && (
           <div className="d-flex flex-row justify-content-end align-items-center gap-3 w-100">
             <div className={styles.spotsLeft}>
-              {capacity
-                ? `Ostáva: ${Math.max(capacity - event.attendants.length, 0)}`
-                : ""}
+              {capacity ? `Ostáva: ${available}` : ""}
             </div>
-            {console.log(subscribers.length, capacity)}
 
-            <div className="d-flex gap-1">
-              <Button variant="secondary" onClick={() => setShowPopup(true)}>
-                Manažovať pravidelné
+            {canJoin ? (
+              isParticipant ? (
+                <LoadingButton
+                  variant="danger"
+                  onClick={() => postAction("leave")}
+                  loading={loading}
+                >
+                  Odhlásiť sa
+                </LoadingButton>
+              ) : available > 0 || !capacity ? (
+                <LoadingButton
+                  variant="primary"
+                  onClick={() => postAction("join")}
+                  loading={loading}
+                >
+                  Prihlásiť sa
+                </LoadingButton>
+              ) : (
+                <Button variant="secondary" disabled>
+                  Už nie sú voľné miesta
+                </Button>
+              )
+            ) : (
+              <Button variant="secondary" disabled>
+                Za {daysUntilJoin} dní
               </Button>
-
-              {room && <JoinRoomButton room={{ ...room, title }} />}
-            </div>
+            )}
           </div>
-        )}
-        {room && !allowRecurringAttendance && (
-          <JoinRoomButton room={{ ...room, title }} />
-        )}
+        </div>
+
+        <div className="d-flex flex-row justify-content-between align-items-center gap-2 w-100 mt-3">
+          <div className="d-flex flex-column align-items-start gap-1">
+            {subscribers.length > 0 && (
+              <>
+                <UserAvatarList
+                  users={subscribers}
+                  size="mini"
+                  interactive
+                  maxVisible={4}
+                  header="Pravidelní uchádzači"
+                />
+                <div className={styles.organizatorTag}>
+                  Pravidelní uchádzači
+                </div>
+              </>
+            )}
+          </div>
+          {allowRecurringAttendance && (
+            <div className="d-flex flex-row justify-content-end align-items-center gap-3 w-100">
+              <div className={styles.spotsLeft}>
+                {capacity
+                  ? `Ostáva: ${Math.max(capacity - event.attendants.length, 0)}`
+                  : ""}
+              </div>
+              {console.log(subscribers.length, capacity)}
+
+              <div className="d-flex gap-1">
+                <Button variant="secondary" onClick={() => setShowPopup(true)}>
+                  Manažovať pravidelné
+                </Button>
+
+                {room && <JoinRoomButton room={{ ...room, title }} />}
+              </div>
+            </div>
+          )}
+          {room && !allowRecurringAttendance && (
+            <JoinRoomButton room={{ ...room, title }} />
+          )}
+        </div>
       </div>
     </div>
   );
