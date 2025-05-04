@@ -15,6 +15,7 @@ import http from "http"; // <- pridáš toto (core Node modul)
 import { getCurrentUTCDate } from "./utils/dateHelpers.js";
 import "./cron/dailyTasks.js";
 import { responseLogger } from "./utils/logs.js";
+import { AppError } from "./utils/AppError.js";
 
 dotenv.config();
 const app = express();
@@ -33,6 +34,15 @@ const __dirname = path.dirname(__filename);
 
 app.use("/uploads", express.static(path.join(__dirname, "../uploads")));
 app.use("/assets", express.static(path.join(__dirname, "../assets")));
+
+app.use((err, req, res, next) => {
+  if (err instanceof AppError) {
+    return res.status(err.statusCode).json({ message: err.message });
+  }
+
+  console.error("Neošetrená chyba:", err);
+  return res.status(500).json({ message: "Vnútorná chyba servera." });
+});
 
 const PORT = process.env.PORT || 5000;
 

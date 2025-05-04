@@ -25,9 +25,8 @@ import {
   eventCreateSchema,
   eventEditSchema,
 } from "../validation/eventSchemas.js";
-import { AppError } from "../utils/AppError.js";
 
-export const createEvent = async (req, res, next) => {
+export const createEvent = async (req, res) => {
   try {
     const parsed = eventCreateSchema.safeParse(req.body);
 
@@ -175,6 +174,8 @@ export const createEvent = async (req, res, next) => {
       }
     } catch {}
   } catch (err) {
+    const message = err.message || "Nepodarilo sa vytvoriť event.";
+    const status = err.statusCode || 500;
     console.warn(err);
 
     // ⚠️ Automatické mazanie súborov z req.files (v prípade chyby)
@@ -198,7 +199,7 @@ export const createEvent = async (req, res, next) => {
       }
     } catch {}
 
-    next();
+    return res.status(status).json(message);
   }
 };
 
@@ -379,7 +380,7 @@ const doesEventMatchFilters = (event, filters) => {
 
 // GET /api/events
 
-export const getAllEvents = async (req, res, next) => {
+export const getAllEvents = async (req, res) => {
   try {
     const {
       search,
@@ -813,7 +814,7 @@ function canJoinEventToday(targetDate, joinDaysBeforeStart) {
   return today >= joinStartDate && today <= startDate;
 }
 
-export const joinEvent = async (req, res, next) => {
+export const joinEvent = async (req, res) => {
   try {
     const { id } = req.params; // event id
     const { date } = req.query;
@@ -910,7 +911,7 @@ export const joinEvent = async (req, res, next) => {
   }
 };
 
-export const getEventByDate = async (req, res, next) => {
+export const getEventByDate = async (req, res) => {
   try {
     const { id } = req.params;
     const targetDate = normalizeDate(req.query.date);
@@ -1026,7 +1027,7 @@ export const getEventByDate = async (req, res, next) => {
   }
 };
 
-export const leaveEvent = async (req, res, next) => {
+export const leaveEvent = async (req, res) => {
   try {
     const { id } = req.params;
     const userId = req.user.id;
@@ -1085,7 +1086,7 @@ export const leaveEvent = async (req, res, next) => {
   }
 };
 
-export const attendEventDays = async (req, res, next) => {
+export const attendEventDays = async (req, res) => {
   try {
     const userId = req.user.id;
     const eventId = parseInt(req.params.id);
@@ -1430,7 +1431,7 @@ async function updateEventImages({
   return deletedImageUrls;
 }
 
-export const editEvent = async (req, res, next) => {
+export const editEvent = async (req, res) => {
   try {
     // validateEventData(req.body, true);
     const parsed = eventEditSchema.safeParse(req.body);
@@ -1780,6 +1781,8 @@ export const editEvent = async (req, res, next) => {
       }
     } catch {}
   } catch (err) {
+    const message = err.message || "Nepodarilo sa editovať event";
+    const status = err.statusCode || 500;
     console.warn(err);
 
     // ⚠️ Automatické mazanie súborov z req.files (v prípade chyby)
@@ -1803,11 +1806,11 @@ export const editEvent = async (req, res, next) => {
       }
     } catch {}
 
-    next(err);
+    return res.status(status).json(message);
   }
 };
 
-export const updateEventModerators = async (req, res, next) => {
+export const updateEventModerators = async (req, res) => {
   const moderators = req.body;
   const { id: eventIdParam } = req.params;
   const eventId = parseInt(eventIdParam, 10);
@@ -1879,12 +1882,14 @@ export const updateEventModerators = async (req, res, next) => {
 
     res.status(200).json({ message: "Updated" });
   } catch (error) {
+    const message = err.message || "Nepodarilo sa updatovať  moderatorov.";
+    const status = err.statusCode || 500;
     console.warn(err);
     next(error);
   }
 };
 
-export const deleteRecurringAttendance = async (req, res, next) => {
+export const deleteRecurringAttendance = async (req, res) => {
   const { id: eventIdParam, eventDayId, userId } = req.params;
 
   if (!eventDayId || !userId) {
@@ -1912,7 +1917,7 @@ export const deleteRecurringAttendance = async (req, res, next) => {
   }
 };
 
-export const deleteSingleAttendance = async (req, res, next) => {
+export const deleteSingleAttendance = async (req, res) => {
   const { id: eventIdParam, occurrenceId, userId } = req.params;
 
   if (!occurrenceId || !userId) {
@@ -1940,7 +1945,7 @@ export const deleteSingleAttendance = async (req, res, next) => {
   }
 };
 
-export const deleteEvent = async (req, res, next) => {
+export const deleteEvent = async (req, res) => {
   const { id } = req.params;
 
   try {

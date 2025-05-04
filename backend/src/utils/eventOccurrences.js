@@ -99,18 +99,14 @@ export async function createOccurrence(
         },
         select: { id: true },
       });
-
       if (users.length > 0) {
-        await tx.eventOccurrence.update({
+        const updatedOccurrence = await tx.eventOccurrence.update({
           where: { id: newOccurrence.id },
           data: {
             participants: {
               connect: users.map((user) => ({ id: user.id })),
             },
           },
-        });
-        const updatedOccurrence = await tx.eventOccurrence.findUnique({
-          where: { id: newOccurrence.id },
           include: {
             participants: {
               select: { id: true },
