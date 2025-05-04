@@ -19,9 +19,6 @@ const ChatPage = () => {
           }}
         />
       </MobileLayout>
-      <ChatModal show={!!openedRoomId} onHide={closeChat}>
-        {openedRoomId && <Chat roomId={openedRoomId} userId={user.id} />}
-      </ChatModal>
     </>
   );
 };

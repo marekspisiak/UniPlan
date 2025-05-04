@@ -128,13 +128,23 @@ const Chat = ({ roomId }) => {
     <div className={styles.chatPage}>
       {/* Horný panel */}
       <div className={styles.header}>
-        <Button variant="outline-danger" size="sm" onClick={handleLeaveRoom}>
+        <Button
+          className={styles.leaveButton}
+          variant="outline-danger"
+          size="sm"
+          onClick={handleLeaveRoom}
+        >
           Opustiť miestnosť
         </Button>
 
-        {roomTitle && <div className={styles.roomTitle}>{roomTitle}</div>}
+        <div className={styles.roomTitle}>{roomTitle}</div>
 
-        <Button variant="light" size="sm" onClick={closeChat}>
+        <Button
+          className={styles.closeButton}
+          variant="light"
+          size="sm"
+          onClick={closeChat}
+        >
           <X size={20} />
         </Button>
       </div>

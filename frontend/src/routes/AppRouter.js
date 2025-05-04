@@ -22,12 +22,14 @@ import EditEventPage from "../pages/EditEventPage/EditEventPage.js";
 import EditableEventRoute from "./EditableEventRoute.js";
 import ScrollToTop from "../components/ScrollToTop.js";
 import styles from "./AppRouter.module.scss";
+import ChatModal from "../components/ChatModal/ChatModal.js";
 
 const AppRouter = () => {
   return (
     <div className={styles.contentWrapper}>
       <Router>
         <ScrollToTop />
+        <ChatModal />
         <Routes>
           <Route path="/verify-email" element={<VerifyEmailPage />} />
           <Route path="/email-info" element={<EmailInfoPage />} />

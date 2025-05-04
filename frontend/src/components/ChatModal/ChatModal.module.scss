@@ -4,8 +4,8 @@
 @use "../../styles/mixins" as mixins;
 
 .modalDialog {
-  height: 100%;
-  width: 100%;
+  height: calc(100% - 42px - 46px);
+
   margin: auto;
   display: flex;
   align-items: center;
@@ -26,6 +26,5 @@
   display: flex;
   flex-direction: column;
   overflow: hidden;
-  padding: 0;
+  padding: 0px !important;
 }
-

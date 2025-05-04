@@ -1,19 +1,25 @@
+// ChatModal.jsx
 import { Modal } from "react-bootstrap";
-import "bootstrap/dist/css/bootstrap.min.css";
-import styles from "./ChatModal.module.scss"; // <<< Importuj SCSS modul
+import { useChatModal } from "../../context/ChatModalContext";
+import styles from "./ChatModal.module.scss";
+import Chat from "../Chat/Chat";
 
-const ChatModal = ({ show, onHide, children }) => {
+const ChatModal = () => {
+  const { openedRoomId, closeChat } = useChatModal();
+
   return (
     <Modal
-      show={show}
-      onHide={onHide}
+      show={!!openedRoomId}
+      onHide={closeChat}
       centered
       size="lg"
       keyboard={true}
-      dialogClassName={styles.modalDialog} // Použi modul
-      contentClassName={styles.modalContent} // ✨ aj content
+      dialogClassName={styles.modalDialog}
+      contentClassName={styles.modalContent}
     >
-      <Modal.Body className={styles.modalBody}>{children}</Modal.Body>
+      <Modal.Body className={styles.modalBody}>
+        {openedRoomId && <Chat roomId={openedRoomId} />}
+      </Modal.Body>
     </Modal>
   );
 };

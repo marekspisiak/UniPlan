@@ -22,7 +22,7 @@
   &:focus {
     outline: none;
     border-color: $color-primary-hover;
-    box-shadow: 0 0 5px rgba(0, 123, 255, 0.4);
+    box-shadow: $shadow-focus;
   }
 }
 
@@ -37,7 +37,7 @@
   border: 1px solid $color-border-muted;
   border-radius: 6px;
   z-index: 10;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  box-shadow: $shadow-lg;
   margin-top: 4px;
   padding: 0px;
 

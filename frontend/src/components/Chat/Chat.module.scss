@@ -14,21 +14,48 @@
 
 .header {
   position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: $space-sm;
+  height: 60px; // výška hlavičky, môžeš prispôsobiť
   background-color: white;
   border-bottom: 1px solid $color-border;
-  z-index: 10;
+  padding: 0 1rem;
+  @media (max-width: 418px) {
+    height: 90px;
+  }
+}
+
+.leaveButton {
+  position: absolute;
+  top: 50%;
+  left: 1rem;
+  transform: translateY(-50%);
+  @media (max-width: 418px) {
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, calc(-50% + 15px));
+  }
 }
 
 .roomTitle {
   position: absolute;
+  top: 50%;
   left: 50%;
-  transform: translateX(-50%);
+  transform: translate(-50%, -50%);
   font-weight: bold;
   font-size: $font-size-md;
+  white-space: nowrap;
+  text-align: center;
+  @media (max-width: 418px) {
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, calc(-50% - 20px));
+  }
+}
+
+.closeButton {
+  position: absolute;
+  top: 50%;
+  right: 1rem;
+  transform: translateY(-50%);
 }
 
 .messages {
@@ -44,4 +71,3 @@
 }
 .messageList {
 }
-
