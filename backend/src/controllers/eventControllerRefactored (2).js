@@ -163,6 +163,7 @@ export const createEvent = async (req, res, next) => {
           }
         }
       }
+
       await createOccurrenceIfNeeded(tx, newEvent.id);
       res.status(201).json({ id: newEvent.id });
     });
@@ -748,7 +749,7 @@ export const getAllEvents = async (req, res, next) => {
     const message = err.message || "Nepodarilo sa načítať eventy";
     const status = err.statusCode || 500;
     console.warn(err);
-    return next(err);
+    next(err);
   }
 };
 
@@ -907,7 +908,7 @@ export const joinEvent = async (req, res, next) => {
     const message = err.message || "Nepodarilo sa prihlásiť na event";
     const status = err.statusCode || 500;
     console.warn(err);
-    return next(err);
+    next(err);
   }
 };
 
@@ -1023,7 +1024,7 @@ export const getEventByDate = async (req, res, next) => {
     const message = err.message || "Nepodarilo sa načítať event";
     const status = err.statusCode || 500;
     console.warn(err);
-    return next(err);
+    next(err);
   }
 };
 
@@ -1077,12 +1078,12 @@ export const leaveEvent = async (req, res, next) => {
       }
     });
 
-    return res.status(200).json({ message: "Úspešne odhlásený z eventu." });
+    throw new AppError("Úspešne odhlásený z eventu.", 200);
   } catch (err) {
     const message = err.message || "Nepodarilo sa odhlásiť z eventu.";
     const status = err.statusCode || 500;
     console.warn(err);
-    return next(err);
+    next(err);
   }
 };
 
@@ -1285,7 +1286,7 @@ export const attendEventDays = async (req, res, next) => {
     const message = err.message || "Nepodarilo sa prihlásiť opakované";
     const status = err.statusCode || 500;
     console.warn(err);
-    return next(err);
+    next(err);
   }
 };
 
@@ -1603,7 +1604,7 @@ export const editEvent = async (req, res, next) => {
         }
 
         // Vytvor nové occurrences podľa aktuálneho stavu
-        await createOccurrenceIfNeeded(tx, eventId);
+        await createOccurrenceIfNeeded(eventId);
 
         return res.json({ message: "Úspešne editované" });
       }
@@ -1804,7 +1805,7 @@ export const editEvent = async (req, res, next) => {
       }
     } catch {}
 
-    return next(err);
+    next(err);
   }
 };
 
@@ -1881,7 +1882,7 @@ export const updateEventModerators = async (req, res, next) => {
     res.status(200).json({ message: "Updated" });
   } catch (error) {
     console.warn(err);
-    return next(error);
+    next(error);
   }
 };
 
@@ -1910,7 +1911,7 @@ export const deleteRecurringAttendance = async (req, res, next) => {
     const message = err.message || "Nepodarilo sa odstrániť opakovanú účasť.";
     const status = err.statusCode || 500;
     console.warn(err);
-    return next(err);
+    next(err);
   }
 };
 
@@ -1937,7 +1938,7 @@ export const deleteSingleAttendance = async (req, res, next) => {
     const message = err.message || "Nepodarilo sa odstrániť účasť.";
     const status = err.statusCode || 500;
     console.warn(err);
-    return next(err);
+    next(err);
   }
 };
 
@@ -1962,11 +1963,11 @@ export const deleteEvent = async (req, res, next) => {
       where: { id: parseInt(id) },
     });
 
-    return res.status(200).json({ message: "Event bol úspešne vymazaný." });
+    throw new AppError("Event bol úspešne vymazaný.", 200);
   } catch (err) {
     const message = err.message || "Chyba pri mazaní eventu.";
     const status = err.statusCode || 500;
     console.warn(err);
-    return next(err);
+    next(err);
   }
 };
