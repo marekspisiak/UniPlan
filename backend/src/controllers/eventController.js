@@ -24,6 +24,8 @@ import { createRoom, joinRoom } from "../services/roomService.js";
 import {
   eventCreateSchema,
   eventEditSchema,
+  deleteSingleAttendanceParamsSchema,
+  deleteRecurringAttendanceParamsSchema,
 } from "../validation/eventSchemas.js";
 import { AppError } from "../utils/AppError.js";
 
@@ -1885,18 +1887,19 @@ export const updateEventModerators = async (req, res, next) => {
 };
 
 export const deleteRecurringAttendance = async (req, res, next) => {
-  const { id: eventIdParam, eventDayId, userId } = req.params;
-
-  if (!eventDayId || !userId) {
-    return res.status(400).json({ error: "Chýba ID dňa alebo ID používateľa" });
-  }
-
   try {
+    const parsed = deleteRecurringAttendanceParamsSchema.safeParse(req.params);
+    if (!parsed.success) {
+      throw new AppError("Neplatné parametre URL", 400, parsed.error.flatten());
+    }
+
+    const { eventDayId, userId } = parsed.data; // už sú to čísla
+
     await prisma.eventDay.update({
-      where: { id: parseInt(eventDayId) },
+      where: { id: eventDayId },
       data: {
         users: {
-          disconnect: { id: parseInt(userId) },
+          disconnect: { id: userId },
         },
       },
     });
@@ -1904,44 +1907,46 @@ export const deleteRecurringAttendance = async (req, res, next) => {
     res
       .status(200)
       .json({ message: "User removed from recurring attendance." });
-  } catch (error) {
-    const message = err.message || "Nepodarilo sa updatovať vymazat opakovane";
+  } catch (err) {
+    const message = err.message || "Nepodarilo sa odstrániť opakovanú účasť.";
     const status = err.statusCode || 500;
     console.warn(err);
-    next(error);
+    next(err);
   }
 };
 
 export const deleteSingleAttendance = async (req, res, next) => {
-  const { id: eventIdParam, occurrenceId, userId } = req.params;
-
-  if (!occurrenceId || !userId) {
-    return res
-      .status(400)
-      .json({ error: "Chýba ID výskytu alebo ID používateľa " });
-  }
-
   try {
+    const parsed = deleteSingleAttendanceParamsSchema.safeParse(req.params);
+    if (!parsed.success) {
+      throw new AppError("Neplatné parametre URL", 400, parsed.error.flatten());
+    }
+
+    const { occurrenceId, userId } = parsed.data; // už čísla
+
     await prisma.eventOccurrence.update({
-      where: { id: parseInt(occurrenceId) },
+      where: { id: occurrenceId },
       data: {
         participants: {
-          disconnect: { id: parseInt(userId) },
+          disconnect: { id: userId },
         },
       },
     });
 
     res.status(200).json({ message: "Používateľ odstránený z dochádzky" });
-  } catch (error) {
-    const message = err.message || "Nepodarilo sa updatovať vymazat.";
+  } catch (err) {
+    const message = err.message || "Nepodarilo sa odstrániť účasť.";
     const status = err.statusCode || 500;
     console.warn(err);
-    next(error);
+    next(err);
   }
 };
 
 export const deleteEvent = async (req, res, next) => {
   const { id } = req.params;
+  if (isNaN(parseInt(id))) {
+    return res.status(400).json({ message: "Neplatné ID eventu." });
+  }
 
   try {
     // 1. Skontrolujeme, či Event existuje

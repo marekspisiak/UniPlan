@@ -336,3 +336,21 @@ export const eventEditSchema = baseEventFormSchema
       }
     }
   });
+
+export const deleteSingleAttendanceParamsSchema = z.object({
+  id: z.preprocess((val) => parseInt(val), z.number().int().nonnegative()),
+  occurrenceId: z.preprocess(
+    (val) => parseInt(val),
+    z.number().int().nonnegative()
+  ),
+  userId: z.preprocess((val) => parseInt(val), z.number().int().nonnegative()),
+});
+
+export const deleteRecurringAttendanceParamsSchema = z.object({
+  id: z.preprocess((val) => parseInt(val), z.number().int().nonnegative()),
+  eventDayId: z.preprocess(
+    (val) => parseInt(val),
+    z.number().int().nonnegative()
+  ),
+  userId: z.preprocess((val) => parseInt(val), z.number().int().nonnegative()),
+});

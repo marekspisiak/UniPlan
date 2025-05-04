@@ -34,7 +34,12 @@ router.put(
   editEvent
 );
 
-router.delete("/:id", protectVerified, deleteEvent);
+router.delete(
+  "/:id",
+  protectPermission("isOrganizer"),
+  protectVerified,
+  deleteEvent
+);
 
 router.put(
   "/:id/edit-moderators",
