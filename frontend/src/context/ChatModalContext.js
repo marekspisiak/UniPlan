@@ -1,21 +1,28 @@
-// /context/ChatModalContext.js
 import { createContext, useContext, useState } from "react";
+import { useRoomContext } from "./RoomContext";
 
 const ChatModalContext = createContext();
 
 export const ChatModalProvider = ({ children }) => {
-  const [openedRoomId, setOpenedRoomId] = useState(null);
-  const [roomTitle, setRoomTitle] = useState(null);
+  const { getRoomDataById } = useRoomContext(); // tu sú napr. formattedRooms
+  const [roomId, setRoomId] = useState(null);
 
-  const openChat = (room) => {
-    setOpenedRoomId(room.id);
-    setRoomTitle(room.title);
+  const roomData = roomId ? getRoomDataById(roomId) : null;
+
+  const openChat = (roomOrId) => {
+    const id = typeof roomOrId === "object" ? roomOrId.id : roomOrId;
+    setRoomId(id);
   };
-  const closeChat = () => setOpenedRoomId(null);
+
+  const closeChat = () => setRoomId(null);
 
   return (
     <ChatModalContext.Provider
-      value={{ openedRoomId, roomTitle, openChat, closeChat }}
+      value={{
+        openChat,
+        closeChat,
+        roomData, // prístup ku všetkým dátam z kontextu RoomContext
+      }}
     >
       {children}
     </ChatModalContext.Provider>

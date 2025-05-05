@@ -32,7 +32,12 @@ import CategoryList from "../../components/CategoryList/CategoryList";
 import JoinRoomButton from "../../components/JoinRoomButton/JoinRoomButton";
 import LoadingButton from "../../components/LoadingButton/LoadingButton";
 
-const EventDetail = ({ eventId: parEventId, date: parDate, refetch }) => {
+const EventDetail = ({
+  eventId: parEventId,
+  date: parDate,
+  refetch,
+  close,
+}) => {
   let { eventId, date } = useParams();
   const { user } = useAuth();
   const [event, setEvent] = useState(null);
@@ -71,7 +76,7 @@ const EventDetail = ({ eventId: parEventId, date: parDate, refetch }) => {
       }
 
       setMessage("Event bol úspešne vymazaný.");
-      fetchEvent();
+      close();
       // napríklad refreshneš zoznam eventov alebo redirect
     } catch (error) {
       setError(error.message || "Chyba pri mazaní eventu.");
@@ -135,7 +140,7 @@ const EventDetail = ({ eventId: parEventId, date: parDate, refetch }) => {
       setEditModeratorsValue(
         newData.moderators.map((item) => ({
           ...item,
-          profileImageUrl: `/uploads/profile/user_${item.user.id}.png`,
+          profileImageUrl: item.user.profileImageUrl,
           firstName: item.user.firstName,
           lastName: item.user.lastName,
           email: item.user.emal,

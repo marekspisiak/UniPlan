@@ -8,6 +8,7 @@ const ModeratorSelector = ({ selected = [], onChange }) => {
   const [selectedDetails, setSelectedDetails] = useState(selected);
   const [showResults, setShowResults] = useState(false);
   const inputRef = useRef();
+  console.log(selected);
 
   useEffect(() => {
     const handleClickOutside = (e) => {
@@ -79,6 +80,7 @@ const ModeratorSelector = ({ selected = [], onChange }) => {
   };
 
   console.log(selected);
+  console.log(selectedDetails);
 
   return (
     <div className={styles.container}>
@@ -105,7 +107,7 @@ const ModeratorSelector = ({ selected = [], onChange }) => {
               >
                 <div className="d-flex align-items-center">
                   <img
-                    src={user.profileImageUrl}
+                    src={user.profileImageUrl || "/assets/default-avatar.png"}
                     alt="avatar"
                     className={styles.avatar}
                   />
@@ -141,7 +143,9 @@ const ModeratorSelector = ({ selected = [], onChange }) => {
                   <td>
                     <div className="d-flex align-items-center justify-contend-center">
                       <img
-                        src={user.profileImageUrl}
+                        src={
+                          user.profileImageUrl || "/assets/default-avatar.png"
+                        }
                         alt="avatar"
                         className={styles.avatarSmall}
                       />

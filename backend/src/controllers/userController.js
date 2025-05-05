@@ -52,7 +52,6 @@ export const updateProfile = async (req, res) => {
 
   let newImagePath = null;
   let oldImagePathToDelete = null;
-  console.log(req.body);
 
   try {
     const user = await prisma.user.findUnique({ where: { id: userId } });
@@ -120,7 +119,6 @@ export const updateProfile = async (req, res) => {
     });
 
     // 🗑️ Odstránenie starého obrázka, ak treba
-    console.log(oldImagePathToDelete);
     if (oldImagePathToDelete) {
       fs.unlink(oldImagePathToDelete).catch((err) => {
         console.warn("⚠️ Nepodarilo sa zmazať starý obrázok:", err.message);
@@ -129,7 +127,6 @@ export const updateProfile = async (req, res) => {
 
     return res.json({ message: "Profil bol aktualizovaný." });
   } catch (err) {
-    console.log(err);
     // Ak sa niečo pokazilo, odstráň nový nahratý obrázok
     if (req.file) {
       try {

@@ -236,6 +236,7 @@ const EventForm = ({
           <>
             <Form.Group className="mb-3">
               <Form.Check
+                id="repeat-event"
                 type="checkbox"
                 label="Opakovať event"
                 disabled={scope === "event"}
@@ -280,16 +281,22 @@ const EventForm = ({
                   <Form.Group key={week} className="mb-3">
                     <Form.Label>Dni v týždni – Týždeň {week + 1}</Form.Label>
                     <div className={styles.weekdayCheckboxes}>
-                      {daysFromAPI.map((day) => (
-                        <Form.Check
-                          key={day.id}
-                          inline
-                          label={day.name}
-                          type="checkbox"
-                          checked={repeatDays[week]?.includes(day.id) || false}
-                          onChange={() => handleRepeatDayToggle(week, day.id)}
-                        />
-                      ))}
+                      {daysFromAPI.map((day) => {
+                        const checkboxId = `repeat-week-${week}-day-${day.id}`;
+                        return (
+                          <Form.Check
+                            key={day.id}
+                            id={checkboxId}
+                            inline
+                            label={day.name}
+                            type="checkbox"
+                            checked={
+                              repeatDays[week]?.includes(day.id) || false
+                            }
+                            onChange={() => handleRepeatDayToggle(week, day.id)}
+                          />
+                        );
+                      })}
                     </div>
                   </Form.Group>
                 ))}

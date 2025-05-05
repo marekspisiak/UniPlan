@@ -55,6 +55,8 @@ const UserAvatar = ({
     return null;
   }
 
+  console.log(user);
+
   const avatarImg = (
     <img
       src={user.profileImageUrl || "/assets/default-avatar.png"}

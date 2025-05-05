@@ -11,9 +11,16 @@ const JoinRoomButton = ({ room }) => {
   const { openChat } = useChatModal();
   const { reloadRooms } = useRoomContext();
   const handleJoin = async () => {
-    joinRoom(room.id);
-    reloadRooms();
-    openChat(room);
+    try {
+      await joinRoom(room.id);
+
+      await reloadRooms();
+      console.log("zobrazujem spravy");
+      openChat(room);
+    } catch (err) {
+      console.error("Nepodarilo sa pripojiť do miestnosti:", err.message);
+      // Môžeš zobraziť toast / alert
+    }
   };
 
   return (

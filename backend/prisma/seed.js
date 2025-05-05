@@ -50,8 +50,6 @@ const seed = async () => {
     });
   }
 
-  console.log("✅ Všetky kategórie boli vložené");
-
   for (const day of days) {
     await prisma.day.upsert({
       where: { id: day.id },
@@ -59,8 +57,6 @@ const seed = async () => {
       create: day,
     });
   }
-
-  console.log("✅ Všetky dni v týždni boli vložené");
 
   process.exit();
 };

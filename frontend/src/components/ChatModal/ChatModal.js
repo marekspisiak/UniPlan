@@ -5,7 +5,9 @@ import styles from "./ChatModal.module.scss";
 import Chat from "../Chat/Chat";
 
 const ChatModal = () => {
-  const { openedRoomId, closeChat } = useChatModal();
+  const { roomData, closeChat } = useChatModal();
+  const openedRoomId = roomData?.id;
+  console.log(roomData);
 
   return (
     <Modal

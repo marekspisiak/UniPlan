@@ -45,6 +45,7 @@ const EventCard = ({ event, refetch }) => {
           eventId={id}
           date={date}
           refetch={refetch}
+          close={() => setIsOpen(false)}
         />
       </Popup>
 

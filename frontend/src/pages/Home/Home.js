@@ -24,7 +24,7 @@ const Home = () => {
   const { id: eventId } = useParams();
   const [isOpen, setIsOpen] = useState(true);
   const Navigate = useNavigate();
-  const { openedRoomId, openChat, closeChat } = useChatModal();
+  const { openChat } = useChatModal();
 
   const { user } = useAuth();
 

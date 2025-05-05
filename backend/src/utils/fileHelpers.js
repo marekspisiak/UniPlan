@@ -5,8 +5,6 @@ export function generateNewImageNames(files) {
   let newMainImage = undefined;
   const newGallery = [];
 
-  console.log(files);
-
   const timestamp = Date.now();
 
   if (files?.mainImage?.[0]) {
@@ -31,9 +29,6 @@ export function generateNewImageNames(files) {
  * @param {Array} newGallery - zoznam cieľových ciest pre galériu
  */
 export async function moveUploadedImages(files, newMainImage, newGallery) {
-  console.log(files);
-  console.log(newMainImage);
-  console.log(newGallery);
   const moves = [];
 
   if (files?.mainImage?.[0] && newMainImage) {
@@ -54,7 +49,6 @@ export async function moveUploadedImages(files, newMainImage, newGallery) {
 }
 
 export async function deleteFiles(filePaths) {
-  console.log(filePaths);
   if (!Array.isArray(filePaths)) return;
 
   for (const filePath of filePaths) {

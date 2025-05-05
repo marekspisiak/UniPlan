@@ -1,9 +1,23 @@
 import EventForm from "../../components/EventForm/EventForm";
 import { useState } from "react";
+import { useAuth } from "../../context/AuthContext";
+import { useChatRoom } from "../../hooks/useChatRoom";
+import { useRoomContext } from "../../context/RoomContext";
 
 const CreateEvent = () => {
   const [success, setSuccess] = useState(null);
   const [error, setError] = useState(null);
+  const { user } = useAuth();
+  const userId = user.id;
+  const { joinRoom } = useChatRoom(userId);
+  // const { openChat } = useChatModal();
+  const { reloadRooms } = useRoomContext();
+  const handleJoin = async (roomId) => {
+    return;
+    joinRoom(roomId);
+    reloadRooms();
+    // openChat(room);
+  };
 
   const handleCreateEvent = async (form) => {
     setError(null);
@@ -58,9 +72,12 @@ const CreateEvent = () => {
       });
 
       const data = await res.json();
+
       if (!res.ok) {
         throw new Error(data.message || "Nepodarilo sa vytvoriť akciu");
       }
+
+      handleJoin(data?.roomId);
 
       setSuccess("Akcia bola úspešne vytvorená.");
     } catch (err) {

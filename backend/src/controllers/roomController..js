@@ -12,13 +12,20 @@ import {
 export const getMyRooms = async (req, res) => {
   try {
     const userId = req.user.id; // musíš mať middleware ktorý nastaví req.user
-
     const rooms = await prisma.roomMember.findMany({
       where: { userId },
       include: {
         room: {
           include: {
-            event: true,
+            event: {
+              include: {
+                moderators: {
+                  select: {
+                    userId: true, // alebo include: { user: true } ak chceš celého používateľa
+                  },
+                },
+              },
+            },
             members: {
               where: {
                 userId: req.user.id,
@@ -31,7 +38,7 @@ export const getMyRooms = async (req, res) => {
               orderBy: {
                 createdAt: "desc",
               },
-              take: 1, // posledná správa
+              take: 1,
               select: {
                 text: true,
                 createdAt: true,
@@ -46,14 +53,19 @@ export const getMyRooms = async (req, res) => {
     let formattedRooms = rooms.map((member) => {
       const lastMessage = member.room.messages[0]?.text || null;
       const lastMessageTime = member.room.messages[0]?.createdAt || null;
+      const event = member.room.event;
+
+      const moderatorIds = event.moderators?.map((mod) => mod.userId) || [];
 
       return {
         id: member.roomId,
-        title: member.room.title || member.room.event.title,
-        mainImage: member.room.event.mainImage,
+        title: member.room.title || event.title,
+        mainImage: event.mainImage,
         lastSeen: member.room.members[0]?.lastSeen || null,
         lastMessage,
         lastMessageTime,
+        organizerId: event.organizerId,
+        moderatorIds, // pole čísel (napr. [12, 34])
       };
     });
 

@@ -28,9 +28,19 @@ export const useChatRoom = (userId) => {
   }, [connectedRoomId]);
 
   const joinRoom = (roomId) => {
-    if (userId && roomId) {
-      socket.emit("joinRoom", { roomId, userId });
-    }
+    return new Promise((resolve, reject) => {
+      if (!userId || !roomId) {
+        return reject(new Error("Missing userId or roomId"));
+      }
+
+      socket.emit("joinRoom", { roomId, userId }, (response) => {
+        if (response?.success) {
+          resolve(); // úspech
+        } else {
+          reject(new Error(response?.message || "Failed to join room"));
+        }
+      });
+    });
   };
 
   const leaveRoom = (roomId) => {

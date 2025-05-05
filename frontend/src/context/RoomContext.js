@@ -1,6 +1,5 @@
 import { createContext, useContext, useState, useEffect } from "react";
 import { useAuth } from "./AuthContext";
-import { useChatModal } from "../hooks/useChatModal";
 
 const RoomContext = createContext();
 
@@ -78,8 +77,9 @@ export const RoomProvider = ({ children }) => {
     };
   }, [user, socket]);
 
-  const reloadRooms = () => {
-    fetchRooms();
+  const reloadRooms = async () => {
+    await fetchRooms();
+    console.log("dokonceny fetch");
   };
 
   const markRoomAsOpened = async (roomId) => {
@@ -106,6 +106,13 @@ export const RoomProvider = ({ children }) => {
     }
   };
 
+  function getRoomDataById(id) {
+    console.log(id);
+    if (rooms) {
+      return rooms.find((room) => room.id === id) || null;
+    }
+  }
+
   return (
     <RoomContext.Provider
       value={{
@@ -113,6 +120,7 @@ export const RoomProvider = ({ children }) => {
         reloadRooms,
         markRoomAsOpened,
         newMessage,
+        getRoomDataById,
       }}
     >
       {children}

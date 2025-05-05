@@ -297,6 +297,7 @@ const Recommendations = () => {
                   ].map((day, index) => (
                     <Form.Check
                       key={index}
+                      id={`day-${index}`}
                       type="checkbox"
                       label={day}
                       checked={daysOfWeek.includes(index + 1)}

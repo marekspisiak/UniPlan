@@ -36,8 +36,8 @@ router.put(
 
 router.delete(
   "/:id",
-  protectPermission("isOrganizer"),
   protectVerified,
+  protectPermission("isOrganizer"),
   deleteEvent
 );
 

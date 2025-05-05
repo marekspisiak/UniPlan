@@ -15,9 +15,12 @@ export const ValidatedField = ({
 
   // Special case: checkbox / radio
   if (type === "checkbox" || type === "radio") {
+    const fieldId = props.id || `field-${name}`;
+
     return (
       <Form.Group className={clean ? "" : "mb-3"}>
         <Form.Check
+          id={fieldId}
           type={type}
           label={label}
           isInvalid={isInvalid}

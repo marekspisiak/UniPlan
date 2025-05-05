@@ -9,11 +9,11 @@ import { RoomProvider } from "./context/RoomContext";
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <AuthProvider>
-    <ChatModalProvider>
-      <RoomProvider>
+    <RoomProvider>
+      <ChatModalProvider>
         <App />
-      </RoomProvider>
-    </ChatModalProvider>
+      </ChatModalProvider>
+    </RoomProvider>
   </AuthProvider>
 );
 

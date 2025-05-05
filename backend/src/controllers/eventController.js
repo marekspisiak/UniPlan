@@ -34,7 +34,6 @@ export const createEvent = async (req, res, next) => {
     const parsed = eventCreateSchema.safeParse(req.body);
 
     if (!parsed.success) {
-      console.log(parsed.error);
       return res.status(400).json({
         message: "Neplatné údaje",
         errors: parsed.error.flatten(),
@@ -66,8 +65,6 @@ export const createEvent = async (req, res, next) => {
     } = data;
 
     const userId = req.user.id;
-
-    // console.log(req.body);
 
     let mainImageUrl = null;
     let galleryUrls = [];
@@ -164,7 +161,8 @@ export const createEvent = async (req, res, next) => {
         }
       }
       await createOccurrenceIfNeeded(tx, newEvent.id);
-      res.status(201).json({ id: newEvent.id });
+      console.log(newEvent);
+      res.status(201).json({ id: newEvent.id, roomId });
     });
 
     try {
@@ -712,7 +710,6 @@ export const getAllEvents = async (req, res, next) => {
       }
 
       if (isRecurring) {
-        console.log(event);
         const virtualEvents = getAllVirtualEvents(event, startDate, endDate);
 
         for (const event of virtualEvents) {
@@ -938,7 +935,13 @@ export const getEventByDate = async (req, res, next) => {
           },
         },
         organizer: {
-          select: { id: true, firstName: true, lastName: true, email: true },
+          select: {
+            id: true,
+            firstName: true,
+            lastName: true,
+            email: true,
+            profileImageUrl: true,
+          },
         },
         moderators: {
           include: {
@@ -1437,8 +1440,6 @@ export const editEvent = async (req, res, next) => {
     const parsed = eventEditSchema.safeParse(req.body);
 
     if (!parsed.success) {
-      console.log(parsed);
-      console.log(parsed.error.flatten()); // ← sem to patrí
       return res.status(400).json({
         message: "Neplatné dáta",
         errors: parsed.error.flatten(),
@@ -1470,8 +1471,6 @@ export const editEvent = async (req, res, next) => {
       mainImageChanged,
       previousMainImage,
     } = validated;
-
-    console.log(startDateTime);
 
     const eventId = parseInt(req.params.id);
     const userId = req.user.id;

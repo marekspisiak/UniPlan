@@ -33,7 +33,6 @@ export const createOccurrenceIfNeeded = async (tx, eventId) => {
       },
     },
   });
-  console.log(event);
 
   if (!event) return null;
 

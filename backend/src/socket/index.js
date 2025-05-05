@@ -16,7 +16,6 @@ export function setupSocket(server) {
     const token = socket.handshake.auth.token;
 
     if (!token) {
-      console.log("⚠️ Socket bez tokenu - odpojený");
       socket.disconnect();
       return;
     }
@@ -27,7 +26,6 @@ export function setupSocket(server) {
         chatHandlers(io, socket); // teraz až pustíš eventy
       }
     } catch (error) {
-      console.log("❌ Neplatný token:", error.message);
       socket.disconnect();
     }
   });

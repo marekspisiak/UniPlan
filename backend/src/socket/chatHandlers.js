@@ -2,11 +2,16 @@ import prisma from "../../prisma/client.js";
 import { joinRoom } from "../services/roomService.js";
 
 export function chatHandlers(io, socket) {
-  socket.on("joinRoom", async ({ roomId, userId }) => {
-    socket.join(`room-${roomId}`);
-    await await joinRoom(prisma, roomId, userId);
+  socket.on("joinRoom", async ({ roomId, userId }, callback) => {
+    try {
+      socket.join(`room-${roomId}`);
+      await joinRoom(prisma, roomId, userId); // napr. pridanie používateľa do DB
 
-    socket.emit("joinedRoom", { roomId });
+      callback({ success: true, roomId }); // ✔️ odpoveď pre klienta
+    } catch (err) {
+      console.error("Join room error:", err);
+      callback({ success: false, message: err.message }); // ❌ odpoveď pre klienta
+    }
   });
 
   socket.on("joinRooms", async ({ roomIds, userId }) => {

@@ -14,7 +14,7 @@ import { debounce } from "lodash";
 const Chat = ({ roomId }) => {
   const { user } = useAuth();
   const { leaveRoom } = useChatRoom(user.id);
-  const { closeChat, roomTitle } = useChatModal();
+  const { closeChat, roomData } = useChatModal();
   const { reloadRooms } = useRoomContext();
   const { messages, sendMessage, fetchOlderMessages, hasMore, loading } =
     useRoomMessages(roomId, user.id);
@@ -27,6 +27,7 @@ const Chat = ({ roomId }) => {
   const previousScrollTopRef = useRef(0);
 
   const isFirstLoad = useRef(true);
+  console.log(roomData);
 
   useEffect(() => {
     wasNearBottomRef.current = isNearBottom();
@@ -137,7 +138,7 @@ const Chat = ({ roomId }) => {
           Opustiť miestnosť
         </Button>
 
-        <div className={styles.roomTitle}>{roomTitle}</div>
+        <div className={styles.roomTitle}>{roomData.title}</div>
 
         <Button
           className={styles.closeButton}
@@ -166,19 +167,38 @@ const Chat = ({ roomId }) => {
         <MessageList
           className={styles.messageList}
           lockable
-          dataSource={messages.map((msg) => ({
-            position: msg.userId === user.id ? "right" : "left",
-            type: "text",
-            title:
-              msg.user?.email === user.email
-                ? "Ja"
-                : `${msg.user?.firstName} ${msg.user?.lastName}` ||
-                  "Používateľ",
-            text: msg.text,
-            date: new Date(msg.createdAt),
-            avatar: `${msg.user?.profileImageUrl}`,
-          }))}
+          dataSource={messages.map((msg) => {
+            const senderId = msg.userId;
+
+            // Určenie prefixu podľa roly
+            let prefix = "";
+            if (roomData.organizerId === senderId) {
+              prefix = "🟢 Organizátor – ";
+            } else if (roomData.moderatorIds.includes(senderId)) {
+              prefix = "🟡 Moderátor – ";
+            }
+
+            // Určenie zobrazovaného mena
+            let title = "Používateľ";
+            if (senderId === user.id) {
+              title = "Ja";
+            } else if (msg.user?.firstName || msg.user?.lastName) {
+              title = `${prefix}${msg.user.firstName || ""} ${
+                msg.user.lastName || ""
+              }`.trim();
+            }
+
+            return {
+              position: senderId === user.id ? "right" : "left",
+              type: "text",
+              title,
+              text: msg.text,
+              date: new Date(msg.createdAt),
+              avatar: msg.user?.profileImageUrl || undefined,
+            };
+          })}
         />
+
         <div ref={messagesEndRef} />
       </div>
 

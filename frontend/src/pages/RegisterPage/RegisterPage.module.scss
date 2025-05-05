@@ -4,7 +4,6 @@
 @use "../../styles/mixins" as mixins;
 
 .heading {
-  color: $color-primary;
+  color: $color-text;
   text-align: center;
 }
-

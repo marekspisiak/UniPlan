@@ -7,9 +7,8 @@ import { useAuth } from "../../context/AuthContext";
 import Chat from "../../components/Chat/Chat";
 
 const ChatPage = () => {
-  const { openedRoomId, openChat, closeChat } = useChatModal();
-  const { user } = useAuth();
-  console.log("renderujem sa");
+  const { openChat } = useChatModal();
+
   return (
     <>
       <MobileLayout>
