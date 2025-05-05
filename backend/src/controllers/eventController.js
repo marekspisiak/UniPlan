@@ -984,13 +984,16 @@ export const getEventByDate = async (req, res, next) => {
       },
     });
 
+    if (!event) {
+      throw new AppError("Event neexistuje", 404);
+    }
+
     const validDate = validateEventDate(event, targetDate);
 
     if (!validDate) {
-      throw new AppError("Event sa v daný deň nekoná.", 400);
+      throw new AppError("Event sa v daný deň nekoná.", 404);
     }
 
-    if (!event) throw new AppError("Event neexistuje.", 404);
     const eventDayId = getEventDayId(event, targetDate);
     let eventDay = null;
     if (eventDayId !== null) {
