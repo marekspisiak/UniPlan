@@ -45,27 +45,6 @@ export const getUserProfile = async (req, res) => {
   }
 };
 
-export const updateUserInterests = async (req, res) => {
-  const userId = req.user.id;
-  const categoryIds = toArray(req.body.categoryIds);
-
-  try {
-    await prisma.user.update({
-      where: { id: userId },
-      data: {
-        interests: {
-          set: [], // vymažeme všetky
-          connect: categoryIds.map((id) => ({ id })),
-        },
-      },
-    });
-
-    return res.json({ message: "Úspešne editované" });
-  } catch (err) {
-    res.status(500).json({ message: "Chyba pri aktualizácii záujmov." });
-  }
-};
-
 export const updateProfile = async (req, res) => {
   const userId = req.user.id;
   const { firstName, lastName, email, mainImageChanged } = req.body;

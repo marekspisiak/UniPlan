@@ -44,10 +44,11 @@
   width: 300px;
   flex-shrink: 0;
   position: sticky;
-  top: 70px;
+  top: 72px;
   align-self: flex-start;
   background: $color-bg-light;
   padding: 0.8rem;
+  padding-top: 0px;
   height: fit-content;
   overflow: auto;
   border-radius: 0.5rem;
@@ -128,4 +129,3 @@
   width: 100%; // natiahnuť inputy aby sa prispôsobili rodičovi
   min-width: 0; // odstrániť defaultné minimum čo robí problém
 }
-

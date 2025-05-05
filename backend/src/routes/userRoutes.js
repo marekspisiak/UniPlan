@@ -2,7 +2,6 @@ import express from "express";
 import { protect, protectVerified } from "../middleware/authMiddleware.js";
 import {
   getUserProfile,
-  updateUserInterests,
   updateProfile,
   searchUsers,
   changePassword,
@@ -34,7 +33,6 @@ router.get("/me", protect, (req, res) => {
   });
 });
 
-router.put("/me/interests", protectVerified, updateUserInterests);
 router.put("/profile", protectVerified, uploadUserPicture, updateProfile);
 router.get("/search", protectVerified, searchUsers);
 router.put("/change-password", protectVerified, changePassword);

@@ -26,7 +26,7 @@ const cronEvent = async () => {
   }
 };
 
-cron.schedule("* * * * *", cronEvent, {
+cron.schedule("0 0 * * *", cronEvent, {
   timezone: "Europe/Bratislava",
 });
 

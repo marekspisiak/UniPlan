@@ -2,6 +2,7 @@ import { Card, Button, Spinner, Alert, Container } from "react-bootstrap";
 import { useEffect, useState } from "react";
 import { useAuth } from "../../context/AuthContext";
 import styles from "./ViewProfileCard.module.scss";
+import CategoryList from "../CategoryList/CategoryList";
 
 const ProfileCard = ({ userId, setIsEditing, setIsChangingPassword }) => {
   const { user } = useAuth();
@@ -57,18 +58,7 @@ const ProfileCard = ({ userId, setIsEditing, setIsChangingPassword }) => {
       </div>
       <div className={styles.email}>{profile.email}</div>
 
-      {profile.interests?.length > 0 && (
-        <div className={styles.interests}>
-          {profile.interests.map((interest) => (
-            <span key={interest.id} className={styles.interest}>
-              {interest.icon && (
-                <span className={styles.icon}>{interest.icon}</span>
-              )}
-              {interest.label}
-            </span>
-          ))}
-        </div>
-      )}
+      <CategoryList center categories={profile?.interests} />
 
       {isOwner && (
         <>

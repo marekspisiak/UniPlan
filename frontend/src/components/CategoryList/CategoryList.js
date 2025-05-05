@@ -1,10 +1,14 @@
 import styles from "./CategoryList.module.scss";
 
-const CategoryList = ({ categories = [] }) => {
+const CategoryList = ({ categories = [], center = false }) => {
   if (categories.length === 0) return null;
 
   return (
-    <div className="d-flex justify-content-between align-items-center">
+    <div
+      className={`d-flex align-items-center ${
+        center ? "justify-content-center" : "justify-content-between"
+      }`}
+    >
       <div className={styles.tags}>
         {categories.map((cat) => (
           <span key={cat.id} className={styles.tag}>

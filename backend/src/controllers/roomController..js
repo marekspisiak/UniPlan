@@ -1,5 +1,14 @@
 import prisma from "../../prisma/client.js";
 
+import { AppError } from "../utils/AppError.js";
+
+import {
+  getRoomMessagesParamsSchema,
+  getRoomMessagesQuerySchema,
+  leaveRoomParamsSchema,
+  updateLastSeenParamsSchema,
+} from "../validation/roomSchemas.js";
+
 export const getMyRooms = async (req, res) => {
   try {
     const userId = req.user.id; // musíš mať middleware ktorý nastaví req.user
@@ -68,38 +77,55 @@ export const getMyRooms = async (req, res) => {
   }
 };
 
-export const leaveRoom = async (req, res) => {
+export const leaveRoom = async (req, res, next) => {
   try {
-    const { roomId } = req.params;
+    const parsed = leaveRoomParamsSchema.safeParse(req.params);
+    if (!parsed.success) {
+      throw new AppError(
+        "Neplatné ID miestnosti.",
+        400,
+        parsed.error.flatten()
+      );
+    }
+
+    const { roomId } = parsed.data;
     const userId = req.user.id;
 
     await prisma.roomMember.deleteMany({
       where: {
-        roomId: parseInt(roomId),
-        userId: userId,
+        roomId,
+        userId,
       },
     });
 
-    res.json({ message: "Opustil si miestnosť." });
+    return res.json({ message: "Opustil si miestnosť." });
   } catch (err) {
-    res.status(500).json({ message: "Nepodarilo sa opustiť miestnosť." });
+    console.warn(err);
+    return next(err); // správne odovzdanie chyby
   }
 };
 
-export const getRoomMessages = async (req, res) => {
-  const { roomId } = req.params;
-  const { before, limit } = req.query; // pridáme query parametre
-
+export const getRoomMessages = async (req, res, next) => {
   try {
-    const whereClause = {
-      roomId: parseInt(roomId),
-    };
+    const parsedParams = getRoomMessagesParamsSchema.safeParse(req.params);
+    const parsedQuery = getRoomMessagesQuerySchema.safeParse(req.query);
 
-    if (before) {
-      whereClause.createdAt = {
-        lt: new Date(before), // menej ako before timestamp
-      };
+    if (!parsedParams.success || !parsedQuery.success) {
+      throw new AppError("Neplatné parametre.", 400, {
+        ...(parsedParams.error && parsedParams.error.flatten()),
+        ...(parsedQuery.error && parsedQuery.error.flatten()),
+      });
     }
+
+    const { roomId } = parsedParams.data;
+    const { before, limit } = parsedQuery.data;
+
+    const whereClause = {
+      roomId,
+      ...(before && {
+        createdAt: { lt: new Date(before) },
+      }),
+    };
 
     const messages = await prisma.message.findMany({
       where: whereClause,
@@ -111,36 +137,46 @@ export const getRoomMessages = async (req, res) => {
             lastName: true,
             profileImageUrl: true,
           },
-        }, // aj údaje o používateľovi
+        },
       },
-      orderBy: { createdAt: "desc" }, // najnovšie prvé
-      take: parseInt(limit) || 20, // štandardne 20
+      orderBy: { createdAt: "desc" },
+      take: limit || 20,
     });
 
-    // frontend čaká správy od najstaršej po najnovšiu, preto ich prevrátime späť
-    res.json(messages.reverse());
+    return res.json(messages.reverse());
   } catch (err) {
-    res.status(500).json({ message: "Chyba pri načítaní správ." });
+    console.warn(err);
+    return next(err);
   }
 };
 
-export const updateLastSeen = async (req, res) => {
-  const { roomId } = req.params;
-  const userId = req.user.id;
-
+export const updateLastSeen = async (req, res, next) => {
   try {
+    const parsed = updateLastSeenParamsSchema.safeParse(req.params);
+    if (!parsed.success) {
+      throw new AppError(
+        "Neplatné ID miestnosti.",
+        400,
+        parsed.error.flatten()
+      );
+    }
+
+    const { roomId } = parsed.data;
+    const userId = req.user.id;
+
     await prisma.roomMember.updateMany({
       where: {
-        roomId: parseInt(roomId),
-        userId: userId,
+        roomId,
+        userId,
       },
       data: {
         lastSeen: new Date(),
       },
     });
 
-    res.status(200).json({ message: "Last seen updated" });
-  } catch (error) {
-    res.status(500).json({ message: "Chyba pri aktualizácii lastSeen" });
+    return res.status(200).json({ message: "Last seen updated" });
+  } catch (err) {
+    console.warn(err);
+    return next(err);
   }
 };
