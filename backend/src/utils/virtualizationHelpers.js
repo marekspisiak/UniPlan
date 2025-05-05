@@ -163,14 +163,18 @@ export const getAllVirtualDates = (event, now = getCurrentUTCDate()) => {
 
 export const getAllVirtualEvents = (
   event,
-  now = getCurrentUTCDate(),
+  startDate = getCurrentUTCDate(),
   end = null
 ) => {
   const dates = [];
   const existingDates = new Set(
     event.eventOccurrences.map((occ) => new Date(occ.date).toISOString())
   );
-  getVirtualDates(event, now, (candidate, dayId, day) => {
+
+  if (event.startDate > startDate) {
+    startDate = normalizeDate(event.startDate);
+  }
+  getVirtualDates(event, startDate, (candidate, dayId, day) => {
     if (!existingDates.has(candidate.toISOString())) {
       const changedEvent = applyChangesData(
         event,

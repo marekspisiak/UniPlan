@@ -256,9 +256,27 @@ const EventDetail = ({
     eventStartUTC.getTime() - event.joinDaysBeforeStart * 24 * 60 * 60 * 1000
   );
 
-  const canJoin = event.startDate
-    ? event.joinDaysBeforeStart == null || currentDate >= joinAvailableFrom
-    : false;
+  const now = getCurrentUTCDate(); // aktuálny UTC čas
+
+  // Vytvoríme plný UTC timestamp zo startDate a startTime
+  const [hours, minutes] = event.startTime.split(":").map(Number);
+  const eventStart = new Date(event.startDate);
+  eventStart.setUTCHours(hours, minutes, 0, 0); // nastavíme čas v UTC
+
+  let canJoin = false;
+
+  if (now >= eventStart) {
+    canJoin = false; // event už začal
+  } else if (event.joinDaysBeforeStart == null) {
+    canJoin = true; // žiadne obmedzenie
+  } else {
+    const joinAvailableFrom = new Date(eventStart);
+    joinAvailableFrom.setUTCDate(
+      eventStart.getUTCDate() - event.joinDaysBeforeStart
+    );
+
+    canJoin = now >= joinAvailableFrom;
+  }
 
   const daysUntilJoin =
     event.startDate && event.joinDaysBeforeStart != null
@@ -503,7 +521,9 @@ const EventDetail = ({
               )
             ) : (
               <Button variant="secondary" disabled>
-                Za {daysUntilJoin} dní
+                {daysUntilJoin < 0
+                  ? "Event už prebieha alebo skončil"
+                  : `Za ${daysUntilJoin} dní`}
               </Button>
             )}
           </div>

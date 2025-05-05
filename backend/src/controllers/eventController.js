@@ -797,18 +797,28 @@ export const applyChanges = async (
 };
 
 function canJoinEventToday(targetDate, joinDaysBeforeStart) {
+  const now = getCurrentUTCDate(); // aktuálny čas (vrátane hodín a minút)
+  const eventStart = new Date(targetDate); // plný čas štartu eventu
+
+  // ✅ Základná podmienka: ak event už začal, nesmieš sa prihlásiť
+  if (now >= eventStart) {
+    return false;
+  }
+
+  // ✅ Ak nie je definované, stačí len že ešte event nezačal
   if (!joinDaysBeforeStart) {
     return true;
   }
-  const today = normalizeDate(getCurrentUTCDate());
 
-  const startDate = normalizeDate(targetDate);
+  // Vypočítaj dátum, od kedy sa môžeš prihlásiť (čas sa ignoruje)
+  const joinStartDate = normalizeDate(
+    new Date(eventStart.setDate(eventStart.getDate() - joinDaysBeforeStart))
+  );
 
-  let joinStartDate = new Date(targetDate);
-  joinStartDate.setDate(startDate.getDate() - joinDaysBeforeStart);
-  joinStartDate = normalizeDate(joinStartDate);
+  const todayDateOnly = normalizeDate(now); // vynulovaný čas dnes
 
-  return today >= joinStartDate && today <= startDate;
+  // ✅ Môžeš sa prihlásiť iba ak dnešný dátum je v rozsahu
+  return todayDateOnly >= joinStartDate;
 }
 
 export const joinEvent = async (req, res, next) => {
